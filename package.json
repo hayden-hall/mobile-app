@@ -1,0 +1,44 @@
+{
+  "name": "hayden-hall",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
+  "rnpm": {
+    "assets": [
+      "./assets/fonts/"
+    ]
+  },
+  "dependencies": {
+    "@react-native-community/async-storage": "^1.4.0",
+    "@react-native-community/netinfo": "^2.0.10",
+    "lodash": "^4.17.11",
+    "moment": "^2.24.0",
+    "react": "16.8.3",
+    "react-native": "0.59.5",
+    "react-native-config": "^0.11.7",
+    "react-native-elements": "^1.1.0",
+    "react-native-gesture-handler": "^1.2.1",
+    "react-native-keyboard-aware-scroll-view": "^0.8.0",
+    "react-native-localization": "^2.1.2",
+    "react-native-modal-datetime-picker": "^7.4.2",
+    "react-native-popover-view": "^2.0.1",
+    "react-native-sqlite-storage": "^3.3.10",
+    "react-native-vector-icons": "^6.4.2",
+    "react-navigation": "^3.9.1",
+    "recompose": "^0.30.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/runtime": "^7.4.4",
+    "babel-jest": "^24.7.1",
+    "jest": "^24.7.1",
+    "metro-react-native-babel-preset": "^0.53.1",
+    "react-test-renderer": "16.8.3"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
