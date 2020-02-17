@@ -2,7 +2,6 @@ import {
   getLoggedInCDWContact,
   getLoggedInUserMothersChilds
 } from './API/Salesforce/Contact';
-import { loginUser } from './API/Salesforce/SalesforceAPI';
 import { getCDWClientJunctionObjects } from './API/Salesforce/CDWJunction';
 import {
   getAllSurveysFromSalesforce,
@@ -57,7 +56,6 @@ export const refreshAll = async () => {
 
       return Promise.resolve(true);
     } else {
-      //await loginUser();
       return Promise.reject('Login Failed');
     }
 
@@ -108,10 +106,4 @@ const getSurveyFields = questions => {
   let uniqueFields = [...new Set(fields)];
   console.log(uniqueFields);
   return uniqueFields;
-};
-
-const loginSalesforceUser = async () => {
-  this.setState({ loading: true });
-  const loginResponse = await loginUser();
-  this.setState({ loading: false });
 };

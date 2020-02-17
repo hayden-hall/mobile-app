@@ -41,6 +41,13 @@ export default class SurveyPicker extends PureComponent {
         headerTitle: labels.CHOOSE_MOTHER
       });
     } else if (
+      survey.MotherChildPickerType__c === MotherChildPickerType__c.ANTE_NATAL
+    ) {
+      this.props.navigation.push('MotherPicker', {
+        survey,
+        headerTitle: labels.CHOOSE_MOTHER
+      });
+    } else if (
       survey.MotherChildPickerType__c === MotherChildPickerType__c.BENEFICIARY
     ) {
       this.props.navigation.push('BeneficiaryPicker', {

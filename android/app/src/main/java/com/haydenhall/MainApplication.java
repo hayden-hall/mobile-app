@@ -4,6 +4,7 @@ import android.app.Application;
 import org.pgsqlite.SQLitePluginPackage;
 
 import com.facebook.react.ReactApplication;
+import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.babisoft.ReactNativeLocalization.ReactNativeLocalizationPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 //import io.realm.react.RealmReactPackage;
@@ -30,6 +31,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ReactNativeConfigPackage(),
             new ReactNativeLocalizationPackage(),
             new AsyncStoragePackage(),
               new SQLitePluginPackage(),

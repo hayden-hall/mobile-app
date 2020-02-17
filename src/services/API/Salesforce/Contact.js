@@ -20,7 +20,7 @@ const getCDWContact = async areaCode => {
 
 const getLoggedInUserMothersChilds = async contactsIds => {
   const ids = prepareIdsForSalesforce(contactsIds);
-  const query = `SELECT Id,Name,Address_Locator__c,FirstName,LastName FROM contact WHERE Id IN (${ids})`;
+  const query = `SELECT Id,Name,Address_Locator__c,FirstName,LastName,Ante_natal_Mother__c FROM contact WHERE Id IN (${ids})`;
   const response = await getDataFromQuery(query);
   await clearTable(DB_TABLE.CONTACT);
   await saveRecords(DB_TABLE.CONTACT, response.records);
@@ -49,6 +49,19 @@ const getMothers = async () => {
   return await getRecords(DB_TABLE.CONTACT, `WHERE Id IN (${motherIdsForSql})`);
 };
 
+const getAnteNatalMothers = async () => {
+  const CDWRecords = await getRecords(DB_TABLE.CDW_JUNCTION, '');
+
+  const mothersIds = CDWRecords.map(cdwRecord => cdwRecord.Mother__c);
+
+  const motherIdsForSql = prepareIdsForSqllite(mothersIds);
+
+  return await getRecords(
+    DB_TABLE.CONTACT,
+    `WHERE Id IN (${motherIdsForSql}) AND Ante_natal_Mother__c = 'true'`
+  );
+};
+
 const getChildsForMother = async motherId => {
   const CDWRecords = await getRecords(
     DB_TABLE.CDW_JUNCTION,
@@ -73,5 +86,6 @@ export {
   getAllOfflineContacts,
   getChildsForMother,
   getMothers,
+  getAnteNatalMothers,
   getBeneficiaries
 };

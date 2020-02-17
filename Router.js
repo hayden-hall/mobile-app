@@ -14,7 +14,6 @@ import withImageBackground from './src/hoc/withImageBackground';
 import Login from './src/screens/Auth/Login';
 import AreaCode from './src/screens/Auth/AreaCode';
 
-import Survey from './src/screens/Survey';
 import SurveyList from './src/screens/SurveyList';
 import SurveyPicker from './src/screens/NewSurvey/SurveyPicker';
 import MotherPicker from './src/screens/NewSurvey/SurveyPicker/MotherPicker';
