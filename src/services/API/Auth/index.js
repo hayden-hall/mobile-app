@@ -1,13 +1,12 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
-
-const LOGIN_URL = 'http://haydenhall.herokuapp.com/login';
+import { LOGIN_API_URL } from 'react-native-dotenv';
 
 export const login = async (email, password) => {
   return new Promise(async (resolve, reject) => {
     const data = { email, password };
     try {
-      let response = await fetch(LOGIN_URL, {
+      let response = await fetch(LOGIN_API_URL, {
         method: 'POST',
         body: JSON.stringify(data), // data can be `string` or {object}!
         headers: {
