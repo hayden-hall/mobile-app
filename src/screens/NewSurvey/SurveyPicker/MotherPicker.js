@@ -2,7 +2,10 @@ import React, { PureComponent } from 'react';
 import { StyleSheet } from 'react-native';
 import { SelectionList } from '../../../components';
 import { labels } from '../../../stringConstants';
-import { getMothers } from '../../../services/API/Salesforce/Contact';
+import {
+  getMothers,
+  getAnteNatalMothers
+} from '../../../services/API/Salesforce/Contact';
 import { MotherChildPickerType__c } from '../../../services/API/Salesforce/Survey';
 
 export default class MotherPicker extends PureComponent {
@@ -13,8 +16,16 @@ export default class MotherPicker extends PureComponent {
   };
 
   componentDidMount = async () => {
-    const data = await getMothers();
-    this.setState({ mothers: data, filteredMothers: data });
+    const { survey } = this.props.navigation.state.params;
+    if (
+      survey.MotherChildPickerType__c == MotherChildPickerType__c.ANTE_NATAL
+    ) {
+      const data = await getAnteNatalMothers();
+      this.setState({ mothers: data, filteredMothers: data });
+    } else {
+      const data = await getMothers();
+      this.setState({ mothers: data, filteredMothers: data });
+    }
   };
 
   filterMothers = text => {

@@ -18,6 +18,7 @@ export const MotherChildPickerType__c = {
   NONE: '',
   MOTHER: 'Mother',
   MOTHER_CHILD: 'Mother-Child',
+  ANTE_NATAL: 'Ante-Natal',
   BENEFICIARY: 'Beneficiary'
 };
 
@@ -210,9 +211,7 @@ export const getOfflineCreatedSurvey = async survey => {
 
   const contacts = await getRecords(
     DB_TABLE.CONTACT,
-    `WHERE Id IN ("${survey.Mother__c}","${survey.Child__c}","${
-      survey.Beneficiary_Name__c
-    }")`
+    `WHERE Id IN ("${survey.Mother__c}","${survey.Child__c}","${survey.Beneficiary_Name__c}")`
   );
 
   if (surveyMetadatas && surveyMetadatas.length > 0) {
@@ -268,9 +267,7 @@ export const getOfflineCreatedSurvey = async survey => {
               contact => contact.Id == contactId
             );
             if (filteredContacts && filteredContacts.length > 0) {
-              return `${filteredContacts[0].FirstName} ${
-                filteredContacts[0].LastName
-              }`;
+              return `${filteredContacts[0].FirstName} ${filteredContacts[0].LastName}`;
             }
           };
 

@@ -11,7 +11,7 @@ import {
 import { labels } from '../../stringConstants';
 import { APP_FONTS, APP_THEME, ASYNC_STORAGE_KEYS } from '../../constants';
 import { SelectionList, SearchBar } from '../../components';
-import { Icon, Divider } from 'react-native-elements';
+import { Icon, Divider, Button } from 'react-native-elements';
 import {
   getAllSurveys,
   getOfflineCreatedSurvey
@@ -195,18 +195,26 @@ export default class SurveyList extends PureComponent {
           editable={false}
         />
         <View style={styles.syncIconStyle}>
-          <Icon
-            name="sync"
-            size={22}
-            color={
+          <Button
+            containerStyle={{ minWidth: 80 }}
+            titleStyle={{
+              fontSize: 18,
+              fontFamily: APP_FONTS.FONT_REGULAR
+            }}
+            titleStyle={
               refreshButtonState
-                ? APP_THEME.APP_BASE_COLOR
-                : APP_THEME.APP_BORDER_COLOR
+                ? { color: APP_THEME.APP_WHITE }
+                : { color: APP_THEME.APP_DARK_FONT_COLOR }
             }
-            type="octicons"
+            buttonStyle={
+              refreshButtonState
+                ? { backgroundColor: APP_THEME.APP_BASE_COLOR }
+                : { backgroundColor: APP_THEME.APP_BORDER_COLOR }
+            }
             onPress={() => {
               refreshButtonState && this.showRefreshPopup();
             }}
+            title="Sync"
           />
         </View>
       </View>
@@ -247,9 +255,9 @@ export default class SurveyList extends PureComponent {
       <View style={flex1}>
         {this._renderSearchBar()}
         {this._renderPendingSurveyCount()}
-        <Text style={textStyleTotalSurvey}>{`${labels.TOTAL_SURVEYS} ${
-          this.state.surveys.length
-        }`}</Text>
+        <Text
+          style={textStyleTotalSurvey}
+        >{`${labels.TOTAL_SURVEYS} ${this.state.surveys.length}`}</Text>
         <Divider style={{ backgroundColor: APP_THEME.APP_BORDER_COLOR }} />
         <SelectionList
           data={this.state.filteredSurveys}

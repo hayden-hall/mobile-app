@@ -145,6 +145,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-config')
     implementation project(':react-native-localization')
     implementation project(':@react-native-community_async-storage')
     //implementation project(':realm')
