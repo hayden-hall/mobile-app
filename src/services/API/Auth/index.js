@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
-import { LOGIN_API_URL } from 'react-native-dotenv';
+import { LOGIN_API_URL } from 'react-native-config';
 
 export const login = async (email, password) => {
   return new Promise(async (resolve, reject) => {
