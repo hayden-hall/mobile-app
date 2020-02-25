@@ -1,9 +1,6 @@
 # Environment variables
 .env
 
-# Use yarn
-package-lock.json
-
 # OSX
 #
 .DS_Store
