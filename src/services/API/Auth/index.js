@@ -1,12 +1,12 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
-import { LOGIN_API_URL } from 'react-native-config';
+import Config from 'react-native-config';
 
 export const login = async (email, password) => {
   return new Promise(async (resolve, reject) => {
     const data = { email, password };
     try {
-      let response = await fetch(LOGIN_API_URL, {
+      let response = await fetch(Config.LOGIN_API_URL, {
         method: 'POST',
         body: JSON.stringify(data), // data can be `string` or {object}!
         headers: {
