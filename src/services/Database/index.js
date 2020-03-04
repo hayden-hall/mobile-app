@@ -2,6 +2,14 @@ import SQLite from 'react-native-sqlite-storage';
 
 const databaseName = 'AppDatabase.db';
 let database = undefined;
+const SURVEY_LOOKUP_FIELDS = [
+  'Mother__c',
+  'Child__c',
+  'Beneficiary_Name__c',
+  'Permanent_Record__c',
+  'Record_Type_ID__c',
+  'Family_Org_Name__c'
+];
 
 export const DB_TABLE = {
   SURVEY_METADATA: 'SurveyMetadata__c',
@@ -54,6 +62,17 @@ export const saveRecords = async (table, records) => {
     console.log('sqlInsertStatement', sqlInsertStatement);
 
     return await database.executeSql(sqlInsertStatement);
+  }
+};
+
+export const updateRecord = async (table, record, LocalId) => {
+  if (record) {
+    const fields = getDatabaseFields(record);
+    //Prepare update statement
+    const sqlUpdateStatement = prepareUpdateStatement(table, record, fields, LocalId);
+    console.log('sqlUpdateStatement', sqlUpdateStatement);
+
+    return await database.executeSql(sqlUpdateStatement);
   }
 };
 
@@ -144,6 +163,17 @@ const prepareInsertStatement = (table, records, fields) => {
 
   const keys = fields.join(',');
   return `INSERT INTO ${table} (${keys}) VALUES ${valuesArray.join(',')}`;
+};
+
+const prepareUpdateStatement = (table, record, fields, LocalId) => {
+    var pairArray = [];
+    fields.forEach(field => {
+      //Leave as it is for lookup fields
+      if(!SURVEY_LOOKUP_FIELDS.includes(field)) {
+        pairArray.push(`${field}="${record[field]}"`);
+      }
+    });
+    return `UPDATE ${table} SET ${pairArray.join(',')} WHERE LocalId = ${LocalId}`;
 };
 
 const getDatabaseFields = record => {

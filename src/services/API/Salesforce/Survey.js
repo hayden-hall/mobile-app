@@ -1,6 +1,7 @@
 import { getDataFromQuery, createNewObject } from './SalesforceAPI';
 import {
   saveRecords,
+  updateRecord,
   DB_TABLE,
   clearTable,
   getRecords,
@@ -334,6 +335,20 @@ export const createNewSurvey = async survey => {
     return await saveRecords(DB_TABLE.SURVEY, [payload]);
   }
 };
+
+export const updateSurvey = async (survey, LocalId) => {
+  const payload = { ...survey, IsLocallyCreated: 1 };
+  //TODO: Check for network connectivity, if connected then upload the survey to Saleforce and then save to database.
+  //If no network is detected then save the record to local database.
+  const connectivity = await AsyncStorage.getItem(
+    ASYNC_STORAGE_KEYS.NETWORK_CONNECTIVITY
+  );
+  if (connectivity == true) {
+    return await updateRecord(DB_TABLE.SURVEY, payload, LocalId);
+  } else {
+    return await updateRecord(DB_TABLE.SURVEY, payload, LocalId);
+  }
+}
 
 export const uploadSurveyToSalesforce = async survey => {
   let payload = {};
