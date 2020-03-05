@@ -268,8 +268,12 @@ export default class SurveyList extends PureComponent {
           searchBarLabel={labels.SEARCH_SURVEYS}
           onPress={async item => {
             const createdSurvey = await getOfflineCreatedSurvey(item);
+            const LocalId = item.LocalId;
+            const IsLocallyCreated = item.IsLocallyCreated;
             this.props.navigation.push('NewSurvey', {
               createdSurvey,
+              LocalId,
+              IsLocallyCreated,
               headerTitle: labels.SURVEY_DETAIL
             });
           }}

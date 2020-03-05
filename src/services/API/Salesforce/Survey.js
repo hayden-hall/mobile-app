@@ -296,9 +296,9 @@ export const getOfflineCreatedSurvey = async survey => {
             };
           }
 
-          return { ...question, Answer__c, disabled: true };
+          return { ...question, Answer__c, disabled: ((survey.IsLocallyCreated) ? false : true) };
         } else {
-          return { ...question, disabled: true };
+          return { ...question, disabled: ((survey.IsLocallyCreated) ? false : true) };
         }
       });
 

@@ -8,8 +8,8 @@ import { APP_FONTS, APP_THEME, ASYNC_STORAGE_KEYS } from '../../constants';
 import SurveyItem from './SurveyItem';
 import {
   getOfflineSurveyQuestionsForSurveyMetadata,
-  MotherChildPickerType__c,
-  createNewSurvey
+  createNewSurvey,
+  updateSurvey
 } from '.././../services/API/Salesforce/Survey';
 import { formatAPIDate, checkForDatabaseNull } from '../../utility';
 
@@ -28,9 +28,11 @@ export default class NewSurvey extends React.Component {
     );
     this.setState({ selectedLanguage: selectedLanguage || 'en-US' });
 
-    const { survey, createdSurvey } = this.props.navigation.state.params;
+    const { survey, createdSurvey, LocalId, IsLocallyCreated } = this.props.navigation.state.params;
     if (createdSurvey) {
       this.setState({ sections: createdSurvey });
+      this.setState({ LocalId: LocalId });
+      this.setState({ IsLocallyCreated: IsLocallyCreated });
       console.log('RESULT', createdSurvey);
     } else {
       const sections = await getOfflineSurveyQuestionsForSurveyMetadata(
@@ -168,12 +170,13 @@ export default class NewSurvey extends React.Component {
       child,
       beneficiary
     } = this.props.navigation.state.params;
-    //Populate the Survey Record Type.
-    surveyPacket = {
-      ...surveyPacket,
-      RecordTypeId: survey.SurveyRecordTypeId__c
-    };
-
+    //Populate the Survey Record Type. (When creating)
+    if(survey) {
+      surveyPacket = {
+        ...surveyPacket,
+        RecordTypeId: survey.SurveyRecordTypeId__c
+      };
+    }
     //Populate Visit date.
     const visitDate = formatAPIDate(new Date());
     surveyPacket = { ...surveyPacket, Visit_Clinic_Date__c: visitDate };
@@ -196,7 +199,11 @@ export default class NewSurvey extends React.Component {
     console.log('FINAL SURVEY', surveyPacket);
 
     try {
-      await createNewSurvey(surveyPacket);
+      if(!this.state.LocalId) {
+        await createNewSurvey(surveyPacket);
+      } else {
+        await updateSurvey(surveyPacket, this.state.LocalId);
+      }
       this.props.navigation.push('SurveyCompleted', {
         headerTitle: labels.SURVEY_COMPLETED
       });
@@ -230,10 +237,10 @@ export default class NewSurvey extends React.Component {
             sections={this.state.sections}
             keyExtractor={(item, index) => item + index}
             ListFooterComponent={
-              !createdSurvey && (
+              (!createdSurvey || this.state.IsLocallyCreated) && (
                 <View style={styles.inputButton}>
                   <CustomButton
-                    title={labels.SAVE}
+                    title={!this.state.LocalId ? labels.SAVE : labels.UPDATE}
                     onPress={() => {
                       this.onSave();
                     }}
