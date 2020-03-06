@@ -11,12 +11,13 @@
     "@react-native-community/netinfo": "^2.0.10",
     "expo": "~36.0.0",
     "expo-localization": "~8.0.0",
+    "expo-sqlite": "~8.0.0",
     "i18n-js": "^3.5.1",
     "moment": "^2.24.0",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-36.0.0.tar.gz",
-    "react-native-config": "^0.11.7",
+    "react-native-dotenv": "^0.2.0",
     "react-native-elements": "^1.1.0",
     "react-native-gesture-handler": "^1.2.1",
     "react-native-keyboard-aware-scroll-view": "^0.8.0",
@@ -27,8 +28,7 @@
     "react-native-vector-icons": "^6.4.2",
     "react-native-web": "~0.11.7",
     "react-navigation": "^3.9.1",
-    "recompose": "^0.30.0",
-    "expo-sqlite": "~8.0.0"
+    "recompose": "^0.30.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
