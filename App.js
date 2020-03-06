@@ -1,9 +1,8 @@
 import React, { PureComponent } from 'react';
-import { AppState, AsyncStorage } from 'react-native';
-import Storage from 'react-native-storage';
 
 import { openDatabase, closeDatabase } from './src/services/Database';
 import Router from './src/Router';
+import { initializeStorage } from './src/utility'; 
 
 export default class App extends PureComponent {
   state = {
@@ -19,18 +18,7 @@ export default class App extends PureComponent {
     });
     // Listen for app state changes
     AppState.addEventListener('change', this.handleAppStateChange);
-    this.initializeStorage();
-  };
-
-  initializeStorage = () => {
-    if(!global.storage) {
-      global.storage = new Storage({
-          size: 1000,
-          storageBackend: AsyncStorage,
-          defaultExpires: 1000 * 3600 * 24,
-          enableCache: true
-      });    
-    }
+    await initializeStorage();
   };
 
   componentWillUnmount = () => {

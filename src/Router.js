@@ -8,7 +8,7 @@ import {
 import { Icon } from 'react-native-elements';
 import { compose } from 'recompose';
 
-import { clearAllAsyncKeys } from './utility';
+import { initializeStorage } from './utility';
 import { clearDatabase } from './services/Database';
 
 import withImageBackground from './hoc/withImageBackground';
@@ -86,7 +86,7 @@ makeLogout = navigation => {
       {
         text: i18n.t('OK'),
         onPress: async () => {
-          await clearAllAsyncKeys();
+          await initializeStorage();
           await clearDatabase();
           navigation.replace('Login', { headerTitle: i18n.t('LOGIN') });
         }

@@ -1,5 +1,7 @@
+import { AsyncStorage } from 'react-native';
+import Storage from 'react-native-storage';
 import moment from 'moment';
-import AsyncStorage from '@react-native-community/async-storage';
+
 
 const DATE_FORMAT = 'MMM DD, YYYY';
 const DATE_FORMAT_API = 'YYYY-MM-DD';
@@ -40,11 +42,17 @@ export const prepareIdsForSqllite = contactsIds => {
     .join(','));
 };
 
-export const clearAllAsyncKeys = async () => {
-  const keys = await AsyncStorage.getAllKeys();
-  await AsyncStorage.multiRemove(keys);
-};
-
 export const checkForDatabaseNull = value => {
   return value && value != null && value != 'null';
+};
+
+export const initializeStorage = () => {
+  if(!global.storage) {
+    global.storage = new Storage({
+        size: 1000,
+        storageBackend: AsyncStorage,
+        defaultExpires: 1000 * 3600 * 24,
+        enableCache: true
+    });    
+  }
 };
