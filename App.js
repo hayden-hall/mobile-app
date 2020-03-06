@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react';
 import { AppState, AsyncStorage } from 'react-native';
 import Storage from 'react-native-storage';
+
 import { ASYNC_STORAGE_KEYS } from './src/constants';
-import { labels } from './src/stringConstants';
+import { labels } from './src/config/stringConstants';
 import { openDatabase, closeDatabase } from './src/services/Database';
 import Router from './src/Router';
 
@@ -10,7 +11,6 @@ export default class App extends PureComponent {
   state = {
     appState: AppState.currentState,
     isDatabaseReady: false,
-    isLocalizationReady: false
   };
 
   componentDidMount = async () => {
@@ -22,7 +22,6 @@ export default class App extends PureComponent {
     // Listen for app state changes
     AppState.addEventListener('change', this.handleAppStateChange);
     this.initializeStorage();
-    this.setLanguage();
   };
 
   initializeStorage = () => {
@@ -34,22 +33,6 @@ export default class App extends PureComponent {
           enableCache: true
       });    
     }
-  };
-
-  setLanguage = async () => {
-    const languageCode = await storage.load({
-      key: ASYNC_STORAGE_KEYS.LANGUAGE
-    });
-    if (languageCode) {
-      labels.setLanguage(languageCode);
-    } else {
-      labels.setLanguage('en-US');
-      await storage.save({
-        key: ASYNC_STORAGE_KEYS.LANGUAGE,
-        data: 'en-US'
-      });
-    }
-    this.setState({ localizationReady: true });
   };
 
   componentWillUnmount = () => {
@@ -88,7 +71,7 @@ export default class App extends PureComponent {
   };
 
   render() {
-    if (this.state.isDatabaseReady && this.state.isLocalizationReady) {
+    if (this.state.isDatabaseReady) {
       return <Router />;
     }
     return null;
