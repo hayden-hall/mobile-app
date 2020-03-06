@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
 import { View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
-import { labels } from '../stringConstants';
 import { APP_THEME } from '../constants';
 import { SearchBar } from './SearchBar';
 import { ListItem } from './ListItem';

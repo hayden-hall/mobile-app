@@ -6,6 +6,8 @@ import {
   createAppContainer
 } from 'react-navigation';
 import { Icon } from 'react-native-elements';
+import { compose } from 'recompose';
+
 import { clearAllAsyncKeys } from './utility';
 import { clearDatabase } from './services/Database';
 
@@ -13,7 +15,6 @@ import withImageBackground from './hoc/withImageBackground';
 
 import Login from './screens/Auth/Login';
 import AreaCode from './screens/Auth/AreaCode';
-
 import SurveyList from './screens/SurveyList';
 import SurveyPicker from './screens/NewSurvey/SurveyPicker';
 import MotherPicker from './screens/NewSurvey/SurveyPicker/MotherPicker';
@@ -24,9 +25,7 @@ import SurveyCompleted from './screens/NewSurvey/SurveyCompleted';
 import Settings from './screens/Settings';
 
 import { APP_FONTS, APP_THEME, APP_ROUTE } from './constants';
-import { labels } from './stringConstants';
-
-import { compose } from 'recompose';
+import i18n from './config/i18n';
 
 let enhance = compose(withImageBackground);
 
@@ -81,19 +80,19 @@ const stackNavigaterOptions = (title, leftButton, rightButton) => {
 
 makeLogout = navigation => {
   Alert.alert(
-    labels.LOGOUT,
-    labels.LOGOUT_MESSAGE,
+    i18n.t('LOGOUT'),
+    i18n.t('LOGOUT_MESSAGE'),
     [
       {
-        text: labels.OK,
+        text: i18n.t('OK'),
         onPress: async () => {
           await clearAllAsyncKeys();
           await clearDatabase();
-          navigation.replace('Login', { headerTitle: labels.LOGIN });
+          navigation.replace('Login', { headerTitle: i18n.t('LOGIN') });
         }
       },
       {
-        text: labels.CANCEL
+        text: i18n.t('CANCEL')
       }
     ],
     { cancelable: true }
@@ -128,7 +127,7 @@ decideLeftButton = (navigation, type) => {
         type="material"
         onPress={() => {
           if (navigation.state.params.isSettingPage) {
-            navigation.navigate('SurveyList', { headerTitle: labels.SURVEYS });
+            navigation.navigate('SurveyList', { headerTitle: i18n.t('SURVEYS') });
           } else {
             navigation.pop();
           }
@@ -150,7 +149,7 @@ const getSettingsButton = (navigation, rightButtonType) => {
         type="font-awesome"
         onPress={() => {
           navigation.push('Settings', {
-            headerTitle: labels.LANGUAGE,
+            headerTitle: i18n.t('LANGUAGE'),
             isSettingPage: true
           });
         }}
@@ -187,28 +186,28 @@ const getScreen = (component, title, type, rightButtonType) => {
 export default createAppContainer(
   createStackNavigator(
     {
-      Login: getScreen(Login, labels.LOGIN),
-      AreaCode: getScreen(AreaCode, labels.ENTER_AREA_CODE),
+      Login: getScreen(Login, i18n.t('LOGIN')),
+      AreaCode: getScreen(AreaCode, i18n.t('ENTER_AREA_CODE')),
       SurveyList: getScreen(
         SurveyList,
-        labels.SURVEYS,
+        i18n.t('SURVEYS'),
         BACK_BUTTON_TYPE.LOGOUT,
         RIGHT_BUTTON_TYPE.SETTINGS
       ),
-      SurveyPicker: getScreen(SurveyPicker, labels.CHOOSE_SURVEY),
-      MotherPicker: getScreen(MotherPicker, labels.CHOOSE_MOTHER),
+      SurveyPicker: getScreen(SurveyPicker, i18n.t('CHOOSE_SURVEY')),
+      MotherPicker: getScreen(MotherPicker, i18n.t('CHOOSE_MOTHER')),
       BeneficiaryPicker: getScreen(
         BeneficiaryPicker,
-        labels.CHOOSE_BENEFIACIARY
+        i18n.t('CHOOSE_BENEFIACIARY')
       ),
-      ChildPicker: getScreen(ChildPicker, labels.CHOOSE_CHILD),
-      NewSurvey: getScreen(NewSurvey, labels.NEW_SURVEY),
+      ChildPicker: getScreen(ChildPicker, i18n.t('CHOOSE_CHILD')),
+      NewSurvey: getScreen(NewSurvey, i18n.t('NEW_SURVEY')),
       SurveyCompleted: getScreen(
         SurveyCompleted,
-        labels.SURVEY_COMPLETED,
+        i18n.t('SURVEY_COMPLETED'),
         BACK_BUTTON_TYPE.NONE
       ),
-      Settings: getScreen(Settings, labels.LANGUAGE, BACK_BUTTON_TYPE.BACK)
+      Settings: getScreen(Settings, i18n.t('LANGUAGE'), BACK_BUTTON_TYPE.BACK)
     },
     {
       initialRouteName: 'Login'
