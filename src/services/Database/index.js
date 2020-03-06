@@ -1,4 +1,4 @@
-import SQLite from 'react-native-sqlite-storage';
+import { SQLite } from 'expo-sqlite';
 
 const databaseName = 'AppDatabase.db';
 let database = undefined;
