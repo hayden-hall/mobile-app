@@ -1,10 +1,10 @@
 import React, { PureComponent } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView } from 'react-native';
-import { TextInput, CustomButton } from '../../../components';
-import i18n from '../../../config/i18n';
-import { getCDWContact } from '../../../services/API/Salesforce/Contact';
-import { ASYNC_STORAGE_KEYS } from '../../../constants';
-import { refreshAll } from '../../../services/Refresh';
+import { TextInput, CustomButton } from '../../components';
+import i18n from '../../config/i18n';
+import { getCDWContact } from '../../services/API/Salesforce/Contact';
+import { ASYNC_STORAGE_KEYS } from '../../constants';
+import { refreshAll } from '../../services/Refresh';
 
 const styles = StyleSheet.create({
   container: {

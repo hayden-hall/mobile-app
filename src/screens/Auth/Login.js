@@ -4,11 +4,11 @@ import {
   StyleSheet,
   Image,
   } from 'react-native';
-import { TextInput, CustomButton, Loader } from '../../../components';
-import i18n from '../../../config/i18n';
-import { validateEmail } from '../../../utility';
-import { login } from '../../../services/API/Auth';
-import { ASYNC_STORAGE_KEYS } from '../../../constants';
+import { TextInput, CustomButton, Loader } from '../../components';
+import i18n from '../../config/i18n';
+import { validateEmail } from '../../utility';
+import { login } from '../../services/API/Auth';
+import { ASYNC_STORAGE_KEYS } from '../../constants';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const styles = StyleSheet.create({
