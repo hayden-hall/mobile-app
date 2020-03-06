@@ -42,11 +42,11 @@ export default class Login extends PureComponent {
     loginFailError: '',
     email: '',
     password: '',
-    isAppLoading: false
+    isLoading: false
   };
 
-  showHideLoading = show => {
-    this.setState({ isAppLoading: show });
+  showsSpinner = (showsSpinner) => {
+    this.setState({ isAppLoading: showsSpinner });
   };
 
   validateInput = () => {
@@ -71,9 +71,9 @@ export default class Login extends PureComponent {
     if (this.validateInput()) {
       try {
         const { email, password } = this.state;
-        this.showHideLoading(true);
+        this.showsSpinner(true);
         const loginResponse = await login(email, password);
-        this.showHideLoading(false);
+        this.showsSpinner(false);
         if (loginResponse.access_token && loginResponse.instance_url) {
           if (this.props.isLoginModal) {
             this.props.loginSuccessfull();
@@ -88,7 +88,7 @@ export default class Login extends PureComponent {
           }, 500);
         }
       } catch (error) {
-        this.showHideLoading(false);
+        this.showsSpinner(false);
         setTimeout(() => {
           alert(`${error}`);
         }, 500);
@@ -97,16 +97,19 @@ export default class Login extends PureComponent {
   };
 
   componentDidMount = () => {
-    this.checkLogin();
+    this.hasLoggedIn();
   };
-
-  checkLogin = async () => {
+  
+  hasLoggedIn = async () => {
     if (!this.props.isLoginModal) {
-      this.showHideLoading(true);
+      this.showsSpinner(true);
       const CDW_Worked_Id = await storage.load({
         key: ASYNC_STORAGE_KEYS.CDW_WORKED_ID
+      }).catch(error => {
+        //User not logged in
       });
-      this.showHideLoading(false);
+      this.showsSpinner(false);
+      //if user already logged in (= has CDW Id), navigate to survey list
       if (CDW_Worked_Id) {
         this.props.navigation.replace('SurveyList', {
           headerTitle: i18n.t('SURVEYS')
@@ -126,7 +129,7 @@ export default class Login extends PureComponent {
     } = styles;
     return (
       <KeyboardAwareScrollView style={flex1}>
-        <Loader loading={this.state.isAppLoading} />
+        <Loader loading={this.state.isLoading} />
         <View style={container}>
           <Image
             source={require('../../../../assets/images/haydenhallicon.png')}
