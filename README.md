@@ -1,25 +1,19 @@
 # Hayden Hall Mobile App
 
-## Instructions
-### Development Environment
-
-Goto https://facebook.github.io/react-native/docs/getting-started and make the correct setup of React-Native with Android studio.
-
-### Development
-
-1. Clone the repository
-2. run `npm install` to install dependency
-3. Run `react-native link` to link Assets to ios/android and React native libraries
-4. run `npm start` and In another tab, run `react-native run-android` for android.
+## Development
+1. Clone the repository.
+2. Run `npm install` to install dependency.
+3. Install expo app ( [Android](https://play.google.com/store/apps/details?id=host.exp.exponent) | [iOS](https://apps.apple.com/jp/app/expo-client/id982107779) ) in your mobile device.
+4. Run `npm start`. Metro bundler will open as new browser tab. Scan the QR Code and test the app in your device.
 
 ### Environment Variable
-Create a `.env` file
+Create a `.env` file to set the endpoint URL of the [Login API](https://github.com/hayden-hall/auth0-salesforce-login-api)
 
 ```
-LOGIN_API_URL=YOUR_HEROKU_LOGIN_API_ENDPOINT
+LOGIN_API_URL=https://YOUR_HEROKU_APP.herokuapp.com/login
 ```
 
-### Archive(.apk) Generation
+### (Old) Archive(.apk) Generation
 Generate the main.jsbundle using below command. This command generate the main.jsbundle file in Android project.
 
 ```
