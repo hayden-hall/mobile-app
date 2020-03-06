@@ -11,7 +11,7 @@ import {
 import { prepareIdsForSqllite } from '../../../utility';
 import { getAllOfflineContacts } from './Contact';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
-import { labels } from '../../../stringConstants';
+import i18n from '../../../config/i18n';
 import AsyncStorage from '@react-native-community/async-storage';
 import { checkForDatabaseNull } from '../../../utility';
 
@@ -369,7 +369,7 @@ export const uploadSurveyToSalesforce = async survey => {
     } else if (response && response.length > 0 && response[0].errorCode) {
       reject(response[0].message);
     } else {
-      reject(labels.SALESFORCE_OBJECT_CREATION_ERROR);
+      reject(i18n.t('SALESFORCE_OBJECT_CREATION_ERROR'));
     }
   });
 };

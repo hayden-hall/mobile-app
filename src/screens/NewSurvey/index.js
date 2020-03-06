@@ -1,9 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, SectionList, Alert } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { CustomButton } from '../../components';
-import { labels } from '../../stringConstants';
+import i18n from '../../config/i18n';
 import { APP_FONTS, APP_THEME, ASYNC_STORAGE_KEYS } from '../../constants';
 import SurveyItem from './SurveyItem';
 import {
@@ -16,18 +15,12 @@ import { formatAPIDate, checkForDatabaseNull } from '../../utility';
 export default class NewSurvey extends React.Component {
   state = {
     sections: [],
-    selectedLanguage: 'en-US'
   };
   componentDidMount = () => {
     this.getSurveyQuestions();
   };
 
   getSurveyQuestions = async () => {
-    const selectedLanguage = await AsyncStorage.getItem(
-      ASYNC_STORAGE_KEYS.LANGUAGE
-    );
-    this.setState({ selectedLanguage: selectedLanguage || 'en-US' });
-
     const { survey, createdSurvey, LocalId, IsLocallyCreated } = this.props.navigation.state.params;
     if (createdSurvey) {
       this.setState({ sections: createdSurvey });
@@ -51,7 +44,9 @@ export default class NewSurvey extends React.Component {
       child,
       beneficiary
     } = this.props.navigation.state.params;
-    const areaCode = await AsyncStorage.getItem(ASYNC_STORAGE_KEYS.AREA_CODE);
+    const areaCode = await storage.load({
+      key: ASYNC_STORAGE_KEYS.AREA_CODE
+    });
     this.findAPINameAndReplace('Area_Code__c', areaCode);
     if (mother) {
       this.findAPINameAndReplace(
@@ -108,7 +103,7 @@ export default class NewSurvey extends React.Component {
 
   renderItem = ({ item, index, section }) => {
     let { QuestionText__c, Question_Name_Nepali__c } = item;
-    if (this.state.selectedLanguage === 'ne') {
+    if (i18n.locale === 'ne') {
       QuestionText__c = checkForDatabaseNull(Question_Name_Nepali__c)
         ? Question_Name_Nepali__c
         : QuestionText__c;
@@ -126,7 +121,7 @@ export default class NewSurvey extends React.Component {
   renderSectionHeader = ({ section: { Name, Section_Name_Nepali__c } }) => {
     let title = Name;
     if (
-      this.state.selectedLanguage === 'ne' &&
+      i18n.locale === 'ne' &&
       checkForDatabaseNull(Section_Name_Nepali__c)
     ) {
       title = Section_Name_Nepali__c;
@@ -182,7 +177,9 @@ export default class NewSurvey extends React.Component {
     surveyPacket = { ...surveyPacket, Visit_Clinic_Date__c: visitDate };
 
     //Populate Area Code.
-    const areaCode = await AsyncStorage.getItem(ASYNC_STORAGE_KEYS.AREA_CODE);
+    const areaCode = await storage.load({
+      key: ASYNC_STORAGE_KEYS.AREA_CODE
+    });
     surveyPacket = { ...surveyPacket, Area_Code__c: areaCode };
 
     //Populate mother and child
@@ -205,15 +202,15 @@ export default class NewSurvey extends React.Component {
         await updateSurvey(surveyPacket, this.state.LocalId);
       }
       this.props.navigation.push('SurveyCompleted', {
-        headerTitle: labels.SURVEY_COMPLETED
+        headerTitle: i18n.t('SURVEY_COMPLETED')
       });
     } catch (error) {
       Alert.alert(
-        labels.ERROR,
-        labels.ERROR_ON_SAVE,
+        i18n.t('ERROR'),
+        i18n.t('ERROR_ON_SAVE'),
         [
           {
-            text: labels.OK,
+            text: i18n.t('OK'),
             onPress: async () => {}
           }
         ],
@@ -240,7 +237,7 @@ export default class NewSurvey extends React.Component {
               (!createdSurvey || this.state.IsLocallyCreated) && (
                 <View style={styles.inputButton}>
                   <CustomButton
-                    title={!this.state.LocalId ? labels.SAVE : labels.UPDATE}
+                    title={!this.state.LocalId ? i18n.t('SAVE') : i18n.t('UPDATE')}
                     onPress={() => {
                       this.onSave();
                     }}

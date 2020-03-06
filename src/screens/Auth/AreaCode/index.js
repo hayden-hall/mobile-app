@@ -1,9 +1,8 @@
 import React, { PureComponent } from 'react';
-import { View, StyleSheet, Image, KeyboardAvoidingView } from 'react-native';
-import { TextInput, CustomButton, Loader } from '../../../components';
-import { labels } from '../../../stringConstants';
+import { View, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { TextInput, CustomButton } from '../../../components';
+import i18n from '../../../config/i18n';
 import { getCDWContact } from '../../../services/API/Salesforce/Contact';
-import AsyncStorage from '@react-native-community/async-storage';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
 import { refreshAll } from '../../../services/Refresh';
 
@@ -39,7 +38,7 @@ export default class AreaCode extends PureComponent {
   validateInput = () => {
     const { areaCode } = this.state;
     if (areaCode.length == 0) {
-      this.setState({ areaCodeError: labels.ENTER_AREA_CODE });
+      this.setState({ areaCodeError: i18n.t('ENTER_AREA_CODE') });
       return false;
     }
     this.setState({ areaCodeError: '' });
@@ -53,22 +52,22 @@ export default class AreaCode extends PureComponent {
       this.props.showHideLoading(false);
       if (response.records && response.records.length > 0) {
         const workerContact = response.records[0];
-        await AsyncStorage.setItem(
-          ASYNC_STORAGE_KEYS.CDW_WORKED_ID,
-          workerContact.Id
-        );
-        await AsyncStorage.setItem(
-          ASYNC_STORAGE_KEYS.AREA_CODE,
-          this.state.areaCode
-        );
-        await AsyncStorage.setItem(
-          ASYNC_STORAGE_KEYS.CDW_WORKED_NAME,
-          workerContact.Name
-        );
+        storage.save({
+          key: ASYNC_STORAGE_KEYS.CDW_WORKED_ID,
+          data: workerContact.Id
+        });
+        storage.save({
+          key: ASYNC_STORAGE_KEYS.AREA_CODE,
+          data: this.state.areaCode
+        });
+        storage.save({
+          key: ASYNC_STORAGE_KEYS.CDW_WORKED_NAME,
+          data: workerContact.Name
+        });
         this.refreshAppData();
       } else {
         setTimeout(() => {
-          alert(labels.AREA_CODE_NOT_FOUND);
+          alert(i18n.t('AREA_CODE_NOT_FOUND'));
         }, 500);
       }
     }
@@ -80,7 +79,7 @@ export default class AreaCode extends PureComponent {
       const result = await refreshAll();
       this.props.showHideLoading(false);
       this.props.navigation.replace('SurveyList', {
-        headerTitle: labels.SURVEYS
+        headerTitle: i18n.t('SURVEYS')
       });
     } catch (error) {
       this.props.showHideLoading(false);
@@ -103,14 +102,14 @@ export default class AreaCode extends PureComponent {
               this.setState({ areaCode });
             }}
             value={this.state.areaCode}
-            label={labels.AREA_CODE}
+            label={i18n.t('AREA_CODE')}
             placeholder="3A2276BB"
             errorStyle={{ color: 'red' }}
             errorMessage={this.state.areaCodeError}
           />
           <View style={inputButton}>
             <CustomButton
-              title={labels.GO_TO_SURVEY}
+              title={i18n.t('GO_TO_SURVEY')}
               onPress={this.checkAreaCode}
             />
           </View>

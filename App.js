@@ -2,8 +2,6 @@ import React, { PureComponent } from 'react';
 import { AppState, AsyncStorage } from 'react-native';
 import Storage from 'react-native-storage';
 
-import { ASYNC_STORAGE_KEYS } from './src/constants';
-import { labels } from './src/config/stringConstants';
 import { openDatabase, closeDatabase } from './src/services/Database';
 import Router from './src/Router';
 

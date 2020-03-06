@@ -2,16 +2,12 @@ import React, { PureComponent } from 'react';
 import {
   View,
   StyleSheet,
-  Text,
   Image,
-  KeyboardAvoidingView
-} from 'react-native';
+  } from 'react-native';
 import { TextInput, CustomButton, Loader } from '../../../components';
-import { APP_THEME } from '../../../constants';
-import { labels } from '../../../stringConstants';
+import i18n from '../../../config/i18n';
 import { validateEmail } from '../../../utility';
 import { login } from '../../../services/API/Auth';
-import AsyncStorage from '@react-native-community/async-storage';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
@@ -56,15 +52,15 @@ export default class Login extends PureComponent {
   validateInput = () => {
     const { email, password } = this.state;
     if (email.length == 0) {
-      this.setState({ emailError: labels.ENTER_EMAIL });
+      this.setState({ emailError: i18n.t('ENTER_EMAIL') });
       return false;
     }
     if (!validateEmail(email)) {
-      this.setState({ emailError: labels.ENTER_VALID_EMAIL });
+      this.setState({ emailError: i18n.t('ENTER_VALID_EMAIL') });
       return false;
     }
     if (password.length == 0) {
-      this.setState({ passwordError: labels.ENTER_PASSWORD });
+      this.setState({ passwordError: i18n.t('ENTER_PASSWORD') });
       return false;
     }
     this.setState({ emailError: '', passwordError: '' });
@@ -83,7 +79,7 @@ export default class Login extends PureComponent {
             this.props.loginSuccessfull();
           } else {
             this.props.navigation.replace('AreaCode', {
-              headerTitle: labels.AREA_CODE
+              headerTitle: i18n.t('AREA_CODE')
             });
           }
         } else {
@@ -107,13 +103,13 @@ export default class Login extends PureComponent {
   checkLogin = async () => {
     if (!this.props.isLoginModal) {
       this.showHideLoading(true);
-      const CDW_Worked_Id = await AsyncStorage.getItem(
-        ASYNC_STORAGE_KEYS.CDW_WORKED_ID
-      );
+      const CDW_Worked_Id = await storage.load({
+        key: ASYNC_STORAGE_KEYS.CDW_WORKED_ID
+      });
       this.showHideLoading(false);
       if (CDW_Worked_Id) {
         this.props.navigation.replace('SurveyList', {
-          headerTitle: labels.SURVEYS
+          headerTitle: i18n.t('SURVEYS')
         });
       }
     }
@@ -143,10 +139,10 @@ export default class Login extends PureComponent {
               this.setState({ email });
             }}
             value={this.state.email}
-            label={labels.EMAIL}
-            placeholder="jon@mtxb2b.com"
+            label={i18n.t('EMAIL')}
+            placeholder="john@example.com"
             errorStyle={{ color: 'red' }}
-            keyboardType="email-address"
+            keyboardType='email-address'
             errorMessage={this.state.emailError}
           />
           <TextInput
@@ -154,14 +150,14 @@ export default class Login extends PureComponent {
               this.setState({ password });
             }}
             value={this.state.password}
-            label={labels.PASSWORD}
+            label={i18n.t('PASSWORD')}
             placeholder="password"
             errorStyle={{ color: 'red' }}
             secureTextEntry
             errorMessage={this.state.passwordError}
           />
           <View style={inputButton}>
-            <CustomButton title={labels.LOGIN} onPress={this.makeLogin} />
+            <CustomButton title={i18n.t('LOGIN')} onPress={this.makeLogin} />
           </View>
         </View>
         <View style={flex2} />
