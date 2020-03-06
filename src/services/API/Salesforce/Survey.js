@@ -12,7 +12,6 @@ import { prepareIdsForSqllite } from '../../../utility';
 import { getAllOfflineContacts } from './Contact';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
 import i18n from '../../../config/i18n';
-import AsyncStorage from '@react-native-community/async-storage';
 import { checkForDatabaseNull } from '../../../utility';
 
 export const MotherChildPickerType__c = {
@@ -144,9 +143,7 @@ export const getAllSurveys = async () => {
 export const getOfflineStoredSurveyMetadata = async () => {
   let records = await getRecords(DB_TABLE.SURVEY_METADATA, '');
 
-  const selectedLanguage = await AsyncStorage.getItem(
-    ASYNC_STORAGE_KEYS.LANGUAGE
-  );
+  const selectedLanguage = i18n.locale;
   if (selectedLanguage && selectedLanguage === 'ne') {
     records = records.map(record => {
       let { Name, Survey_Name_Nepali__c } = record;
@@ -326,9 +323,9 @@ export const createNewSurvey = async survey => {
   const payload = { ...survey, IsLocallyCreated: 1 };
   //TODO: Check for network connectivity, if connected then upload the survey to Saleforce and then save to database.
   //If no network is detected then save the record to local database.
-  const connectivity = await AsyncStorage.getItem(
-    ASYNC_STORAGE_KEYS.NETWORK_CONNECTIVITY
-  );
+  const connectivity = await storage.load({
+    key: ASYNC_STORAGE_KEYS.NETWORK_CONNECTIVITY
+  });
   if (connectivity == true) {
     return await saveRecords(DB_TABLE.SURVEY, [payload]);
   } else {
@@ -340,9 +337,9 @@ export const updateSurvey = async (survey, LocalId) => {
   const payload = { ...survey, IsLocallyCreated: 1 };
   //TODO: Check for network connectivity, if connected then upload the survey to Saleforce and then save to database.
   //If no network is detected then save the record to local database.
-  const connectivity = await AsyncStorage.getItem(
-    ASYNC_STORAGE_KEYS.NETWORK_CONNECTIVITY
-  );
+  const connectivity = await storage.load({
+    key: ASYNC_STORAGE_KEYS.NETWORK_CONNECTIVITY
+  });
   if (connectivity == true) {
     return await updateRecord(DB_TABLE.SURVEY, payload, LocalId);
   } else {

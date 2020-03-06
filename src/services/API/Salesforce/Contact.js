@@ -1,5 +1,4 @@
 import { getDataFromQuery } from './SalesforceAPI';
-import AsyncStorage from '@react-native-community/async-storage';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
 import {
   prepareIdsForSalesforce,
@@ -8,7 +7,9 @@ import {
 import { saveRecords, DB_TABLE, clearTable, getRecords } from '../../Database';
 
 const getLoggedInCDWContact = async () => {
-  return await AsyncStorage.getItem(ASYNC_STORAGE_KEYS.CDW_WORKED_ID);
+  return await storage.load({
+    key: ASYNC_STORAGE_KEYS.CDW_WORKED_ID
+  });
 };
 
 const getCDWContact = async areaCode => {

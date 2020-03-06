@@ -67,7 +67,7 @@ export default class SurveyList extends PureComponent {
     const isNetworkConnected = await NetInfo.isConnected.fetch();
     console.log('NET INFO', isNetworkConnected);
 
-    await storage.save({
+    storage.save({
       key: ASYNC_STORAGE_KEYS.NETWORK_CONNECTIVITY,
       data: `${isNetworkConnected}`
     });
