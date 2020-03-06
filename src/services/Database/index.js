@@ -21,8 +21,6 @@ export const DB_TABLE = {
 };
 
 export const openDatabase = async () => {
-  SQLite.DEBUG(true);
-  SQLite.enablePromise(true);
   let databaseInstance;
 
   return SQLite.openDatabase({
