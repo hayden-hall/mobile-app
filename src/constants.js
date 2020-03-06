@@ -16,10 +16,6 @@ export const APP_THEME = {
   APP_WHITE: 'white'
 };
 
-export const APP_ROUTE = {
-  LOGIN: 'Login'
-};
-
 export const ASYNC_STORAGE_KEYS = {
   SALESFORCE_ACCESS_TOKEN: '@SalesforceAccessToken',
   SALESFORCE_INSTANCE_URL: '@SalesforceInstanceURL',

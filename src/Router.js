@@ -24,7 +24,7 @@ import NewSurvey from './screens/NewSurvey';
 import SurveyCompleted from './screens/NewSurvey/SurveyCompleted';
 import Settings from './screens/Settings';
 
-import { APP_FONTS, APP_THEME, APP_ROUTE } from './constants';
+import { APP_FONTS, APP_THEME } from './constants';
 import i18n from './config/i18n';
 
 let enhance = compose(withImageBackground);
