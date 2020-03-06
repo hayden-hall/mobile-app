@@ -9,6 +9,14 @@
       "android",
       "web"
     ],
+    "ios": {
+      "bundleIdentifier": "com.haydenhall.mobileapp",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.haydenhall.mobileapp",
+      "versionCode": 1
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -22,9 +30,6 @@
     },
     "assetBundlePatterns": [
       "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    }
+    ]
   }
 }
