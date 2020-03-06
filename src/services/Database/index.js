@@ -1,7 +1,6 @@
-import { SQLite } from 'expo-sqlite';
+import * as SQLite from 'expo-sqlite';
 
-const databaseName = 'AppDatabase.db';
-let database = undefined;
+const database = SQLite.openDatabase('AppDatabase.db');
 const SURVEY_LOOKUP_FIELDS = [
   'Mother__c',
   'Child__c',
@@ -18,33 +17,6 @@ export const DB_TABLE = {
   CONTACT: 'contact',
   CDW_JUNCTION: 'CDW_Client_Junction__c',
   SURVEY: 'Survey__c'
-};
-
-export const openDatabase = async () => {
-  let databaseInstance;
-
-  return SQLite.openDatabase({
-    name: databaseName,
-    location: 'default'
-  })
-    .then(db => {
-      databaseInstance = db;
-      console.log('[db] Database open!');
-    })
-    .then(() => {
-      database = databaseInstance;
-      return databaseInstance;
-    });
-};
-
-export const closeDatabase = () => {
-  if (database === undefined) {
-    return Promise.reject('[db] Database was not open; unable to close.');
-  }
-  return database.close().then(status => {
-    console.log('[db] Database closed.');
-    database = undefined;
-  });
 };
 
 export const saveRecords = async (table, records) => {
