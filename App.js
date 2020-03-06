@@ -1,17 +1,16 @@
 import React, { PureComponent } from 'react';
-//import Survey from './src/screens/Survey';
-import { AppState } from 'react-native';
-import Router from './Router';
-import { openDatabase, closeDatabase } from './src/services/Database';
-import AsyncStorage from '@react-native-community/async-storage';
+import { AppState, AsyncStorage } from 'react-native';
+import Storage from 'react-native-storage';
 import { ASYNC_STORAGE_KEYS } from './src/constants';
 import { labels } from './src/stringConstants';
+import { openDatabase, closeDatabase } from './src/services/Database';
+import Router from './src/Router';
 
 export default class App extends PureComponent {
   state = {
     appState: AppState.currentState,
-    databaseIsReady: false,
-    localizationReady: false
+    isDatabaseReady: false,
+    isLocalizationReady: false
   };
 
   componentDidMount = async () => {
@@ -22,19 +21,33 @@ export default class App extends PureComponent {
     });
     // Listen for app state changes
     AppState.addEventListener('change', this.handleAppStateChange);
-
+    this.initializeStorage();
     this.setLanguage();
   };
 
+  initializeStorage = () => {
+    if(!global.storage) {
+      global.storage = new Storage({
+          size: 1000,
+          storageBackend: AsyncStorage,
+          defaultExpires: 1000 * 3600 * 24,
+          enableCache: true
+      });    
+    }
+  };
+
   setLanguage = async () => {
-    const languageCode = await AsyncStorage.getItem(
-      ASYNC_STORAGE_KEYS.LANGUAGE
-    );
+    const languageCode = await storage.load({
+      key: ASYNC_STORAGE_KEYS.LANGUAGE
+    });
     if (languageCode) {
       labels.setLanguage(languageCode);
     } else {
       labels.setLanguage('en-US');
-      await AsyncStorage.setItem(ASYNC_STORAGE_KEYS.LANGUAGE, 'en-US');
+      await storage.save({
+        key: ASYNC_STORAGE_KEYS.LANGUAGE,
+        data: 'en-US'
+      });
     }
     this.setState({ localizationReady: true });
   };
@@ -75,7 +88,7 @@ export default class App extends PureComponent {
   };
 
   render() {
-    if (this.state.databaseIsReady && this.state.localizationReady) {
+    if (this.state.isDatabaseReady && this.state.isLocalizationReady) {
       return <Router />;
     }
     return null;

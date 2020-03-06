@@ -8,7 +8,6 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "@react-native-community/async-storage": "^1.4.0",
     "@react-native-community/netinfo": "^2.0.10",
     "expo": "~36.0.0",
     "moment": "^2.24.0",
@@ -31,8 +30,9 @@
     "recompose": "^0.30.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.0.0",
     "babel-preset-expo": "~8.0.0",
-    "@babel/core": "^7.0.0"
+    "prettier": "^1.19.1"
   },
   "private": true
 }
