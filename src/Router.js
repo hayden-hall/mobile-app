@@ -6,25 +6,25 @@ import {
   createAppContainer
 } from 'react-navigation';
 import { Icon } from 'react-native-elements';
-import { clearAllAsyncKeys } from './src/utility';
-import { clearDatabase } from './src/services/Database';
+import { clearAllAsyncKeys } from './utility';
+import { clearDatabase } from './services/Database';
 
-import withImageBackground from './src/hoc/withImageBackground';
+import withImageBackground from './hoc/withImageBackground';
 
-import Login from './src/screens/Auth/Login';
-import AreaCode from './src/screens/Auth/AreaCode';
+import Login from './screens/Auth/Login';
+import AreaCode from './screens/Auth/AreaCode';
 
-import SurveyList from './src/screens/SurveyList';
-import SurveyPicker from './src/screens/NewSurvey/SurveyPicker';
-import MotherPicker from './src/screens/NewSurvey/SurveyPicker/MotherPicker';
-import BeneficiaryPicker from './src/screens/NewSurvey/SurveyPicker/BeneficiaryPicker';
-import ChildPicker from './src/screens/NewSurvey/SurveyPicker/ChildPicker';
-import NewSurvey from './src/screens/NewSurvey/';
-import SurveyCompleted from './src/screens/NewSurvey/SurveyCompleted';
-import Settings from './src/screens/Settings';
+import SurveyList from './screens/SurveyList';
+import SurveyPicker from './screens/NewSurvey/SurveyPicker';
+import MotherPicker from './screens/NewSurvey/SurveyPicker/MotherPicker';
+import BeneficiaryPicker from './screens/NewSurvey/SurveyPicker/BeneficiaryPicker';
+import ChildPicker from './screens/NewSurvey/SurveyPicker/ChildPicker';
+import NewSurvey from './screens/NewSurvey';
+import SurveyCompleted from './screens/NewSurvey/SurveyCompleted';
+import Settings from './screens/Settings';
 
-import { APP_FONTS, APP_THEME, APP_ROUTE } from './src/constants';
-import { labels } from './src/stringConstants';
+import { APP_FONTS, APP_THEME, APP_ROUTE } from './constants';
+import { labels } from './stringConstants';
 
 import { compose } from 'recompose';
 
