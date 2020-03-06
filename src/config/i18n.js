@@ -5,7 +5,7 @@ import ne from './locale/ne_IN.json';
 import en from './locale/en_US.json';
 
 //expo-localization gives the result in a language-region format
-const deviceLocale = (Localization.locale.indexOf("-") !==  0) ? deviceLocale.split("-")[0] : Localization.locale;
+const deviceLocale = (Localization.locale.indexOf("-") !==  0) ? Localization.locale.split("-")[0] : Localization.locale;
 
 i18n.defaultLocale = deviceLocale;
 i18n.locale = deviceLocale;

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-
+import { AppState } from 'react-native';
 import { openDatabase, closeDatabase } from './src/services/Database';
 import Router from './src/Router';
 import { initializeStorage } from './src/utility'; 
