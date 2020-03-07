@@ -47,12 +47,10 @@ export const checkForDatabaseNull = value => {
 };
 
 export const initializeStorage = () => {
-  if(!global.storage) {
-    global.storage = new Storage({
-        size: 1000,
-        storageBackend: AsyncStorage,
-        defaultExpires: 1000 * 3600 * 24,
-        enableCache: true
-    });    
-  }
+  global.storage = new Storage({
+      size: 1000,
+      storageBackend: AsyncStorage,
+      defaultExpires: 1000 * 3600 * 24,
+      enableCache: true
+  });    
 };
