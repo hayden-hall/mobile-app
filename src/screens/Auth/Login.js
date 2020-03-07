@@ -71,9 +71,11 @@ export default class Login extends PureComponent {
     if (this.validateInput()) {
       try {
         const { email, password } = this.state;
+        console.log('making login...');
         this.showsSpinner(true);
         const loginResponse = await login(email, password);
         this.showsSpinner(false);
+        console.log('logged in!');
         if (loginResponse.access_token && loginResponse.instance_url) {
           if (this.props.isLoginModal) {
             this.props.loginSuccessfull();

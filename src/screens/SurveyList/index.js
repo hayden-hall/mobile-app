@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -46,43 +46,40 @@ export default class SurveyList extends PureComponent {
     } catch (error) {}
   };
 
-  componentDidMount = async () => {
+  componentDidMount = () => {
     this._navListener = this.props.navigation.addListener(
       'didFocus',
       payload => {
         this.fetchData();
       }
     );
-    //Watch for network connectivity to change refresh button state
-    this.watchNetworkConnetivity();
+    
+    NetInfo.addEventListener(state => {
+      console.log("Connection type", state.type);
+      console.log("Is connected?", state.isConnected);
+      const isNetworkConnected = state.isConnected;
+      storage.save({
+        key: ASYNC_STORAGE_KEYS.NETWORK_CONNECTIVITY,
+        data: `${isNetworkConnected}`
+      });
+      this.setState({ isNetworkConnected });
+      this.setRefreshButtonState();
+    });
   };
 
   componentWillUnmount = () => {
-    this.removeNetworkConnectivity();
-    console.log('this.props.navigation.', this.props.navigation);
-    this._navListener.remove();
+    return () => {
+      //unsubscribe
+      console.log('this.props.navigation.', this.props.navigation);
+      this._navListener.remove();
+    };
   };
 
   fetchConnectivity = async () => {
-    const isNetworkConnected = await NetInfo.isConnected.fetch();
+    const isNetworkConnected = (await NetInfo.fetch()).isConnected;
     console.log('NET INFO', isNetworkConnected);
 
-    storage.save({
-      key: ASYNC_STORAGE_KEYS.NETWORK_CONNECTIVITY,
-      data: `${isNetworkConnected}`
-    });
-    this.setState({ isNetworkConnected });
-    this.setRefreshButtonState();
-  };
-
-  watchNetworkConnetivity = async () => {
-    NetInfo.addEventListener('connectionChange', result => {
-      this.fetchConnectivity();
-    });
-  };
-
-  removeNetworkConnectivity = () => {
-    NetInfo.removeEventListener('connectionChange');
+    
   };
 
   refreshAppData = async () => {
