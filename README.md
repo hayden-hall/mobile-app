@@ -1,4 +1,6 @@
 # Hayden Hall Mobile App
+## About This Project
+See [the wiki page](https://github.com/hayden-hall/mobile-app/wiki/About) 
 
 ## Development
 1. Clone the repository.
