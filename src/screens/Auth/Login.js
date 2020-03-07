@@ -132,7 +132,7 @@ export default class Login extends PureComponent {
         <Loader loading={this.state.isLoading} />
         <View style={container}>
           <Image
-            source={require('../../../../assets/images/haydenhallicon.png')}
+            source={require('../../../assets/images/haydenhallicon.png')}
             style={logoStyle}
           />
         </View>

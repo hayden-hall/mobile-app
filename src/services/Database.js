@@ -20,8 +20,8 @@ export const DB_TABLE = {
   SURVEY: 'Survey__c'
 };
 
-export const saveRecords = async (table, records) => {
-  return new Promise((resolve, reject) => {
+export const saveRecords = (table, records) => {
+  return new Promise(async (resolve, reject) => {
     const firstRecord = records[0];
     const fields = getDatabaseFields(firstRecord);
 
@@ -66,7 +66,7 @@ export const saveRecordsWithFields = async (
   records,
   fieldsWithDataTypes
 ) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     //Check for table.
     await checkAndCreateTableWithDataTypes(table, fieldsWithDataTypes);
     //Prepare insert statement
