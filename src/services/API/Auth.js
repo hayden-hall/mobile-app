@@ -1,4 +1,4 @@
-import { ASYNC_STORAGE_KEYS } from '../../../constants';
+import { ASYNC_STORAGE_KEYS } from '../../constants';
 import { LOGIN_API_URL } from 'react-native-dotenv';
 
 export const login = async (email, password) => {
