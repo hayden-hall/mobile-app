@@ -2,6 +2,7 @@ import { AsyncStorage } from 'react-native';
 import Storage from 'react-native-storage';
 import moment from 'moment';
 
+import { ASYNC_STORAGE_KEYS } from '../constants';
 
 const DATE_FORMAT = 'MMM DD, YYYY';
 const DATE_FORMAT_API = 'YYYY-MM-DD';
@@ -54,3 +55,11 @@ export const initializeStorage = () => {
       enableCache: true
   });    
 };
+
+export const clearStorage = () => {
+  for (const k of Object.keys(ASYNC_STORAGE_KEYS)) {
+    storage.remove({
+      key: ASYNC_STORAGE_KEYS[k]
+    });
+  }
+}

@@ -1,14 +1,11 @@
 import React from 'react';
-import { View, Alert } from 'react-native';
-import {
-  createSwitchNavigator,
-  createStackNavigator,
-  createAppContainer
-} from 'react-navigation';
+import { Alert } from 'react-native';
+import { createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
 import { Icon } from 'react-native-elements';
 import { compose } from 'recompose';
 
-import { initializeStorage } from './utility';
+import { clearStorage } from './utility';
 import { clearDatabase } from './services/Database';
 
 import withImageBackground from './hoc/withImageBackground';
@@ -86,7 +83,7 @@ makeLogout = navigation => {
       {
         text: i18n.t('OK'),
         onPress: async () => {
-          await initializeStorage();
+          clearStorage();
           await clearDatabase();
           navigation.replace('Login', { headerTitle: i18n.t('LOGIN') });
         }
