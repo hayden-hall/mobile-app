@@ -8,8 +8,8 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "@react-native-community/masked-view": "^0.1.7",
-    "@react-native-community/netinfo": "^5.5.1",
+    "@react-native-community/masked-view": "^0.1.5",
+    "@react-native-community/netinfo": "^4.6.0",
     "expo": "~36.0.0",
     "expo-localization": "~8.0.0",
     "expo-sqlite": "~8.0.0",
@@ -25,8 +25,8 @@
     "react-native-modal-datetime-picker": "^7.4.2",
     "react-native-popover-view": "^2.0.1",
     "react-native-reanimated": "~1.4.0",
-    "react-native-safe-area-context": "^0.7.3",
-    "react-native-screens": "^2.0.0-beta.13",
+    "react-native-safe-area-context": "^0.6.0",
+    "react-native-screens": "2.0.0-alpha.12",
     "react-native-storage": "^1.0.1",
     "react-native-vector-icons": "^6.4.2",
     "react-native-web": "~0.11.7",
