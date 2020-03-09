@@ -89,7 +89,6 @@ export const saveRecordsWithFields = async (
 export const getRecords = (table, whereQuery) => {
   return new Promise((resolve, reject) => {
     const sqlStatement = `SELECT * FROM ${table} ${whereQuery || ''}`;
-    console.log('Getting records: ' + sqlStatement);
     try {
       database.transaction(tx => {
         tx.executeSql(

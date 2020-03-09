@@ -23,7 +23,6 @@ export const getDataFromQuery = async query => {
       }
     });
     let responseJson = await response.json();
-    console.log(responseJson);
     return responseJson;
   } catch (error) {
     console.log('ERROR', error);
