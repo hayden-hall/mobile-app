@@ -16,16 +16,12 @@ export const APP_THEME = {
   APP_WHITE: 'white'
 };
 
-export const APP_ROUTE = {
-  LOGIN: 'Login'
-};
-
 export const ASYNC_STORAGE_KEYS = {
   SALESFORCE_ACCESS_TOKEN: '@SalesforceAccessToken',
-  SALESFORCE_INSTANCE_URL: '@SALESFORCE_INSTANCE_URL',
-  CDW_WORKED_ID: '@CDW_WORKED_ID',
-  CDW_WORKED_NAME: '@CDW_WORKED_NAME',
-  AREA_CODE: '@AREA_CODE',
-  NETWORK_CONNECTIVITY: '@NETWORK_CONNECTIVITY',
-  LANGUAGE: '@LANGUAGE'
+  SALESFORCE_INSTANCE_URL: '@SalesforceInstanceURL',
+  CDW_WORKED_ID: '@CdwWorkedId',
+  CDW_WORKED_NAME: '@CdwWorkedName',
+  AREA_CODE: '@AreaCode',
+  NETWORK_CONNECTIVITY: '@NetworkConnectivity',
+  LANGUAGE: '@Language'
 };

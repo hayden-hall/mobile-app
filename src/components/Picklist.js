@@ -7,10 +7,10 @@ import {
   Picker,
   Platform
 } from 'react-native';
-import { Input, Icon } from 'react-native-elements';
+import { Icon } from 'react-native-elements';
 import { APP_THEME, APP_FONTS } from '../constants';
 import { ToolTip } from './ToolTip';
-import { labels } from '../stringConstants';
+import i18n from '../config/i18n';
 
 const styles = StyleSheet.create({
   container: { padding: 10 },
@@ -157,7 +157,7 @@ class Picklist extends PureComponent {
         }}
       >
         <Text style={value ? valueLabel : placeholderLabel}>
-          {value || labels.SELECT}
+          {value || i18n.t('SELECT')}
         </Text>
         <View style={iconView}>
           <Icon

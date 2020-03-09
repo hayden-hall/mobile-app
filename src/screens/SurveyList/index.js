@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -8,7 +8,7 @@ import {
   Text,
   Modal
 } from 'react-native';
-import { labels } from '../../stringConstants';
+import i18n from '../../config/i18n';
 import { APP_FONTS, APP_THEME, ASYNC_STORAGE_KEYS } from '../../constants';
 import { SelectionList, SearchBar } from '../../components';
 import { Icon, Divider, Button } from 'react-native-elements';
@@ -19,7 +19,6 @@ import {
 import NetInfo from '@react-native-community/netinfo';
 import { refreshAll } from '../../services/Refresh';
 import { formatDate } from '../../utility';
-import AsyncStorage from '@react-native-community/async-storage';
 import Login from '../Auth/Login';
 
 export default class SurveyList extends PureComponent {
@@ -47,53 +46,43 @@ export default class SurveyList extends PureComponent {
     } catch (error) {}
   };
 
-  componentDidMount = async () => {
+  componentDidMount = () => {
     this._navListener = this.props.navigation.addListener(
       'didFocus',
       payload => {
         this.fetchData();
       }
     );
-    //Watch for network connectivity to change refresh button state
-    this.watchNetworkConnetivity();
-  };
-
-  componentWillUnmount = () => {
-    this.removeNetworkConnectivity();
-    console.log('this.props.navigation.', this.props.navigation);
-    this._navListener.remove();
-  };
-
-  fetchConnectivity = async () => {
-    const isNetworkConnected = await NetInfo.isConnected.fetch();
-    console.log('NET INFO', isNetworkConnected);
-
-    await AsyncStorage.setItem(
-      ASYNC_STORAGE_KEYS.NETWORK_CONNECTIVITY,
-      `${isNetworkConnected}`
-    );
-    this.setState({ isNetworkConnected });
-    this.setRefreshButtonState();
-  };
-
-  watchNetworkConnetivity = async () => {
-    NetInfo.addEventListener('connectionChange', result => {
-      this.fetchConnectivity();
+    
+    NetInfo.addEventListener(state => {
+      console.log("Connection type", state.type);
+      console.log("Is connected?", state.isConnected);
+      const isNetworkConnected = state.isConnected;
+      storage.save({
+        key: ASYNC_STORAGE_KEYS.NETWORK_CONNECTIVITY,
+        data: `${isNetworkConnected}`
+      });
+      this.setState({ isNetworkConnected });
+      this.setRefreshButtonState();
     });
   };
 
-  removeNetworkConnectivity = () => {
-    NetInfo.removeEventListener('connectionChange');
+  componentWillUnmount = () => {
+    return () => {
+      //unsubscribe
+      console.log('this.props.navigation.', this.props.navigation);
+      this._navListener.remove();
+    };
   };
 
   refreshAppData = async () => {
     try {
-      this.props.showHideLoading(true);
+      this.props.showsSpinner(true);
       const result = await refreshAll();
       this.fetchData();
-      this.props.showHideLoading(false);
+      this.props.showsSpinner(false);
     } catch (error) {
-      this.props.showHideLoading(false);
+      this.props.showsSpinner(false);
       setTimeout(() => {
         if (
           error === 'Login Failed' ||
@@ -165,18 +154,18 @@ export default class SurveyList extends PureComponent {
 
   showRefreshPopup = () => {
     Alert.alert(
-      labels.SYNCING,
-      labels.UPLOAD_SURVEY_MESSAGE,
+      i18n.t('SYNCING'),
+      i18n.t('UPLOAD_SURVEY_MESSAGE'),
       [
         {
-          text: labels.OK,
+          text: i18n.t('OK'),
           onPress: () => {
             //this.props.navigation.pop();
             this.refreshAppData();
           }
         },
         {
-          text: labels.CANCEL
+          text: i18n.t('CANCEL')
         }
       ],
       { cancelable: true }
@@ -189,9 +178,9 @@ export default class SurveyList extends PureComponent {
       <View style={styles.pendingSurveyContainer}>
         <TextInput
           underlineColorAndroid="transparent"
-          placeholder={labels.SEARCH_SURVEYS}
+          placeholder={i18n.t('SEARCH_SURVEYS')}
           style={styles.textStylePendingSurvey}
-          value={`${dirtySurveyCount} - ${labels.QUEUED_FOR_SYNC}`}
+          value={`${dirtySurveyCount} - ${i18n.t('QUEUED_FOR_SYNC')}`}
           editable={false}
         />
         <View style={styles.syncIconStyle}>
@@ -223,7 +212,7 @@ export default class SurveyList extends PureComponent {
 
   _renderSearchBar = () => (
     <SearchBar
-      placeholder={labels.SEARCH_SURVEYS}
+      placeholder={i18n.t('SEARCH_SURVEYS')}
       value={this.props.searchTxt}
       onChangeText={searchTxt => this.filterSurveys(searchTxt)}
     />
@@ -241,7 +230,7 @@ export default class SurveyList extends PureComponent {
           color={APP_THEME.APP_BASE_FONT_COLOR}
           onPress={() => {
             this.props.navigation.push('SurveyPicker', {
-              headerTitle: labels.CHOOSE_SURVEY
+              headerTitle: i18n.t('CHOOSE_SURVEY')
             });
           }}
         />
@@ -257,7 +246,7 @@ export default class SurveyList extends PureComponent {
         {this._renderPendingSurveyCount()}
         <Text
           style={textStyleTotalSurvey}
-        >{`${labels.TOTAL_SURVEYS} ${this.state.surveys.length}`}</Text>
+        >{`${i18n.t('TOTAL_SURVEYS')} ${this.state.surveys.length}`}</Text>
         <Divider style={{ backgroundColor: APP_THEME.APP_BORDER_COLOR }} />
         <SelectionList
           data={this.state.filteredSurveys}
@@ -265,7 +254,7 @@ export default class SurveyList extends PureComponent {
           hideSearchBar
           subtitleKey="subtitle"
           searchTxt={this.props.searchTxt}
-          searchBarLabel={labels.SEARCH_SURVEYS}
+          searchBarLabel={i18n.t('SEARCH_SURVEYS')}
           onPress={async item => {
             const createdSurvey = await getOfflineCreatedSurvey(item);
             const LocalId = item.LocalId;
@@ -274,7 +263,7 @@ export default class SurveyList extends PureComponent {
               createdSurvey,
               LocalId,
               IsLocallyCreated,
-              headerTitle: labels.SURVEY_DETAIL
+              headerTitle: i18n.t('SURVEY_DETAIL')
             });
           }}
           onSearchTextChanged={text => {

@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
-import { StyleSheet } from 'react-native';
 import { SelectionList } from '../../../components';
-import { labels } from '../../../stringConstants';
+import i18n from '../../../config/i18n';
 import {
   getOfflineStoredSurveyMetadata,
   MotherChildPickerType__c
@@ -16,7 +15,6 @@ export default class SurveyPicker extends PureComponent {
 
   componentDidMount = async () => {
     const records = await getOfflineStoredSurveyMetadata();
-    console.log('getOfflineStoredSurveyMetadata()', records);
     this.setState({ surveyTypes: records, filteredSurveyTypes: records });
   };
 
@@ -38,26 +36,26 @@ export default class SurveyPicker extends PureComponent {
     ) {
       this.props.navigation.push('MotherPicker', {
         survey,
-        headerTitle: labels.CHOOSE_MOTHER
+        headerTitle: i18n.t('CHOOSE_MOTHER')
       });
     } else if (
       survey.MotherChildPickerType__c === MotherChildPickerType__c.ANTE_NATAL
     ) {
       this.props.navigation.push('MotherPicker', {
         survey,
-        headerTitle: labels.CHOOSE_MOTHER
+        headerTitle: i18n.t('CHOOSE_MOTHER')
       });
     } else if (
       survey.MotherChildPickerType__c === MotherChildPickerType__c.BENEFICIARY
     ) {
       this.props.navigation.push('BeneficiaryPicker', {
         survey,
-        headerTitle: labels.CHOOSE_BENEFIACIARY
+        headerTitle: i18n.t('CHOOSE_BENEFIACIARY')
       });
     } else {
       this.props.navigation.push('NewSurvey', {
         survey,
-        headerTitle: labels.NEW_SURVEY
+        headerTitle: i18n.t('NEW_SURVEY')
       });
     }
   };
@@ -71,7 +69,7 @@ export default class SurveyPicker extends PureComponent {
           this.onSelection(item);
         }}
         searchTxt={this.props.searchTxt}
-        searchBarLabel={labels.SEARCH_SURVEYS}
+        searchBarLabel={i18n.t('SEARCH_SURVEYS')}
         onSearchTextChanged={text => {
           this.filterSurveyTypes(text);
         }}

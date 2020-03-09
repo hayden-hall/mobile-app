@@ -11,12 +11,13 @@ import {
   getOfflineSurveys,
   uploadSurveyToSalesforce
 } from './API/Salesforce/Survey';
-import AsyncStorage from '@react-native-community/async-storage';
 import { ASYNC_STORAGE_KEYS } from '../constants';
 
 export const refreshAll = async () => {
   const CDW_Worker_Id = await getLoggedInCDWContact();
-  const AREA_CODE = await AsyncStorage.getItem(ASYNC_STORAGE_KEYS.AREA_CODE);
+  const AREA_CODE = await storage.load({
+    key: ASYNC_STORAGE_KEYS.AREA_CODE
+  });
   if (CDW_Worker_Id && AREA_CODE) {
     await syncUpData();
 
@@ -71,7 +72,6 @@ const syncUpData = async () => {
     await Promise.all(
       offlineSurveys.map(async survey => {
         const response = await uploadSurveyToSalesforce(survey);
-        console.log(response);
       })
     );
   } catch (error) {
