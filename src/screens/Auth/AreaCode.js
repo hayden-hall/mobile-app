@@ -47,9 +47,9 @@ export default class AreaCode extends PureComponent {
 
   checkAreaCode = async () => {
     if (this.validateInput()) {
-      this.props.showHideLoading(true);
+      this.props.showsSpinner(true);
       const response = await getCDWContact(this.state.areaCode);
-      this.props.showHideLoading(false);
+      this.props.showsSpinner(false);
       if (response.records && response.records.length > 0) {
         const workerContact = response.records[0];
         storage.save({
@@ -75,14 +75,14 @@ export default class AreaCode extends PureComponent {
 
   refreshAppData = async () => {
     try {
-      this.props.showHideLoading(true);
+      this.props.showsSpinner(true);
       const result = await refreshAll();
-      this.props.showHideLoading(false);
+      this.props.showsSpinner(false);
       this.props.navigation.replace('SurveyList', {
         headerTitle: i18n.t('SURVEYS')
       });
     } catch (error) {
-      this.props.showHideLoading(false);
+      this.props.showsSpinner(false);
       setTimeout(() => {
         alert(`${error}`);
       }, 500);

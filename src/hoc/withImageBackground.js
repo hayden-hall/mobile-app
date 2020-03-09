@@ -7,8 +7,8 @@ export default WrappedComponent => {
     state = {
       isAppLoading: false
     };
-    showHideLoading = show => {
-      this.setState({ isAppLoading: show });
+    showsSpinner = (showsSpinner) => {
+      this.setState({ isAppLoading: showsSpinner });
     };
     render() {
       const { backgroundImage, container } = styles;
@@ -20,7 +20,7 @@ export default WrappedComponent => {
             source={require('../../assets/images/background.png')}
           />
           <WrappedComponent
-            showHideLoading={this.showHideLoading}
+            showsSpinner={this.showsSpinner}
             {...this.state}
             {...this.props}
           />
