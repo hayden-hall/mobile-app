@@ -75,21 +75,14 @@ export default class SurveyList extends PureComponent {
     };
   };
 
-  fetchConnectivity = async () => {
-    const isNetworkConnected = (await NetInfo.fetch()).isConnected;
-    console.log('NET INFO', isNetworkConnected);
-
-    
-  };
-
   refreshAppData = async () => {
     try {
-      this.props.showHideLoading(true);
+      this.props.showsSpinner(true);
       const result = await refreshAll();
       this.fetchData();
-      this.props.showHideLoading(false);
+      this.props.showsSpinner(false);
     } catch (error) {
-      this.props.showHideLoading(false);
+      this.props.showsSpinner(false);
       setTimeout(() => {
         if (
           error === 'Login Failed' ||
