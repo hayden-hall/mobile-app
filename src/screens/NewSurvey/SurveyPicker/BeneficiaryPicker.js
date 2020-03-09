@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
-import { StyleSheet } from 'react-native';
 import { SelectionList } from '../../../components';
-import { labels } from '../../../stringConstants';
+import i18n from '../../../config/i18n';
 import { getBeneficiaries } from '../../../services/API/Salesforce/Contact';
 
 export default class BeneficiaryPicker extends PureComponent {
@@ -31,7 +30,7 @@ export default class BeneficiaryPicker extends PureComponent {
     this.props.navigation.push('NewSurvey', {
       survey,
       beneficiary,
-      headerTitle: labels.NEW_SURVEY
+      headerTitle: i18n.t('NEW_SURVEY')
     });
   };
 
@@ -45,7 +44,7 @@ export default class BeneficiaryPicker extends PureComponent {
           this.onSelection(item);
         }}
         searchTxt={this.props.searchTxt}
-        searchBarLabel={labels.SEARCH_BENEFICIARIES}
+        searchBarLabel={i18n.t('SEARCH_BENEFICIARIES')}
         onSearchTextChanged={text => {
           this.filterMothers(text);
         }}

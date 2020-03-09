@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Picker } from 'react-native';
-import { Input, Icon } from 'react-native-elements';
+import { Icon } from 'react-native-elements';
 import { APP_THEME, APP_FONTS } from '../constants';
-import { labels } from '../stringConstants';
+import i18n from '../config/i18n';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import { formatDate } from '../utility';
 
@@ -89,7 +89,7 @@ class DatePicker extends PureComponent {
             }}
           >
             <Text style={value ? valueLabel : placeholderLabel}>
-              {value ? formatDate(value) : labels.SELECT}
+              {value ? formatDate(value) : i18n.t('SELECT')}
             </Text>
             <View style={iconView}>
               <Icon
@@ -102,8 +102,8 @@ class DatePicker extends PureComponent {
           </TouchableOpacity>
         </View>
         <DateTimePicker
-          confirmTextIOS={labels.CONFIRM}
-          cancelTextIOS={labels.CANCEL}
+          confirmTextIOS={i18n.t('CONFIRM')}
+          cancelTextIOS={i18n.t('CANCEL')}
           titleIOS={title}
           titleStyle={titleLabel}
           date={value ? new Date(value) : undefined}

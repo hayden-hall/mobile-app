@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
-import { StyleSheet } from 'react-native';
 import { SelectionList } from '../../../components';
 import { getChildsForMother } from '../../../services/API/Salesforce/Contact';
-import { labels } from '../../../stringConstants';
+import i18n from '../../../config/i18n';
 
 export default class ChildPicker extends PureComponent {
   state = {
@@ -33,7 +32,7 @@ export default class ChildPicker extends PureComponent {
       child,
       mother,
       survey,
-      headerTitle: labels.NEW_SURVEY
+      headerTitle: i18n.t('NEW_SURVEY')
     });
   };
 
@@ -46,7 +45,7 @@ export default class ChildPicker extends PureComponent {
           this.onSelection(item);
         }}
         searchTxt={this.props.searchTxt}
-        searchBarLabel={labels.SEARCH_CHILDS}
+        searchBarLabel={i18n.t('SEARCH_CHILDS')}
         onSearchTextChanged={text => {
           this.filterChilds(text);
         }}

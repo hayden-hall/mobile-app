@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, BackHandler } from 'react-native';
 import { CustomButton } from '../../components';
-import { labels } from '../../stringConstants';
+import i18n from '../../config/i18n';
 import { Icon } from 'react-native-elements';
 import { APP_THEME, APP_FONTS } from '../../constants';
 
@@ -39,10 +39,10 @@ export default class SurveyCompleted extends React.Component {
         <Text style={textStyle}>Survey Completed</Text>
         <View style={inputButton}>
           <CustomButton
-            title={labels.VIEW_SURVEY_LIST}
+            title={i18n.t('VIEW_SURVEY_LIST')}
             onPress={() => {
               this.props.navigation.navigate('SurveyList', {
-                headerTitle: labels.SURVEYS
+                headerTitle: i18n.t('SURVEYS')
               });
             }}
           />

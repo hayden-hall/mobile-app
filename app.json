@@ -1,4 +1,35 @@
 {
-  "name": "HaydenHall",
-  "displayName": "HaydenHall"
+  "expo": {
+    "name": "HaydenHall",
+    "slug": "hayden-hall-mobile-app",
+    "privacy": "public",
+    "sdkVersion": "36.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "ios": {
+      "bundleIdentifier": "com.haydenhall.mobileapp",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.haydenhall.mobileapp",
+      "versionCode": 1
+    },
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
 }

@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
-import { StyleSheet } from 'react-native';
 import { SelectionList } from '../../../components';
-import { labels } from '../../../stringConstants';
+import i18n from '../../../config/i18n';
 import {
   getMothers,
   getAnteNatalMothers
@@ -46,13 +45,13 @@ export default class MotherPicker extends PureComponent {
       this.props.navigation.push('ChildPicker', {
         mother,
         survey,
-        headerTitle: labels.CHOOSE_CHILD
+        headerTitle: i18n.t('CHOOSE_CHILD')
       });
     } else {
       this.props.navigation.push('NewSurvey', {
         mother,
         survey,
-        headerTitle: labels.NEW_SURVEY
+        headerTitle: i18n.t('NEW_SURVEY')
       });
     }
   };
@@ -67,7 +66,7 @@ export default class MotherPicker extends PureComponent {
           this.onSelection(item);
         }}
         searchTxt={this.props.searchTxt}
-        searchBarLabel={labels.SEARCH_MOTHERS}
+        searchBarLabel={i18n.t('SEARCH_MOTHERS')}
         onSearchTextChanged={text => {
           this.filterMothers(text);
         }}
