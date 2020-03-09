@@ -1,6 +1,12 @@
 # Hayden Hall Mobile App
+<p align="center">
+<img src="./assets/images/HH_Logo.png" />
+</p>
+
+![](img/screenshot.png)
+
 ## About This Project
-See [the wiki page](https://github.com/hayden-hall/mobile-app/wiki/About) 
+See [the wiki page](https://github.com/hayden-hall/mobile-app/wiki/About)
 
 ## Development
 1. Clone the repository.
