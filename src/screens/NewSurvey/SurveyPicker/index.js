@@ -15,7 +15,6 @@ export default class SurveyPicker extends PureComponent {
 
   componentDidMount = async () => {
     const records = await getOfflineStoredSurveyMetadata();
-    console.log('getOfflineStoredSurveyMetadata()', records);
     this.setState({ surveyTypes: records, filteredSurveyTypes: records });
   };
 

@@ -14,7 +14,6 @@ export const login = async (email, password) => {
       });
       if (response.status === 200) {
         let responseJson = await response.json();
-        console.log(responseJson);
         if (responseJson.access_token) {
           storage.save({
             key: ASYNC_STORAGE_KEYS.SALESFORCE_ACCESS_TOKEN,

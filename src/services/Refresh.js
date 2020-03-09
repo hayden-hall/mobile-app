@@ -72,7 +72,6 @@ const syncUpData = async () => {
     await Promise.all(
       offlineSurveys.map(async survey => {
         const response = await uploadSurveyToSalesforce(survey);
-        console.log(response);
       })
     );
   } catch (error) {

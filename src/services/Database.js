@@ -86,24 +86,23 @@ export const saveRecordsWithFields = async (
   });
 };
 
-export const getRecords = async (table, whereQuery) => {
+export const getRecords = (table, whereQuery) => {
   return new Promise((resolve, reject) => {
     const sqlStatement = `SELECT * FROM ${table} ${whereQuery || ''}`;
+    console.log('Getting records: ' + sqlStatement);
     try {
       database.transaction(tx => {
-        tx.executeSql(sqlStatement, [], (txn, result) => {
-          if (result === undefined) {
-            resolve([]);
-          }
-          const records = [];
-          for (let i = 0; i < result.rows.length; i++) {
-            const row = result.rows.item(i);
-            records.push(row);
-          }
-          resolve(records);
-        });
+        tx.executeSql(
+          sqlStatement, 
+          [], 
+          (txn, { rows: { _array } }) => {
+            resolve(_array);
+          },
+          () => { resolve([]);}
+        );
       });
     } catch (error) {
+      console.log(error);
       reject(error);
     }
   });

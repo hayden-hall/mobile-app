@@ -26,13 +26,11 @@ export default class NewSurvey extends React.Component {
       this.setState({ sections: createdSurvey });
       this.setState({ LocalId: LocalId });
       this.setState({ IsLocallyCreated: IsLocallyCreated });
-      console.log('RESULT', createdSurvey);
     } else {
       const sections = await getOfflineSurveyQuestionsForSurveyMetadata(
         survey.Id
       );
       this.setState({ sections });
-      console.log('RESULT', sections);
       this.populateMotherChildData();
     }
   };
