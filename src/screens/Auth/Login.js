@@ -42,7 +42,7 @@ export default class Login extends PureComponent {
     loginFailError: '',
     email: '',
     password: '',
-    isLoading: false
+    isAppLoading: false
   };
 
   showsSpinner = (showsSpinner) => {
@@ -71,11 +71,9 @@ export default class Login extends PureComponent {
     if (this.validateInput()) {
       try {
         const { email, password } = this.state;
-        console.log('making login...');
         this.showsSpinner(true);
         const loginResponse = await login(email, password);
         this.showsSpinner(false);
-        console.log('logged in!');
         if (loginResponse.access_token && loginResponse.instance_url) {
           if (this.props.isLoginModal) {
             this.props.loginSuccessfull();
@@ -113,6 +111,7 @@ export default class Login extends PureComponent {
       this.showsSpinner(false);
       //if user already logged in (= has CDW Id), navigate to survey list
       if (CDW_Worked_Id) {
+        console.log('User is already logged in: ' + CDW_Worked_Id);
         this.props.navigation.replace('SurveyList', {
           headerTitle: i18n.t('SURVEYS')
         });
@@ -131,7 +130,7 @@ export default class Login extends PureComponent {
     } = styles;
     return (
       <KeyboardAwareScrollView style={flex1}>
-        <Loader loading={this.state.isLoading} />
+        <Loader loading={this.state.isAppLoading} />
         <View style={container}>
           <Image
             source={require('../../../assets/images/haydenhallicon.png')}
