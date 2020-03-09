@@ -56,15 +56,15 @@ const stackNavigaterOptions = (title, leftButton, rightButton) => {
     return {
       ...navbarStyle(),
       headerTitle: title,
-      headerLeft: null,
-      gesturesEnabled: false
+      headerLeft: () => null,
+      gestureEnabled: false
     };
   } else if (rightButton) {
     return {
       ...navbarStyle(),
       headerTitle: title,
-      headerLeft: leftButton,
-      headerRight: rightButton
+      headerLeft: () => leftButton,
+      headerRight: () => rightButton
     };
   } else {
     return {
