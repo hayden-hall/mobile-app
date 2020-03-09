@@ -70,7 +70,7 @@ const stackNavigaterOptions = (title, leftButton, rightButton) => {
     return {
       ...navbarStyle(),
       headerTitle: title,
-      headerLeft: leftButton
+      headerLeft: () => leftButton
     };
   }
 };
