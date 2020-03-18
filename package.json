@@ -10,7 +10,11 @@
     "lint": "eslint --format codeframe \"**/*.ts\" \"**/*.tsx\"",
     "prettier:check": "prettier --check \"{./,./src/**/}*.{js,json,ts,tsx}\"",
     "prettier:write": "prettier --write \"{./,./src/**/}*.{js,json,ts,tsx}\"",
-    "validate": "npm run lint && npm run check-types"
+    "validate": "npm run lint && npm run check-types",
+    "test": "jest --coverage"
+  },
+  "jest": {
+    "preset": "jest-expo"
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.5",
@@ -53,6 +57,7 @@
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.18.0",
     "expo-cli": "^3.11.7",
+    "jest-expo": "^36.0.1",
     "prettier": "^1.19.1",
     "typescript": "^3.7.5"
   },
