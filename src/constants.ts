@@ -1,7 +1,7 @@
 export const APP_FONTS = {
   FONT_REGULAR: 'SalesforceSans-Regular',
   FONT_BOLD: 'SalesforceSans-Bold',
-  FONT_LIGHT: 'SalesforceSans-Light'
+  FONT_LIGHT: 'SalesforceSans-Light',
 };
 
 export const APP_THEME = {
@@ -13,7 +13,7 @@ export const APP_THEME = {
   APP_BORDER_COLOR: '#dedcdb',
   APP_ERROR_COLOR: '#94221c',
   APP_LIST_HEADER_COLOR: '#e1f5fe',
-  APP_WHITE: 'white'
+  APP_WHITE: 'white',
 };
 
 export const ASYNC_STORAGE_KEYS = {
@@ -23,5 +23,5 @@ export const ASYNC_STORAGE_KEYS = {
   CDW_WORKED_NAME: '@CdwWorkedName',
   AREA_CODE: '@AreaCode',
   NETWORK_CONNECTIVITY: '@NetworkConnectivity',
-  LANGUAGE: '@Language'
+  LANGUAGE: '@Language',
 };
