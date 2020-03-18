@@ -1,34 +1,36 @@
 import { ASYNC_STORAGE_KEYS } from '../../constants';
 import { LOGIN_API_URL } from 'react-native-dotenv';
 
-export const login = async (email, password) => {
+export const login = async (email: string, password: string) => {
   return new Promise(async (resolve, reject) => {
     const data = { email, password };
     try {
-      let response = await fetch(LOGIN_API_URL, {
+      const response = await fetch(LOGIN_API_URL, {
         method: 'POST',
         body: JSON.stringify(data), // data can be `string` or {object}!
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       });
       if (response.status === 200) {
-        let responseJson = await response.json();
+        const responseJson = await response.json();
         if (responseJson.access_token) {
+          // @ts-ignore
           storage.save({
             key: ASYNC_STORAGE_KEYS.SALESFORCE_ACCESS_TOKEN,
-            data: responseJson.access_token
+            data: responseJson.access_token,
           });
         }
         if (responseJson.instance_url) {
+          // @ts-ignore
           storage.save({
             key: ASYNC_STORAGE_KEYS.SALESFORCE_INSTANCE_URL,
-            data: responseJson.instance_url
+            data: responseJson.instance_url,
           });
         }
         resolve(responseJson);
       } else {
-        let responseText = await response.text();
+        const responseText = await response.text();
         reject(responseText);
       }
     } catch (error) {
