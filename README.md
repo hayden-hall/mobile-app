@@ -1,4 +1,6 @@
 # Hayden Hall Mobile App
+[![Github Workflow](https://github.com/hayden-hall/mobile-app/workflows/unit%20test/badge.svg?branch=master)](https://github.com/hayden-hall/mobile-app/actions?query=workflow%3A%22unit%20test%22) [![codecov](https://codecov.io/gh/hayden-hall/mobile-app/branch/master/graph/badge.svg)](https://codecov.io/gh/hayden-hall/mobile-app)
+
 <p align="center">
 <img src="./assets/images/HH_Logo.png" />
 </p>
