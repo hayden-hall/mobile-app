@@ -1,24 +1,25 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import React, { PureComponent } from 'react';
 import { SelectionList } from '../../../components';
 import i18n from '../../../config/i18n';
-import {
-  getMothers,
-  getAnteNatalMothers
-} from '../../../services/API/Salesforce/Contact';
+import { getMothers, getAnteNatalMothers } from '../../../services/API/Salesforce/Contact';
 import { MotherChildPickerType__c } from '../../../services/API/Salesforce/Survey';
 
-export default class MotherPicker extends PureComponent {
+interface MotherPickerProps {
+  navigation: any;
+  searchTxt: string;
+}
+
+export default class MotherPicker extends PureComponent<MotherPickerProps> {
   state = {
     mothers: null,
     filteredMothers: null,
-    searchTxt: ''
+    searchTxt: '',
   };
 
   componentDidMount = async () => {
     const { survey } = this.props.navigation.state.params;
-    if (
-      survey.MotherChildPickerType__c == MotherChildPickerType__c.ANTE_NATAL
-    ) {
+    if (survey.MotherChildPickerType__c == MotherChildPickerType__c.ANTE_NATAL) {
       const data = await getAnteNatalMothers();
       this.setState({ mothers: data, filteredMothers: data });
     } else {
@@ -39,19 +40,17 @@ export default class MotherPicker extends PureComponent {
 
   onSelection = mother => {
     const { survey } = this.props.navigation.state.params;
-    if (
-      survey.MotherChildPickerType__c === MotherChildPickerType__c.MOTHER_CHILD
-    ) {
+    if (survey.MotherChildPickerType__c === MotherChildPickerType__c.MOTHER_CHILD) {
       this.props.navigation.push('ChildPicker', {
         mother,
         survey,
-        headerTitle: i18n.t('CHOOSE_CHILD')
+        headerTitle: i18n.t('CHOOSE_CHILD'),
       });
     } else {
-      this.props.navigation.push('NewSurvey', {
+      this.props.navigation.push('Survey', {
         mother,
         survey,
-        headerTitle: i18n.t('NEW_SURVEY')
+        headerTitle: i18n.t('NEW_SURVEY'),
       });
     }
   };

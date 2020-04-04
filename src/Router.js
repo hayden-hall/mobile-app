@@ -1,27 +1,24 @@
 import React from 'react';
-import { Alert } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { Icon } from 'react-native-elements';
 import { compose } from 'recompose';
-
-import { clearStorage } from './utility';
-import { clearDatabase } from './services/Database';
 
 import withImageBackground from './hoc/withImageBackground';
 
 import Login from './screens/Auth/Login';
 import AreaCode from './screens/Auth/AreaCode';
 import SurveyList from './screens/SurveyList';
-import SurveyPicker from './screens/NewSurvey/SurveyPicker';
-import MotherPicker from './screens/NewSurvey/SurveyPicker/MotherPicker';
-import BeneficiaryPicker from './screens/NewSurvey/SurveyPicker/BeneficiaryPicker';
-import ChildPicker from './screens/NewSurvey/SurveyPicker/ChildPicker';
-import NewSurvey from './screens/NewSurvey';
-import SurveyCompleted from './screens/NewSurvey/SurveyCompleted';
+import SurveyPicker from './screens/Survey/SurveyPicker';
+import MotherPicker from './screensSurvey/SurveyPicker/MotherPicker';
+import BeneficiaryPicker from './screens/Survey/SurveyPicker/BeneficiaryPicker';
+import ChildPicker from './screens/Survey/SurveyPicker/ChildPicker';
+import Survey from './screens/Survey';
+import SurveyCompleted from './screens/Survey/SurveyCompleted';
 import Settings from './screens/Settings';
 
 import { APP_FONTS, APP_THEME } from './constants';
+import { makeLogout } from './utility';
 import i18n from './config/i18n';
 
 let enhance = compose(withImageBackground);
@@ -75,27 +72,6 @@ const stackNavigaterOptions = (title, leftButton, rightButton) => {
   }
 };
 
-makeLogout = navigation => {
-  Alert.alert(
-    i18n.t('LOGOUT'),
-    i18n.t('LOGOUT_MESSAGE'),
-    [
-      {
-        text: i18n.t('OK'),
-        onPress: async () => {
-          clearStorage();
-          await clearDatabase();
-          navigation.replace('Login', { headerTitle: i18n.t('LOGIN') });
-        }
-      },
-      {
-        text: i18n.t('CANCEL')
-      }
-    ],
-    { cancelable: true }
-  );
-};
-
 decideLeftButton = (navigation, type) => {
   let leftButton = null;
   if (type && type == BACK_BUTTON_TYPE.LOGOUT) {
@@ -107,7 +83,7 @@ decideLeftButton = (navigation, type) => {
         color={APP_THEME.APP_BASE_COLOR}
         type="simple-line-icon"
         onPress={() => {
-          this.makeLogout(navigation);
+          makeLogout(navigation);
         }}
       />
     );
@@ -198,7 +174,7 @@ export default createAppContainer(
         i18n.t('CHOOSE_BENEFIACIARY')
       ),
       ChildPicker: getScreen(ChildPicker, i18n.t('CHOOSE_CHILD')),
-      NewSurvey: getScreen(NewSurvey, i18n.t('NEW_SURVEY')),
+      Survey: getScreen(Survey, i18n.t('NEW_SURVEY')),
       SurveyCompleted: getScreen(
         SurveyCompleted,
         i18n.t('SURVEY_COMPLETED'),

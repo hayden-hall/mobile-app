@@ -8,7 +8,7 @@ const SURVEY_LOOKUP_FIELDS = [
   'Beneficiary_Name__c',
   'Permanent_Record__c',
   'Record_Type_ID__c',
-  'Family_Org_Name__c'
+  'Family_Org_Name__c',
 ];
 
 export const DB_TABLE = {
@@ -17,7 +17,7 @@ export const DB_TABLE = {
   SURVEY_QUESTION: 'SurveyQuestion__c',
   CONTACT: 'contact',
   CDW_JUNCTION: 'CDW_Client_Junction__c',
-  SURVEY: 'Survey__c'
+  SURVEY: 'Survey__c',
 };
 
 export const saveRecords = (table, records) => {
@@ -34,7 +34,9 @@ export const saveRecords = (table, records) => {
 
     try {
       database.transaction(tx => {
-        tx.executeSql(sqlInsertStatement, null, (txn, result) => { resolve(result); });
+        tx.executeSql(sqlInsertStatement, null, (txn, result) => {
+          resolve(result);
+        });
       });
     } catch (error) {
       console.log(error);
@@ -52,7 +54,9 @@ export const updateRecord = async (table, record, LocalId) => {
 
     try {
       database.transaction(tx => {
-        tx.executeSql(sqlUpdateStatement, null, (txn, result) => { resolve(true); });
+        tx.executeSql(sqlUpdateStatement, null, (txn, result) => {
+          resolve(true);
+        });
       });
     } catch (error) {
       console.log(error);
@@ -62,22 +66,22 @@ export const updateRecord = async (table, record, LocalId) => {
 };
 
 export const saveRecordsWithFields = async (
-  table,
-  records,
-  fieldsWithDataTypes
+  table: any,
+  records: any,
+  fieldsWithDataTypes: Array<any>
 ) => {
   return new Promise(async (resolve, reject) => {
     //Check for table.
     await checkAndCreateTableWithDataTypes(table, fieldsWithDataTypes);
     //Prepare insert statement
-    const fields = fieldsWithDataTypes.map(
-      fieldWithDataType => fieldWithDataType.split('#')[0]
-    );
+    const fields = fieldsWithDataTypes.map(fieldWithDataType => fieldWithDataType.split('#')[0]);
     const sqlInsertStatement = prepareInsertStatement(table, records, fields);
     console.log('sqlInsertStatement: ', sqlInsertStatement);
     try {
       database.transaction(tx => {
-        tx.executeSql(sqlInsertStatement, null, (txn, result) => { resolve(result); });
+        tx.executeSql(sqlInsertStatement, null, (txn, result) => {
+          resolve(result);
+        });
       });
     } catch (error) {
       console.log(error);
@@ -92,12 +96,16 @@ export const getRecords = (table, whereQuery) => {
     try {
       database.transaction(tx => {
         tx.executeSql(
-          sqlStatement, 
-          [], 
-          (txn, { rows: { _array } }) => {
-            resolve(_array);
+          sqlStatement,
+          [],
+          (txn, result) => {
+            const rows = result.rows as any;
+            resolve(rows._array);
           },
-          () => { resolve([]);}
+          () => {
+            resolve([]);
+            return true;
+          }
         );
       });
     } catch (error) {
@@ -112,7 +120,9 @@ export const markRecordNonDirty = (table, LocalId) => {
     const sqlStatement = `UPDATE ${table} SET IsLocallyCreated = 0 WHERE LocalId = ${LocalId}`;
     try {
       database.transaction(tx => {
-        tx.executeSql(sqlStatement, [], (txn, result) => { resolve(true); });
+        tx.executeSql(sqlStatement, [], (txn, result) => {
+          resolve(true);
+        });
       });
     } catch (error) {
       console.log(error);
@@ -126,7 +136,9 @@ export const clearTable = table => {
     const sqlStatement = `DROP TABLE IF EXISTS ${table};`;
     try {
       database.transaction(tx => {
-        tx.executeSql(sqlStatement, [], (txn, result) => { resolve(true); });
+        tx.executeSql(sqlStatement, [], (txn, result) => {
+          resolve(true);
+        });
       });
     } catch (error) {
       console.log(error);
@@ -142,9 +154,9 @@ export const clearDatabase = async () => {
 };
 
 const prepareInsertStatement = (table, records, fields) => {
-  var valuesArray = [];
+  const valuesArray = [];
   records.forEach(record => {
-    var values = [];
+    const values = [];
     fields.forEach(field => {
       values.push(`"${record[field]}"`);
     });
@@ -156,18 +168,18 @@ const prepareInsertStatement = (table, records, fields) => {
 };
 
 const prepareUpdateStatement = (table, record, fields, LocalId) => {
-    var pairArray = [];
-    fields.forEach(field => {
-      //Leave as it is for lookup fields
-      if(!SURVEY_LOOKUP_FIELDS.includes(field)) {
-        pairArray.push(`${field}="${record[field]}"`);
-      }
-    });
-    return `UPDATE ${table} SET ${pairArray.join(',')} WHERE LocalId = ${LocalId}`;
+  const pairArray = [];
+  fields.forEach(field => {
+    //Leave as it is for lookup fields
+    if (!SURVEY_LOOKUP_FIELDS.includes(field)) {
+      pairArray.push(`${field}="${record[field]}"`);
+    }
+  });
+  return `UPDATE ${table} SET ${pairArray.join(',')} WHERE LocalId = ${LocalId}`;
 };
 
 const getDatabaseFields = record => {
-  var keys = [];
+  const keys = [];
   for (const [key, value] of Object.entries(record)) {
     if (typeof value != 'object' || value == null) {
       keys.push(key);
@@ -183,10 +195,13 @@ const checkAndCreateTable = (table, fields) => {
     fieldsWithType = `${fieldsWithType}, LocalId INTEGER PRIMARY KEY AUTOINCREMENT`;
     try {
       database.transaction(tx => {
-        tx.executeSql(`CREATE TABLE IF NOT EXISTS ${table}( ${fieldsWithType});`, 
-                      [],
-                      (txn, result) => { resolve(database); }
-                      );
+        tx.executeSql(
+          `CREATE TABLE IF NOT EXISTS ${table}( ${fieldsWithType});`,
+          [],
+          (txn, result) => {
+            resolve(database);
+          }
+        );
       });
     } catch (error) {
       console.log(error);
@@ -204,10 +219,13 @@ const checkAndCreateTableWithDataTypes = (table, fieldsWithDataType) => {
     fieldsWithType = `${fieldsWithType}, LocalId INTEGER PRIMARY KEY AUTOINCREMENT`;
     try {
       database.transaction(tx => {
-        tx.executeSql(`CREATE TABLE IF NOT EXISTS ${table}( ${fieldsWithType});`, 
-                      [],
-                      (txn, result) => { resolve(database); }
-                      );
+        tx.executeSql(
+          `CREATE TABLE IF NOT EXISTS ${table}( ${fieldsWithType});`,
+          [],
+          (txn, result) => {
+            resolve(database);
+          }
+        );
       });
     } catch (error) {
       console.log(error);

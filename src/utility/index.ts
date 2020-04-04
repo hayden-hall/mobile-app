@@ -1,8 +1,11 @@
-import { AsyncStorage } from 'react-native';
+import { Alert, AsyncStorage } from 'react-native';
 import Storage from 'react-native-storage';
 import moment from 'moment';
 
 import { ASYNC_STORAGE_KEYS } from '../constants';
+import { clearDatabase } from '../services/Database';
+
+import i18n from '../config/i18n';
 
 const DATE_FORMAT = 'MMM DD, YYYY';
 const DATE_FORMAT_API = 'YYYY-MM-DD';
@@ -59,4 +62,25 @@ export const clearStorage = () => {
       key: ASYNC_STORAGE_KEYS[k],
     });
   }
+};
+
+export const makeLogout = navigation => {
+  Alert.alert(
+    i18n.t('LOGOUT'),
+    i18n.t('LOGOUT_MESSAGE'),
+    [
+      {
+        text: i18n.t('OK'),
+        onPress: async () => {
+          clearStorage();
+          await clearDatabase();
+          navigation.replace('Login', { headerTitle: i18n.t('LOGIN') });
+        }
+      },
+      {
+        text: i18n.t('CANCEL')
+      }
+    ],
+    { cancelable: true }
+  );
 };
