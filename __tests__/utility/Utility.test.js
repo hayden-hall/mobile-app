@@ -1,4 +1,4 @@
-import { validateEmail } from '../src/utility/';
+import { validateEmail } from '../../src/utility';
 
 describe('Utility', () => {
   it('validateEmail', () => {
