@@ -1,7 +1,12 @@
 import { ASYNC_STORAGE_KEYS } from '../../constants';
 import { LOGIN_API_URL } from 'react-native-dotenv';
 
-export const login = async (email: string, password: string) => {
+interface LoginResponse {
+  access_token: string;
+  instance_url: string;
+}
+
+export const login = async (email: string, password: string): Promise<LoginResponse> => {
   return new Promise(async (resolve, reject) => {
     const data = { email, password };
     try {
