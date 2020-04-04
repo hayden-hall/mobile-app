@@ -75,11 +75,11 @@ export const makeLogout = navigation => {
           clearStorage();
           await clearDatabase();
           navigation.replace('Login', { headerTitle: i18n.t('LOGIN') });
-        }
+        },
       },
       {
-        text: i18n.t('CANCEL')
-      }
+        text: i18n.t('CANCEL'),
+      },
     ],
     { cancelable: true }
   );
