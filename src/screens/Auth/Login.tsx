@@ -1,9 +1,5 @@
 import React, { PureComponent } from 'react';
-import {
-  View,
-  StyleSheet,
-  Image,
-  } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import { TextInput, CustomButton, Loader } from '../../components';
 import i18n from '../../config/i18n';
 import { validateEmail } from '../../utility';
@@ -16,7 +12,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-end',
-    marginTop: 20
+    marginTop: 20,
   },
   logoStyle: { height: 181, width: 181 },
   inputBoxesView: {
@@ -24,28 +20,34 @@ const styles = StyleSheet.create({
     width: '90%',
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   flex1: {
-    flex: 1
+    flex: 1,
   },
   flex2: {
-    flex: 2
+    flex: 2,
   },
-  inputButton: { width: '40%', alignSelf: 'center', paddingTop: 20 }
+  inputButton: { width: '40%', alignSelf: 'center', paddingTop: 20 },
 });
 
-export default class Login extends PureComponent {
+interface LoginProps {
+  isLoginModal: boolean;
+  loginSuccessfull :any;
+  navigation: any;
+}
+
+export default class Login extends PureComponent<LoginProps> {
   state = {
     emailError: '',
     passwordError: '',
     loginFailError: '',
     email: '',
     password: '',
-    isAppLoading: false
+    isAppLoading: false,
   };
 
-  showsSpinner = (showsSpinner) => {
+  showsSpinner = showsSpinner => {
     this.setState({ isAppLoading: showsSpinner });
   };
 
@@ -79,7 +81,7 @@ export default class Login extends PureComponent {
             this.props.loginSuccessfull();
           } else {
             this.props.navigation.replace('AreaCode', {
-              headerTitle: i18n.t('AREA_CODE')
+              headerTitle: i18n.t('AREA_CODE'),
             });
           }
         } else {
@@ -99,10 +101,11 @@ export default class Login extends PureComponent {
   componentDidMount = () => {
     this.hasLoggedIn();
   };
-  
+
   hasLoggedIn = async () => {
     if (!this.props.isLoginModal) {
       this.showsSpinner(true);
+      // @ts-ignore
       const CDW_Worked_Id = await storage.load({
         key: ASYNC_STORAGE_KEYS.CDW_WORKED_ID
       }).catch(error => {
@@ -120,22 +123,12 @@ export default class Login extends PureComponent {
   };
 
   render() {
-    const {
-      flex1,
-      flex2,
-      inputBoxesView,
-      container,
-      logoStyle,
-      inputButton
-    } = styles;
+    const { flex1, flex2, inputBoxesView, container, logoStyle, inputButton } = styles;
     return (
       <KeyboardAwareScrollView style={flex1}>
         <Loader loading={this.state.isAppLoading} />
         <View style={container}>
-          <Image
-            source={require('../../../assets/images/haydenhallicon.png')}
-            style={logoStyle}
-          />
+          <Image source={require('../../../assets/images/haydenhallicon.png')} style={logoStyle} />
         </View>
         <View style={inputBoxesView}>
           <TextInput

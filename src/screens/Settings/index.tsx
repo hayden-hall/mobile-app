@@ -1,21 +1,27 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  FlatList
-} from 'react-native';
+import { View, StyleSheet, FlatList } from 'react-native';
 import i18n from '../../config/i18n';
 import { APP_THEME } from '../../constants';
 import { Divider, ListItem } from 'react-native-elements';
 
 const languages = [
   { name: 'English', code: 'en' },
-  { name: 'Nepali', code: 'ne' }
+  { name: 'Nepali', code: 'ne' },
 ];
 
-export default class Settings extends React.Component {
+const styles = StyleSheet.create({
+  flex1: {
+    flex: 1,
+  },
+});
+
+interface Props {
+  navigation: any;
+}
+
+export default class Settings extends React.Component<Props> {
   state = {
-    selectedLanguageCode: ''
+    selectedLanguageCode: '',
   };
 
   componentDidMount = () => {
@@ -63,9 +69,3 @@ export default class Settings extends React.Component {
     );
   };
 }
-
-const styles = StyleSheet.create({
-  flex1: {
-    flex: 1
-  }
-});
