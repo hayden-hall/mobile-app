@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
 
 interface LoginProps {
   isLoginModal: boolean;
-  loginSuccessfull :any;
+  loginSuccessfull: any;
   navigation: any;
 }
 
@@ -106,17 +106,19 @@ export default class Login extends PureComponent<LoginProps> {
     if (!this.props.isLoginModal) {
       this.showsSpinner(true);
       // @ts-ignore
-      const CDW_Worked_Id = await storage.load({
-        key: ASYNC_STORAGE_KEYS.CDW_WORKED_ID
-      }).catch(error => {
-        //User not logged in
-      });
+      const cdwWorkedId = await storage
+        .load({
+          key: ASYNC_STORAGE_KEYS.CDW_WORKED_ID,
+        })
+        .catch(error => {
+          // User not logged in
+        });
       this.showsSpinner(false);
       //if user already logged in (= has CDW Id), navigate to survey list
-      if (CDW_Worked_Id) {
-        console.log('User is already logged in: ' + CDW_Worked_Id);
+      if (cdwWorkedId) {
+        console.log(`User is already logged in: ${cdwWorkedId}`);
         this.props.navigation.replace('SurveyList', {
-          headerTitle: i18n.t('SURVEYS')
+          headerTitle: i18n.t('SURVEYS'),
         });
       }
     }
@@ -139,7 +141,7 @@ export default class Login extends PureComponent<LoginProps> {
             label={i18n.t('EMAIL')}
             placeholder="john@example.com"
             errorStyle={{ color: 'red' }}
-            keyboardType='email-address'
+            keyboardType="email-address"
             errorMessage={this.state.emailError}
           />
           <TextInput
