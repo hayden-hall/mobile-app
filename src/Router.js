@@ -10,7 +10,7 @@ import Login from './screens/Auth/Login';
 import AreaCode from './screens/Auth/AreaCode';
 import SurveyList from './screens/SurveyList';
 import SurveyPicker from './screens/Survey/SurveyPicker';
-import MotherPicker from './screensSurvey/SurveyPicker/MotherPicker';
+import MotherPicker from './screens/Survey/SurveyPicker/MotherPicker';
 import BeneficiaryPicker from './screens/Survey/SurveyPicker/BeneficiaryPicker';
 import ChildPicker from './screens/Survey/SurveyPicker/ChildPicker';
 import Survey from './screens/Survey';
