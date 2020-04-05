@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import React from 'react';
 import { View, Text, StyleSheet, SectionList, Alert } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -8,13 +9,37 @@ import SurveyItem from './SurveyItem';
 import {
   getOfflineSurveyQuestionsForSurveyMetadata,
   createNewSurvey,
-  updateSurvey
-} from '.././../services/API/Salesforce/Survey';
+  updateSurvey,
+} from '../../services/API/Salesforce/Survey';
 import { formatAPIDate, checkForDatabaseNull } from '../../utility';
 
-export default class NewSurvey extends React.Component {
+const styles = StyleSheet.create({
+  inputButton: { width: '40%', alignSelf: 'center', paddingTop: 20 },
+  headerView: {
+    backgroundColor: APP_THEME.APP_LIST_HEADER_COLOR,
+    justifyContent: 'center',
+  },
+  sectionTitle: {
+    fontSize: 10,
+    color: APP_THEME.APP_LIGHT_FONT_COLOR,
+    letterSpacing: 0.42,
+    padding: 10,
+    fontFamily: APP_FONTS.FONT_REGULAR,
+  },
+  flex1: {
+    flex: 1,
+  },
+});
+
+interface SurveyProps {
+  navigation: any;
+}
+
+export default class Survey extends React.Component<SurveyProps> {
   state = {
     sections: [],
+    LocalId: '',
+    IsLocallyCreated: false,
   };
   componentDidMount = () => {
     this.getSurveyQuestions();
@@ -27,36 +52,24 @@ export default class NewSurvey extends React.Component {
       this.setState({ LocalId: LocalId });
       this.setState({ IsLocallyCreated: IsLocallyCreated });
     } else {
-      const sections = await getOfflineSurveyQuestionsForSurveyMetadata(
-        survey.Id
-      );
+      const sections = await getOfflineSurveyQuestionsForSurveyMetadata(survey.Id);
       this.setState({ sections });
       this.populateMotherChildData();
     }
   };
 
   populateMotherChildData = async () => {
-    const {
-      survey,
-      mother,
-      child,
-      beneficiary
-    } = this.props.navigation.state.params;
+    const { mother, child, beneficiary } = this.props.navigation.state.params;
+    // @ts-ignore
     const areaCode = await storage.load({
-      key: ASYNC_STORAGE_KEYS.AREA_CODE
+      key: ASYNC_STORAGE_KEYS.AREA_CODE,
     });
     this.findAPINameAndReplace('Area_Code__c', areaCode);
     if (mother) {
-      this.findAPINameAndReplace(
-        'Mother__c',
-        `${mother.FirstName} ${mother.LastName}`
-      );
+      this.findAPINameAndReplace('Mother__c', `${mother.FirstName} ${mother.LastName}`);
     }
     if (child) {
-      this.findAPINameAndReplace(
-        'Child__c',
-        `${child.FirstName} ${child.LastName}`
-      );
+      this.findAPINameAndReplace('Child__c', `${child.FirstName} ${child.LastName}`);
     }
     if (beneficiary) {
       this.findAPINameAndReplace(
@@ -67,13 +80,13 @@ export default class NewSurvey extends React.Component {
   };
 
   findAPINameAndReplace = (APIName__c, Answer__c) => {
-    var sections = this.state.sections.map(objSection => {
-      var data = objSection.data.map(question => {
+    const sections = this.state.sections.map(objSection => {
+      const data = objSection.data.map(question => {
         if (question.APIName__c === APIName__c) {
           return {
             ...question,
             disabled: true,
-            Answer__c: Answer__c
+            Answer__c: Answer__c,
           };
         } else {
           return { ...question };
@@ -85,12 +98,12 @@ export default class NewSurvey extends React.Component {
   };
 
   onChoiceChanged = (answer, item, index, section) => {
-    var sections = this.state.sections.map(objSection => {
-      if (objSection.Id === section.Id) {
-        let data = objSection.data;
+    const sections = this.state.sections.map(objSection => {
+      if (section && objSection.Id === section.Id) {
+        const data = objSection.data;
         objSection.data[index] = {
           ...objSection.data[index],
-          Answer__c: answer
+          Answer__c: answer,
         };
         return { ...objSection, data };
       }
@@ -100,6 +113,7 @@ export default class NewSurvey extends React.Component {
   };
 
   renderItem = ({ item, index, section }) => {
+    // eslint-disable-next-line prefer-const
     let { QuestionText__c, Question_Name_Nepali__c } = item;
     if (i18n.locale === 'ne') {
       QuestionText__c = checkForDatabaseNull(Question_Name_Nepali__c)
@@ -116,12 +130,9 @@ export default class NewSurvey extends React.Component {
     );
   };
 
-  renderSectionHeader = ({ section: { Name, Section_Name_Nepali__c } }) => {
+  renderSectionHeader = ({ section: { Name, Section_Name_Nepali__c } }: any) => {
     let title = Name;
-    if (
-      i18n.locale === 'ne' &&
-      checkForDatabaseNull(Section_Name_Nepali__c)
-    ) {
+    if (i18n.locale === 'ne' && checkForDatabaseNull(Section_Name_Nepali__c)) {
       title = Section_Name_Nepali__c;
     }
 
@@ -146,28 +157,23 @@ export default class NewSurvey extends React.Component {
               : question.Answer__c;
           surveyPacket = {
             ...surveyPacket,
-            [question.APIName__c]: answer
+            [question.APIName__c]: answer,
           };
         } else if (question.QuestionType__c === 'Checkbox') {
           surveyPacket = {
             ...surveyPacket,
-            [question.APIName__c]: false
+            [question.APIName__c]: false,
           };
         }
       });
     });
 
-    const {
-      survey,
-      mother,
-      child,
-      beneficiary
-    } = this.props.navigation.state.params;
+    const { survey, mother, child, beneficiary } = this.props.navigation.state.params;
     //Populate the Survey Record Type. (When creating)
-    if(survey) {
+    if (survey) {
       surveyPacket = {
         ...surveyPacket,
-        RecordTypeId: survey.SurveyRecordTypeId__c
+        RecordTypeId: survey.SurveyRecordTypeId__c,
       };
     }
     //Populate Visit date.
@@ -175,8 +181,9 @@ export default class NewSurvey extends React.Component {
     surveyPacket = { ...surveyPacket, Visit_Clinic_Date__c: visitDate };
 
     //Populate Area Code.
+    // @ts-ignore
     const areaCode = await storage.load({
-      key: ASYNC_STORAGE_KEYS.AREA_CODE
+      key: ASYNC_STORAGE_KEYS.AREA_CODE,
     });
     surveyPacket = { ...surveyPacket, Area_Code__c: areaCode };
 
@@ -194,13 +201,13 @@ export default class NewSurvey extends React.Component {
     console.log('FINAL SURVEY', surveyPacket);
 
     try {
-      if(!this.state.LocalId) {
+      if (!this.state.LocalId) {
         await createNewSurvey(surveyPacket);
       } else {
         await updateSurvey(surveyPacket, this.state.LocalId);
       }
       this.props.navigation.push('SurveyCompleted', {
-        headerTitle: i18n.t('SURVEY_COMPLETED')
+        headerTitle: i18n.t('SURVEY_COMPLETED'),
       });
     } catch (error) {
       Alert.alert(
@@ -209,8 +216,9 @@ export default class NewSurvey extends React.Component {
         [
           {
             text: i18n.t('OK'),
-            onPress: async () => {}
-          }
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            onPress: async () => {},
+          },
         ],
         { cancelable: true }
       );
@@ -223,9 +231,6 @@ export default class NewSurvey extends React.Component {
       <KeyboardAwareScrollView>
         <View style={styles.flex1}>
           <SectionList
-            onChoiceChanged={answer => {
-              this.onChoiceChanged(answer);
-            }}
             style={styles.flex1}
             renderItem={this.renderItem}
             renderSectionHeader={this.renderSectionHeader}
@@ -249,21 +254,3 @@ export default class NewSurvey extends React.Component {
     );
   };
 }
-
-const styles = StyleSheet.create({
-  inputButton: { width: '40%', alignSelf: 'center', paddingTop: 20 },
-  headerView: {
-    backgroundColor: APP_THEME.APP_LIST_HEADER_COLOR,
-    justifyContent: 'center'
-  },
-  sectionTitle: {
-    fontSize: 10,
-    color: APP_THEME.APP_LIGHT_FONT_COLOR,
-    letterSpacing: 0.42,
-    padding: 10,
-    fontFamily: APP_FONTS.FONT_REGULAR
-  },
-  flex1: {
-    flex: 1
-  }
-});

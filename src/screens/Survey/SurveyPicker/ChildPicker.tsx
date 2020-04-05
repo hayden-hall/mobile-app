@@ -3,11 +3,16 @@ import { SelectionList } from '../../../components';
 import { getChildsForMother } from '../../../services/API/Salesforce/Contact';
 import i18n from '../../../config/i18n';
 
-export default class ChildPicker extends PureComponent {
+interface ChildPickerProps {
+  navigation: any;
+  searchTxt: string;
+}
+
+export default class ChildPicker extends PureComponent<ChildPickerProps> {
   state = {
     childs: null,
     filteredChilds: null,
-    searchTxt: ''
+    searchTxt: '',
   };
 
   componentDidMount = async () => {
@@ -28,11 +33,11 @@ export default class ChildPicker extends PureComponent {
 
   onSelection = child => {
     const { mother, survey } = this.props.navigation.state.params;
-    this.props.navigation.push('NewSurvey', {
+    this.props.navigation.push('Survey', {
       child,
       mother,
       survey,
-      headerTitle: i18n.t('NEW_SURVEY')
+      headerTitle: i18n.t('NEW_SURVEY'),
     });
   };
 

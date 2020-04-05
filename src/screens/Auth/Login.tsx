@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
 interface LoginProps {
   isLoginModal: boolean;
   loginSuccessfull: any;
-  navigation: any;
+  navigation?: any;
 }
 
 export default class Login extends PureComponent<LoginProps> {

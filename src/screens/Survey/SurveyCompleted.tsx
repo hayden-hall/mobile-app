@@ -5,9 +5,15 @@ import i18n from '../../config/i18n';
 import { Icon } from 'react-native-elements';
 import { APP_THEME, APP_FONTS } from '../../constants';
 
-export default class SurveyCompleted extends React.Component {
+import { makeLogout } from '../../utility';
+
+interface SurveyCompletedProps {
+  navigation: any;
+}
+
+export default class SurveyCompleted extends React.Component<SurveyCompletedProps> {
   static navigationOptions = {
-    title: ({ state }) => 'state.params.name'
+    title: ({ state }) => 'state.params.name',
   };
 
   componentDidMount = () => {
@@ -33,7 +39,7 @@ export default class SurveyCompleted extends React.Component {
           color={APP_THEME.APP_BASE_COLOR}
           type="ionicon"
           onPress={() => {
-            this.makeLogout(navigation);
+            makeLogout(this.props.navigation);
           }}
         />
         <Text style={textStyle}>Survey Completed</Text>
@@ -42,7 +48,7 @@ export default class SurveyCompleted extends React.Component {
             title={i18n.t('VIEW_SURVEY_LIST')}
             onPress={() => {
               this.props.navigation.navigate('SurveyList', {
-                headerTitle: i18n.t('SURVEYS')
+                headerTitle: i18n.t('SURVEYS'),
               });
             }}
           />
@@ -57,7 +63,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   textStyle: {
     padding: 20,
@@ -66,10 +72,10 @@ const styles = StyleSheet.create({
     fontFamily: APP_FONTS.FONT_LIGHT,
     color: APP_THEME.APP_DARK_FONT_COLOR,
     paddingTop: 5,
-    paddingBottom: 5
+    paddingBottom: 5,
   },
   check: {
-    padding: 20
+    padding: 20,
   },
-  inputButton: { width: '40%', alignSelf: 'center', paddingTop: 20 }
+  inputButton: { width: '40%', alignSelf: 'center', paddingTop: 20 },
 });

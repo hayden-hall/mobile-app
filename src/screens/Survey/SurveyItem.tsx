@@ -1,21 +1,22 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import React, { PureComponent } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import {
-  TextInput,
-  CheckBoxButton,
-  Picklist,
-  DatePicker
-} from '../../components';
-import { APP_THEME, APP_FONTS } from '../../constants';
+import { View, StyleSheet } from 'react-native';
+import { TextInput, CheckBoxButton, Picklist, DatePicker } from '../../components';
 
-export default class SurveyItem extends PureComponent {
+interface SurveyItemProps {
+  item: any;
+  index: any;
+  section: any;
+  onChoiceChanged: any;
+}
+
+export default class SurveyItem extends PureComponent<SurveyItemProps> {
   _renderTextField = keyboardType => {
     const { QuestionText__c, Answer__c, disabled } = this.props.item;
     return (
       <TextInput
         disabled={disabled}
         keyboardType={keyboardType}
-        onChangeText={text => {}}
         value={Answer__c}
         label={QuestionText__c}
         placeholder={QuestionText__c}
@@ -57,12 +58,7 @@ export default class SurveyItem extends PureComponent {
   };
 
   _renderPicklist = () => {
-    const {
-      QuestionText__c,
-      Answer__c,
-      OptionsValue__c,
-      disabled
-    } = this.props.item;
+    const { QuestionText__c, Answer__c, OptionsValue__c, disabled } = this.props.item;
     const options = OptionsValue__c.split(';');
     return (
       <Picklist
@@ -138,6 +134,6 @@ const styles = StyleSheet.create({
   innerContainer: {
     flex: 1,
     alignItems: 'flex-start',
-    backgroundColor: 'white'
-  }
+    backgroundColor: 'white',
+  },
 });

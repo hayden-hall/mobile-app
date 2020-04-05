@@ -1,16 +1,22 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import React, { PureComponent } from 'react';
 import { SelectionList } from '../../../components';
 import i18n from '../../../config/i18n';
 import {
   getOfflineStoredSurveyMetadata,
-  MotherChildPickerType__c
+  MotherChildPickerType__c,
 } from '../../../services/API/Salesforce/Survey';
 
-export default class SurveyPicker extends PureComponent {
+interface SurveyPickerProps {
+  navigation: any;
+  searchTxt: string;
+}
+
+export default class SurveyPicker extends PureComponent<SurveyPickerProps> {
   state = {
     surveyTypes: null,
     filteredSurveyTypes: null,
-    searchTxt: ''
+    searchTxt: '',
   };
 
   componentDidMount = async () => {
@@ -22,40 +28,33 @@ export default class SurveyPicker extends PureComponent {
     this.setState({ searchTxt: text });
 
     const { surveyTypes } = this.state;
-    const filteredSurveyTypes = surveyTypes.filter(obj =>
-      obj.Name.includes(text)
-    );
+    const filteredSurveyTypes = surveyTypes.filter(obj => obj.Name.includes(text));
     this.setState({ filteredSurveyTypes });
   };
 
   onSelection = survey => {
     if (
-      survey.MotherChildPickerType__c ===
-        MotherChildPickerType__c.MOTHER_CHILD ||
+      survey.MotherChildPickerType__c === MotherChildPickerType__c.MOTHER_CHILD ||
       survey.MotherChildPickerType__c === MotherChildPickerType__c.MOTHER
     ) {
       this.props.navigation.push('MotherPicker', {
         survey,
-        headerTitle: i18n.t('CHOOSE_MOTHER')
+        headerTitle: i18n.t('CHOOSE_MOTHER'),
       });
-    } else if (
-      survey.MotherChildPickerType__c === MotherChildPickerType__c.ANTE_NATAL
-    ) {
+    } else if (survey.MotherChildPickerType__c === MotherChildPickerType__c.ANTE_NATAL) {
       this.props.navigation.push('MotherPicker', {
         survey,
-        headerTitle: i18n.t('CHOOSE_MOTHER')
+        headerTitle: i18n.t('CHOOSE_MOTHER'),
       });
-    } else if (
-      survey.MotherChildPickerType__c === MotherChildPickerType__c.BENEFICIARY
-    ) {
+    } else if (survey.MotherChildPickerType__c === MotherChildPickerType__c.BENEFICIARY) {
       this.props.navigation.push('BeneficiaryPicker', {
         survey,
-        headerTitle: i18n.t('CHOOSE_BENEFIACIARY')
+        headerTitle: i18n.t('CHOOSE_BENEFIACIARY'),
       });
     } else {
-      this.props.navigation.push('NewSurvey', {
+      this.props.navigation.push('Survey', {
         survey,
-        headerTitle: i18n.t('NEW_SURVEY')
+        headerTitle: i18n.t('NEW_SURVEY'),
       });
     }
   };

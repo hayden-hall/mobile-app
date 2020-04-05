@@ -3,11 +3,16 @@ import { SelectionList } from '../../../components';
 import i18n from '../../../config/i18n';
 import { getBeneficiaries } from '../../../services/API/Salesforce/Contact';
 
-export default class BeneficiaryPicker extends PureComponent {
+interface BeneficiaryPickerProps {
+  navigation: any;
+  searchTxt: string;
+}
+
+export default class BeneficiaryPicker extends PureComponent<BeneficiaryPickerProps> {
   state = {
     beneficieries: null,
     filteredBeneficieries: null,
-    searchTxt: ''
+    searchTxt: '',
   };
 
   componentDidMount = async () => {
@@ -27,10 +32,10 @@ export default class BeneficiaryPicker extends PureComponent {
 
   onSelection = beneficiary => {
     const { survey } = this.props.navigation.state.params;
-    this.props.navigation.push('NewSurvey', {
+    this.props.navigation.push('Survey', {
       survey,
       beneficiary,
-      headerTitle: i18n.t('NEW_SURVEY')
+      headerTitle: i18n.t('NEW_SURVEY'),
     });
   };
 

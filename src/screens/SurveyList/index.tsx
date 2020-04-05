@@ -1,29 +1,26 @@
-import React, { PureComponent, useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  Alert,
-  ActivityIndicator,
-  TextInput,
-  Text,
-  Modal
-} from 'react-native';
+import React, { PureComponent } from 'react';
+import { View, StyleSheet, Alert, ActivityIndicator, TextInput, Text, Modal } from 'react-native';
 import i18n from '../../config/i18n';
 import { APP_FONTS, APP_THEME, ASYNC_STORAGE_KEYS } from '../../constants';
 import { SelectionList, SearchBar } from '../../components';
 import { Icon, Divider, Button } from 'react-native-elements';
-import {
-  getAllSurveys,
-  getOfflineCreatedSurvey
-} from '../../services/API/Salesforce/Survey';
+import { getAllSurveys, getOfflineCreatedSurvey } from '../../services/API/Salesforce/Survey';
 import NetInfo from '@react-native-community/netinfo';
 import { refreshAll } from '../../services/Refresh';
 import { formatDate } from '../../utility';
 import Login from '../Auth/Login';
 
-export default class SurveyList extends PureComponent {
+interface SurveyListProps {
+  navigation: any;
+  searchTxt: string;
+  showsSpinner: any;
+}
+
+export default class SurveyList extends PureComponent<SurveyListProps> {
+  _navListener;
+
   static navigationOptions = {
-    title: 'Home'
+    title: 'Home',
   };
 
   state = {
@@ -33,7 +30,7 @@ export default class SurveyList extends PureComponent {
     refreshButtonState: true,
     isNetworkConnected: false,
     dirtySurveyCount: 0,
-    showLoginModal: false
+    showLoginModal: false,
   };
 
   fetchData = async () => {
@@ -47,20 +44,18 @@ export default class SurveyList extends PureComponent {
   };
 
   componentDidMount = () => {
-    this._navListener = this.props.navigation.addListener(
-      'didFocus',
-      payload => {
-        this.fetchData();
-      }
-    );
-    
+    this._navListener = this.props.navigation.addListener('didFocus', payload => {
+      this.fetchData();
+    });
+
     NetInfo.addEventListener(state => {
-      console.log("Connection type", state.type);
-      console.log("Is connected?", state.isConnected);
+      console.log('Connection type', state.type);
+      console.log('Is connected?', state.isConnected);
       const isNetworkConnected = state.isConnected;
+      // @ts-ignore
       storage.save({
         key: ASYNC_STORAGE_KEYS.NETWORK_CONNECTIVITY,
-        data: `${isNetworkConnected}`
+        data: `${isNetworkConnected}`,
       });
       this.setState({ isNetworkConnected });
       this.setRefreshButtonState();
@@ -84,10 +79,7 @@ export default class SurveyList extends PureComponent {
     } catch (error) {
       this.props.showsSpinner(false);
       setTimeout(() => {
-        if (
-          error === 'Login Failed' ||
-          error === 'Session expired or invalid'
-        ) {
+        if (error === 'Login Failed' || error === 'Session expired or invalid') {
           //Show Login Modal
           this.setState({ showLoginModal: true });
         } else {
@@ -118,10 +110,8 @@ export default class SurveyList extends PureComponent {
     const filteredSurveys = surveys.map(object => {
       return {
         ...object,
-        subtitle: `${object.Survey_Type} • ${formatDate(
-          object.Visit_Clinic_Date__c
-        )}`,
-        showCaret: object.IsLocallyCreated !== 0
+        subtitle: `${object.Survey_Type} • ${formatDate(object.Visit_Clinic_Date__c)}`,
+        showCaret: object.IsLocallyCreated !== 0,
       };
     });
     this.setState({ filteredSurveys });
@@ -148,7 +138,7 @@ export default class SurveyList extends PureComponent {
     const refreshButtonState = isNetworkConnected;
     this.setState({
       refreshButtonState,
-      dirtySurveyCount: getDirtySurveys.length
+      dirtySurveyCount: getDirtySurveys.length,
     });
   };
 
@@ -162,11 +152,11 @@ export default class SurveyList extends PureComponent {
           onPress: () => {
             //this.props.navigation.pop();
             this.refreshAppData();
-          }
+          },
         },
         {
-          text: i18n.t('CANCEL')
-        }
+          text: i18n.t('CANCEL'),
+        },
       ],
       { cancelable: true }
     );
@@ -186,10 +176,6 @@ export default class SurveyList extends PureComponent {
         <View style={styles.syncIconStyle}>
           <Button
             containerStyle={{ minWidth: 80 }}
-            titleStyle={{
-              fontSize: 18,
-              fontFamily: APP_FONTS.FONT_REGULAR
-            }}
             titleStyle={
               refreshButtonState
                 ? { color: APP_THEME.APP_WHITE }
@@ -230,7 +216,7 @@ export default class SurveyList extends PureComponent {
           color={APP_THEME.APP_BASE_FONT_COLOR}
           onPress={() => {
             this.props.navigation.push('SurveyPicker', {
-              headerTitle: i18n.t('CHOOSE_SURVEY')
+              headerTitle: i18n.t('CHOOSE_SURVEY'),
             });
           }}
         />
@@ -244,9 +230,9 @@ export default class SurveyList extends PureComponent {
       <View style={flex1}>
         {this._renderSearchBar()}
         {this._renderPendingSurveyCount()}
-        <Text
-          style={textStyleTotalSurvey}
-        >{`${i18n.t('TOTAL_SURVEYS')} ${this.state.surveys.length}`}</Text>
+        <Text style={textStyleTotalSurvey}>{`${i18n.t('TOTAL_SURVEYS')} ${
+          this.state.surveys.length
+        }`}</Text>
         <Divider style={{ backgroundColor: APP_THEME.APP_BORDER_COLOR }} />
         <SelectionList
           data={this.state.filteredSurveys}
@@ -259,11 +245,11 @@ export default class SurveyList extends PureComponent {
             const createdSurvey = await getOfflineCreatedSurvey(item);
             const LocalId = item.LocalId;
             const IsLocallyCreated = item.IsLocallyCreated;
-            this.props.navigation.push('NewSurvey', {
+            this.props.navigation.push('Survey', {
               createdSurvey,
               LocalId,
               IsLocallyCreated,
-              headerTitle: i18n.t('SURVEY_DETAIL')
+              headerTitle: i18n.t('SURVEY_DETAIL'),
             });
           }}
           onSearchTextChanged={text => {
@@ -285,11 +271,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   flex1: {
     flex: 1,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   textStylePendingSurvey: {
     padding: 10,
@@ -300,14 +286,14 @@ const styles = StyleSheet.create({
     borderColor: APP_THEME.APP_BORDER_COLOR,
     borderWidth: 1,
     borderTopLeftRadius: 2,
-    borderBottomLeftRadius: 2
+    borderBottomLeftRadius: 2,
   },
   textStyleTotalSurvey: {
     paddingLeft: 10,
     paddingBottom: 5,
     fontSize: 14,
     fontFamily: APP_FONTS.FONT_REGULAR,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   pendingSurveyContainer: {
     minHeight: 50,
@@ -318,7 +304,6 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingTop: 5,
     paddingBottom: 5,
-    flexDirection: 'row'
   },
   syncIconStyle: {
     // borderRightWidth: 1,
@@ -329,9 +314,9 @@ const styles = StyleSheet.create({
     // borderRightColor: APP_THEME.APP_BORDER_COLOR,
     padding: 8,
     position: 'absolute',
-    right: 10
+    right: 10,
     // borderTopRightRadius: 2,
     // borderBottomRightRadius: 2
   },
-  addButtonStyle: { position: 'absolute', bottom: 30, right: 30 }
+  addButtonStyle: { position: 'absolute', bottom: 30, right: 30 },
 });
