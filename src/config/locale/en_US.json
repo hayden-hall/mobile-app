@@ -4,7 +4,7 @@
     "ERROR_ON_SAVE": "An error occured while saving data. Please try again.",
     "LOGOUT": "Logout",
     "SELECT": "Select",
-    "LOGOUT_MESSAGE": "Do you really want to logout from app ?",
+    "LOGOUT_MESSAGE": "Do you really want to logout from app? Unsynced surverys will disappear.",
     "SURVEY": "Survey",
     "SURVEY_DETAIL": "Survey Detail",
     "SURVEYS": "Surveys",
