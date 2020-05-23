@@ -90,7 +90,7 @@ export const saveRecordsWithFields = async (
   });
 };
 
-export const getRecords = (table, whereQuery) => {
+export const getRecords = (table, whereQuery): Promise<Array<any>> => {
   return new Promise((resolve, reject) => {
     const sqlStatement = `SELECT * FROM ${table} ${whereQuery || ''}`;
     try {
