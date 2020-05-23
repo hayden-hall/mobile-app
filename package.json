@@ -23,6 +23,7 @@
     "expo-localization": "~8.0.0",
     "expo-sqlite": "~8.0.0",
     "i18n-js": "^3.5.1",
+    "jsforce": "^1.9.3",
     "moment": "^2.24.0",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",
