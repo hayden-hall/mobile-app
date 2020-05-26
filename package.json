@@ -23,7 +23,6 @@
     "expo-localization": "~8.0.0",
     "expo-sqlite": "~8.0.0",
     "i18n-js": "^3.5.1",
-    "jsforce": "^1.9.3",
     "moment": "^2.24.0",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",
@@ -43,7 +42,8 @@
     "react-navigation": "^4.2.2",
     "react-navigation-stack": "^2.2.3",
     "react-navigation-tabs": "^2.8.2",
-    "recompose": "^0.30.0"
+    "recompose": "^0.30.0",
+    "timers": "^0.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.3",
@@ -57,7 +57,7 @@
     "eslint-config-prettier": "^6.9.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.18.0",
-    "expo-cli": "^3.11.7",
+    "expo-cli": "^3.20.9",
     "jest-expo": "^36.0.1",
     "prettier": "^1.19.1",
     "typescript": "^3.7.5"
