@@ -3,7 +3,7 @@ import { View, StyleSheet, Image } from 'react-native';
 import { TextInput, CustomButton, Loader } from '../../components';
 import i18n from '../../config/i18n';
 import { validateEmail } from '../../utility';
-import { login } from '../../services/API/Auth';
+import { login } from '../../services/API/auth';
 import { ASYNC_STORAGE_KEYS } from '../../constants';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
@@ -75,6 +75,7 @@ export default class Login extends PureComponent<LoginProps> {
         const { email, password } = this.state;
         this.showsSpinner(true);
         const loginResponse = await login(email, password);
+        console.log('In Login Screen:' + JSON.stringify(loginResponse));
         this.showsSpinner(false);
         if (loginResponse.access_token && loginResponse.instance_url) {
           if (this.props.isLoginModal) {
