@@ -40,7 +40,7 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
       await this.setState({ surveys });
 
       // show unsynced surveys as default
-      this.filterSurveysByState(this.state.filteredIndex);
+      this.onFilterButtonPressed(this.state.filteredIndex);
     } catch (error) {}
   };
 
@@ -119,37 +119,39 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
     this.setRefreshButtonState();
   };
 
-  filterSurveysByText = text => {
+  filterSurveysByText = async text => {
     if (this.state.surveys) {
       this.setState({ searchTxt: text });
-      const { surveys } = this.state;
-      const filteredSurveys = surveys.filter(
+      const stateFilteredSurveys = await this.filterSurveysByState(this.state.filteredIndex);
+      const textFilteredSurveys = stateFilteredSurveys.filter(
         obj =>
           obj.Survey_Heading.includes(text) ||
           obj.Survey_Type.includes(text) ||
           obj.Visit_Clinic_Date__c.includes(text)
       );
-      this.prepareListdata(filteredSurveys);
+      this.prepareListdata(textFilteredSurveys);
     }
   };
 
   filterSurveysByState = async filteredIndex => {
+    const { surveys } = this.state;
+    return surveys.filter(survey => {
+      // offline
+      if (filteredIndex === 0) {
+        return survey.IsLocallyCreated !== 0;
+        // synced
+      } else if (filteredIndex === 1) {
+        return survey.IsLocallyCreated === 0;
+      } else {
+        return survey;
+      }
+    });
+  };
+
+  onFilterButtonPressed = async filteredIndex => {
     if (this.state.surveys) {
       await this.setState({ filteredIndex });
-      const { surveys } = this.state;
-      this.prepareListdata(
-        surveys.filter(survey => {
-          // offline
-          if (filteredIndex === 0) {
-            return survey.IsLocallyCreated !== 0;
-            // synced
-          } else if (filteredIndex === 1) {
-            return survey.IsLocallyCreated === 0;
-          } else {
-            return survey;
-          }
-        })
-      );
+      this.prepareListdata(await this.filterSurveysByState(filteredIndex));
     }
   };
 
@@ -199,8 +201,8 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
             containerStyle={{ minWidth: 80 }}
             titleStyle={
               refreshButtonState
-                ? { color: APP_THEME.APP_WHITE }
-                : { color: APP_THEME.APP_DARK_FONT_COLOR }
+                ? { color: APP_THEME.APP_WHITE, fontFamily: APP_FONTS.FONT_REGULAR }
+                : { color: APP_THEME.APP_DARK_FONT_COLOR, fontFamily: APP_FONTS.FONT_REGULAR }
             }
             buttonStyle={
               refreshButtonState
@@ -229,9 +231,10 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
     const buttons = [i18n.t('UNSYNCED'), i18n.t('SYNCED'), i18n.t('ALL')];
     return (
       <ButtonGroup
-        onPress={this.filterSurveysByState}
+        onPress={this.onFilterButtonPressed}
         buttons={buttons}
         selectedIndex={this.state.filteredIndex}
+        textStyle={styles.textStyleFilterButton}
       />
     );
   };
@@ -294,7 +297,7 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
       </View>
     ) : (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color="#000000" />
+        <ActivityIndicator size="large" color="#DDDDDD" />
       </View>
     );
   }
@@ -327,6 +330,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: APP_FONTS.FONT_REGULAR,
     backgroundColor: 'white',
+  },
+  textStyleFilterButton: {
+    fontFamily: APP_FONTS.FONT_REGULAR,
   },
   pendingSurveyContainer: {
     minHeight: 50,
