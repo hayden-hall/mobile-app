@@ -3,7 +3,7 @@ import { View, StyleSheet, Alert, ActivityIndicator, TextInput, Text, Modal } fr
 import i18n from '../../config/i18n';
 import { APP_FONTS, APP_THEME, ASYNC_STORAGE_KEYS } from '../../constants';
 import { SelectionList, SearchBar } from '../../components';
-import { Icon, Divider, Button } from 'react-native-elements';
+import { Icon, Divider, Button, ButtonGroup } from 'react-native-elements';
 import { getAllSurveys, getOfflineCreatedSurvey } from '../../services/API/Salesforce/Survey';
 import NetInfo from '@react-native-community/netinfo';
 import { refreshAll } from '../../services/Refresh';
@@ -31,15 +31,16 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
     isNetworkConnected: false,
     dirtySurveyCount: 0,
     showLoginModal: false,
+    filteredIndex: 0,
   };
 
   fetchData = async () => {
     try {
-      const data = await getAllSurveys();
-      await this.setState({ surveys: data });
+      const surveys = await getAllSurveys();
+      await this.setState({ surveys });
 
-      //Prepare the list for Selection List Component
-      this.prepareListdata(data);
+      // show unsynced surveys as default
+      this.filterSurveysByState(this.state.filteredIndex);
     } catch (error) {}
   };
 
@@ -118,7 +119,7 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
     this.setRefreshButtonState();
   };
 
-  filterSurveys = text => {
+  filterSurveysByText = text => {
     if (this.state.surveys) {
       this.setState({ searchTxt: text });
       const { surveys } = this.state;
@@ -129,6 +130,26 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
           obj.Visit_Clinic_Date__c.includes(text)
       );
       this.prepareListdata(filteredSurveys);
+    }
+  };
+
+  filterSurveysByState = async filteredIndex => {
+    if (this.state.surveys) {
+      await this.setState({ filteredIndex });
+      const { surveys } = this.state;
+      this.prepareListdata(
+        surveys.filter(survey => {
+          // offline
+          if (filteredIndex === 0) {
+            return survey.IsLocallyCreated !== 0;
+            // synced
+          } else if (filteredIndex === 1) {
+            return survey.IsLocallyCreated === 0;
+          } else {
+            return survey;
+          }
+        })
+      );
     }
   };
 
@@ -200,9 +221,20 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
     <SearchBar
       placeholder={i18n.t('SEARCH_SURVEYS')}
       value={this.props.searchTxt}
-      onChangeText={searchTxt => this.filterSurveys(searchTxt)}
+      onChangeText={searchTxt => this.filterSurveysByText(searchTxt)}
     />
   );
+
+  _renderFilterButtonGroup = () => {
+    const buttons = [i18n.t('UNSYNCED'), i18n.t('SYNCED'), i18n.t('ALL')];
+    return (
+      <ButtonGroup
+        onPress={this.filterSurveysByState}
+        buttons={buttons}
+        selectedIndex={this.state.filteredIndex}
+      />
+    );
+  };
 
   _renderNewSurveyButton = () => {
     return (
@@ -233,6 +265,7 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
         <Text style={textStyleTotalSurvey}>{`${i18n.t('TOTAL_SURVEYS')} ${
           this.state.surveys.length
         }`}</Text>
+        {this._renderFilterButtonGroup()}
         <Divider style={{ backgroundColor: APP_THEME.APP_BORDER_COLOR }} />
         <SelectionList
           data={this.state.filteredSurveys}
@@ -253,7 +286,7 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
             });
           }}
           onSearchTextChanged={text => {
-            this.filterSurveys(text);
+            this.filterSurveysByText(text);
           }}
         />
         {this._renderLoginModal()}
@@ -306,17 +339,9 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
   },
   syncIconStyle: {
-    // borderRightWidth: 1,
-    // borderTopWidth: 1,
-    // borderBottomWidth: 1,
-    // borderBottomColor: APP_THEME.APP_BORDER_COLOR,
-    // borderTopColor: APP_THEME.APP_BORDER_COLOR,
-    // borderRightColor: APP_THEME.APP_BORDER_COLOR,
     padding: 8,
     position: 'absolute',
     right: 10,
-    // borderTopRightRadius: 2,
-    // borderBottomRightRadius: 2
   },
   addButtonStyle: { position: 'absolute', bottom: 30, right: 30 },
 });
