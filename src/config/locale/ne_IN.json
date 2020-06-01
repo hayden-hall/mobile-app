@@ -45,5 +45,7 @@
     "SEARCH_BENEFICIARIES": "लाभार्थी खोज्नुहोस्",
     "CHOOSE_BENEFIACIARY": "लाभार्थी छान्नुहोस्",
     "LANGUAGE": "भाषा",
-    "SETTINGS": "सेटिङ"
+    "SETTINGS": "सेटिङ",
+    "DELETE": "Delete",
+    "DELETE_MESSAGE": "Are you sure to delete this survey? This cannot be undone."
   }

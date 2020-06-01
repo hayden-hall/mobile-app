@@ -43,5 +43,7 @@
     "LANGUAGE": "Language",
     "SALESFORCE_OBJECT_CREATION_ERROR":
         "Error while creating record on salesforce.",
-    "SETTINGS": "Settings"
+    "SETTINGS": "Settings",
+    "DELETE": "Delete",
+    "DELETE_MESSAGE": "Are you sure to delete this survey? This cannot be undone."
   }
