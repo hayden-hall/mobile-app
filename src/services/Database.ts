@@ -90,7 +90,7 @@ export const saveRecordsWithFields = async (
   });
 };
 
-export const getRecords = (table, whereQuery) => {
+export const getRecords = (table, whereQuery): Promise<Array<any>> => {
   return new Promise((resolve, reject) => {
     const sqlStatement = `SELECT * FROM ${table} ${whereQuery || ''}`;
     try {
@@ -118,6 +118,22 @@ export const getRecords = (table, whereQuery) => {
 export const markRecordNonDirty = (table, LocalId) => {
   return new Promise((resolve, reject) => {
     const sqlStatement = `UPDATE ${table} SET IsLocallyCreated = 0 WHERE LocalId = ${LocalId}`;
+    try {
+      database.transaction(tx => {
+        tx.executeSql(sqlStatement, [], (txn, result) => {
+          resolve(true);
+        });
+      });
+    } catch (error) {
+      console.log(error);
+      reject(error);
+    }
+  });
+};
+
+export const deleteRecord = (table, LocalId) => {
+  return new Promise((resolve, reject) => {
+    const sqlStatement = `DELETE FROM ${table} WHERE LocalId = ${LocalId}`;
     try {
       database.transaction(tx => {
         tx.executeSql(sqlStatement, [], (txn, result) => {

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableHighlight, StyleSheet } from 'react-native';
 import { TextHeading } from './TextHeading';
 import { TextSubheading } from './TextSubheading';
 import { APP_THEME } from '../constants';
@@ -9,13 +9,13 @@ class ListItem extends PureComponent {
     const { innerContainer, row } = styles;
     const { title, subtitle, onPress, showCaret } = this.props;
     return (
-      <TouchableOpacity style={row} onPress={onPress}>
+      <TouchableHighlight style={row} onPress={onPress} underlayColor={'#EEEEEE'}>
         <View style={innerContainer}>
           <TextHeading>{title}</TextHeading>
           {subtitle && <TextSubheading>{subtitle}</TextSubheading>}
+          {showCaret && <View style={styles.triangleCorner} />}
         </View>
-        {showCaret && <View style={styles.triangleCorner} />}
-      </TouchableOpacity>
+      </TouchableHighlight>
     );
   };
 }
@@ -24,9 +24,12 @@ const styles = StyleSheet.create({
   innerContainer: {
     marginLeft: 20,
     flex: 1,
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
-  row: { minHeight: 44 },
+  row: {
+    minHeight: 44,
+    backgroundColor: '#FFF',
+  },
   triangleCorner: {
     width: 0,
     height: 0,
@@ -39,8 +42,8 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     borderRightColor: 'transparent',
     borderTopColor: APP_THEME.APP_BASE_COLOR,
-    transform: [{ rotate: '90deg' }]
-  }
+    transform: [{ rotate: '90deg' }],
+  },
 });
 
 export { ListItem };

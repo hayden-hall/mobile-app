@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
   },
   logoStyle: { height: 61, width: 181 },
   inputBoxesView: {
@@ -18,21 +18,26 @@ const styles = StyleSheet.create({
     width: '90%',
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   flex1: {
-    flex: 1
+    flex: 1,
   },
   flex2: {
-    flex: 2
+    flex: 2,
   },
-  inputButton: { width: '40%', alignSelf: 'center', paddingTop: 20 }
+  inputButton: { width: '40%', alignSelf: 'center', paddingTop: 20 },
 });
 
-export default class AreaCode extends PureComponent {
+interface AreaCodeProps {
+  showsSpinner: any;
+  navigation: any;
+}
+
+export default class AreaCode extends PureComponent<AreaCodeProps> {
   state = {
     areaCodeError: '',
-    areaCode: ''
+    areaCode: '',
   };
 
   validateInput = () => {
@@ -52,17 +57,20 @@ export default class AreaCode extends PureComponent {
       this.props.showsSpinner(false);
       if (response.records && response.records.length > 0) {
         const workerContact = response.records[0];
+        // @ts-ignore
         storage.save({
           key: ASYNC_STORAGE_KEYS.CDW_WORKED_ID,
-          data: workerContact.Id
+          data: workerContact.Id,
         });
+        // @ts-ignore
         storage.save({
           key: ASYNC_STORAGE_KEYS.AREA_CODE,
-          data: this.state.areaCode
+          data: this.state.areaCode,
         });
+        // @ts-ignore
         storage.save({
           key: ASYNC_STORAGE_KEYS.CDW_WORKED_NAME,
-          data: workerContact.Name
+          data: workerContact.Name,
         });
         this.refreshAppData();
       } else {
@@ -76,10 +84,10 @@ export default class AreaCode extends PureComponent {
   refreshAppData = async () => {
     try {
       this.props.showsSpinner(true);
-      const result = await refreshAll();
+      await refreshAll();
       this.props.showsSpinner(false);
       this.props.navigation.replace('SurveyList', {
-        headerTitle: i18n.t('SURVEYS')
+        headerTitle: i18n.t('SURVEYS'),
       });
     } catch (error) {
       this.props.showsSpinner(false);
@@ -88,8 +96,6 @@ export default class AreaCode extends PureComponent {
       }, 500);
     }
   };
-
-  componentDidMount = async () => {};
 
   render() {
     const { flex1, flex2, inputBoxesView, container, inputButton } = styles;
@@ -108,10 +114,7 @@ export default class AreaCode extends PureComponent {
             errorMessage={this.state.areaCodeError}
           />
           <View style={inputButton}>
-            <CustomButton
-              title={i18n.t('GO_TO_SURVEY')}
-              onPress={this.checkAreaCode}
-            />
+            <CustomButton title={i18n.t('GO_TO_SURVEY')} onPress={this.checkAreaCode} />
           </View>
         </View>
         <View style={flex2} />

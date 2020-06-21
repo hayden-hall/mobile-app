@@ -1,11 +1,12 @@
 import React, { PureComponent } from 'react';
 import { View, StyleSheet, Alert, ActivityIndicator, TextInput, Text, Modal } from 'react-native';
+import { Icon, Divider, Button, ButtonGroup } from 'react-native-elements';
+import NetInfo from '@react-native-community/netinfo';
+
 import i18n from '../../config/i18n';
 import { APP_FONTS, APP_THEME, ASYNC_STORAGE_KEYS } from '../../constants';
 import { SelectionList, SearchBar } from '../../components';
-import { Icon, Divider, Button } from 'react-native-elements';
 import { getAllSurveys, getOfflineCreatedSurvey } from '../../services/API/Salesforce/Survey';
-import NetInfo from '@react-native-community/netinfo';
 import { refreshAll } from '../../services/Refresh';
 import { formatDate } from '../../utility';
 import Login from '../Auth/Login';
@@ -31,15 +32,16 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
     isNetworkConnected: false,
     dirtySurveyCount: 0,
     showLoginModal: false,
+    filteredIndex: 0,
   };
 
   fetchData = async () => {
     try {
-      const data = await getAllSurveys();
-      await this.setState({ surveys: data });
+      const surveys = await getAllSurveys();
+      await this.setState({ surveys });
 
-      //Prepare the list for Selection List Component
-      this.prepareListdata(data);
+      // show unsynced surveys as default
+      this.onFilterButtonPressed(this.state.filteredIndex);
     } catch (error) {}
   };
 
@@ -118,18 +120,47 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
     this.setRefreshButtonState();
   };
 
-  filterSurveys = text => {
+  filterSurveysByText = async text => {
     if (this.state.surveys) {
       this.setState({ searchTxt: text });
-      const { surveys } = this.state;
-      const filteredSurveys = surveys.filter(
+      const stateFilteredSurveys = await this.filterSurveysByState(this.state.filteredIndex);
+      const textFilteredSurveys = stateFilteredSurveys.filter(
         obj =>
           obj.Survey_Heading.includes(text) ||
           obj.Survey_Type.includes(text) ||
           obj.Visit_Clinic_Date__c.includes(text)
       );
-      this.prepareListdata(filteredSurveys);
+      this.prepareListdata(textFilteredSurveys);
     }
+  };
+
+  filterSurveysByState = async filteredIndex => {
+    const { surveys } = this.state;
+    return surveys.filter(survey => {
+      // offline
+      if (filteredIndex === 0) {
+        return survey.IsLocallyCreated !== 0;
+        // synced
+      } else if (filteredIndex === 1) {
+        return survey.IsLocallyCreated === 0;
+      } else {
+        return survey;
+      }
+    });
+  };
+
+  onFilterButtonPressed = async filteredIndex => {
+    if (this.state.surveys) {
+      await this.setState({ filteredIndex });
+      this.prepareListdata(await this.filterSurveysByState(filteredIndex));
+    }
+  };
+
+  onSurveyDeleted = async item => {
+    const remainingSurveys = this.state.filteredSurveys.filter(
+      survey => survey.LocalId !== item.LocalId
+    );
+    this.prepareListdata(remainingSurveys);
   };
 
   setRefreshButtonState = () => {
@@ -178,8 +209,8 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
             containerStyle={{ minWidth: 80 }}
             titleStyle={
               refreshButtonState
-                ? { color: APP_THEME.APP_WHITE }
-                : { color: APP_THEME.APP_DARK_FONT_COLOR }
+                ? { color: APP_THEME.APP_WHITE, fontFamily: APP_FONTS.FONT_REGULAR }
+                : { color: APP_THEME.APP_DARK_FONT_COLOR, fontFamily: APP_FONTS.FONT_REGULAR }
             }
             buttonStyle={
               refreshButtonState
@@ -200,9 +231,22 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
     <SearchBar
       placeholder={i18n.t('SEARCH_SURVEYS')}
       value={this.props.searchTxt}
-      onChangeText={searchTxt => this.filterSurveys(searchTxt)}
+      onChangeText={searchTxt => this.filterSurveysByText(searchTxt)}
     />
   );
+
+  _renderFilterButtonGroup = () => {
+    const buttons = [i18n.t('UNSYNCED'), i18n.t('SYNCED'), i18n.t('ALL')];
+    return (
+      <ButtonGroup
+        onPress={this.onFilterButtonPressed}
+        buttons={buttons}
+        selectedIndex={this.state.filteredIndex}
+        textStyle={styles.textStyleFilterButton}
+        selectedButtonStyle={styles.selectedFilterButtonStyle}
+      />
+    );
+  };
 
   _renderNewSurveyButton = () => {
     return (
@@ -233,6 +277,7 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
         <Text style={textStyleTotalSurvey}>{`${i18n.t('TOTAL_SURVEYS')} ${
           this.state.surveys.length
         }`}</Text>
+        {this._renderFilterButtonGroup()}
         <Divider style={{ backgroundColor: APP_THEME.APP_BORDER_COLOR }} />
         <SelectionList
           data={this.state.filteredSurveys}
@@ -253,7 +298,10 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
             });
           }}
           onSearchTextChanged={text => {
-            this.filterSurveys(text);
+            this.filterSurveysByText(text);
+          }}
+          onDelete={item => {
+            this.onSurveyDeleted(item);
           }}
         />
         {this._renderLoginModal()}
@@ -261,7 +309,7 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
       </View>
     ) : (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color="#000000" />
+        <ActivityIndicator size="large" color="#DDDDDD" />
       </View>
     );
   }
@@ -295,6 +343,12 @@ const styles = StyleSheet.create({
     fontFamily: APP_FONTS.FONT_REGULAR,
     backgroundColor: 'white',
   },
+  textStyleFilterButton: {
+    fontFamily: APP_FONTS.FONT_REGULAR,
+  },
+  selectedFilterButtonStyle: {
+    backgroundColor: APP_THEME.APP_BASE_COLOR,
+  },
   pendingSurveyContainer: {
     minHeight: 50,
     backgroundColor: 'white',
@@ -306,17 +360,9 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
   },
   syncIconStyle: {
-    // borderRightWidth: 1,
-    // borderTopWidth: 1,
-    // borderBottomWidth: 1,
-    // borderBottomColor: APP_THEME.APP_BORDER_COLOR,
-    // borderTopColor: APP_THEME.APP_BORDER_COLOR,
-    // borderRightColor: APP_THEME.APP_BORDER_COLOR,
     padding: 8,
     position: 'absolute',
     right: 10,
-    // borderTopRightRadius: 2,
-    // borderBottomRightRadius: 2
   },
   addButtonStyle: { position: 'absolute', bottom: 30, right: 30 },
 });

@@ -30,6 +30,8 @@
     },
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "description": "Mobile application for community development workers to record surveys and sync them with Salesforce",
+    "githubUrl": "https://github.com/hayden-hall/mobile-app"
   }
 }

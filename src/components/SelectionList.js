@@ -1,23 +1,69 @@
 import React, { PureComponent } from 'react';
-import { View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
-import { APP_THEME } from '../constants';
+import { Alert, View, StyleSheet, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { Divider } from 'react-native-elements';
+import { SwipeListView } from 'react-native-swipe-list-view';
+import PropTypes from 'prop-types';
+import { APP_THEME, APP_FONTS } from '../constants';
+import { DB_TABLE, deleteRecord } from '../services/Database';
 import { SearchBar } from './SearchBar';
 import { ListItem } from './ListItem';
-import { Divider } from 'react-native-elements';
+import i18n from '../config/i18n';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   flex1: {
-    flex: 1
-  }
+    flex: 1,
+  },
+  backTextWhite: {
+    color: '#FFF',
+    fontFamily: APP_FONTS.FONT_REGULAR,
+  },
+  rowBack: {
+    alignItems: 'center',
+    backgroundColor: '#FFF',
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 15,
+  },
+  backRightBtn: {
+    alignItems: 'center',
+    bottom: 0,
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 0,
+    width: 75,
+  },
+  backRightBtnRight: {
+    backgroundColor: '#c23934',
+    right: 0,
+  },
+  backDisabledRightBtnRight: {
+    backgroundColor: '#c9c7c5',
+    right: 0,
+  },
 });
 
 class SelectionList extends PureComponent {
   _keyExtractor = (item, index) => index.toString();
+
+  static get propTypes() {
+    return {
+      data: PropTypes.any,
+      titleKey: PropTypes.string,
+      subtitleKey: PropTypes.string,
+      onPress: PropTypes.func,
+      hideSearchBar: PropTypes.bool,
+      searchBarLabel: PropTypes.string,
+      searchTxt: PropTypes.string,
+      onSearchTextChanged: PropTypes.func,
+      onDelete: PropTypes.func,
+    };
+  }
 
   renderItem = item => {
     const { titleKey, subtitleKey, onPress } = this.props;
@@ -45,19 +91,58 @@ class SelectionList extends PureComponent {
     return <Divider style={{ backgroundColor: APP_THEME.APP_BORDER_COLOR }} />;
   };
 
-  async componentDidMount() {}
+  showDeleteConfirmAlert = (rowMap, item, index) => {
+    Alert.alert(
+      i18n.t('DELETE'),
+      i18n.t('DELETE_MESSAGE'),
+      [
+        {
+          text: i18n.t('DELETE'),
+          onPress: async () => {
+            if (rowMap[index]) {
+              rowMap[index].closeRow();
+            }
+            await deleteRecord(DB_TABLE.SURVEY, item.LocalId);
+            return this.props.onDelete(item);
+          },
+        },
+        {
+          text: i18n.t('CANCEL'),
+        },
+      ],
+      { cancelable: true }
+    );
+  };
 
   render() {
     return this.props.data ? (
       <View style={styles.flex1}>
-        <FlatList
-          ListHeaderComponent={
-            !this.props.hideSearchBar && this._renderSearchBar()
-          }
+        <SwipeListView
+          ListHeaderComponent={!this.props.hideSearchBar && this._renderSearchBar()}
           data={this.props.data}
           renderItem={this.renderItem}
           keyExtractor={this._keyExtractor}
           ItemSeparatorComponent={this.renderSeparator}
+          renderHiddenItem={(data, rowMap) =>
+            data.item.IsLocallyCreated ? (
+              <View style={styles.rowBack}>
+                <TouchableOpacity
+                  style={[styles.backRightBtn, styles.backRightBtnRight]}
+                  onPress={() => this.showDeleteConfirmAlert(rowMap, data.item, data.index)}
+                >
+                  <Text style={styles.backTextWhite}>{i18n.t('DELETE')}</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={styles.rowBack}>
+                <TouchableOpacity style={[styles.backRightBtn, styles.backDisabledRightBtnRight]}>
+                  <Text style={styles.backTextWhite}>{i18n.t('DELETE')}</Text>
+                </TouchableOpacity>
+              </View>
+            )
+          }
+          disableRightSwipe
+          rightOpenValue={-75}
         />
       </View>
     ) : (
