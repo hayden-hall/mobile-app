@@ -235,6 +235,7 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
         buttons={buttons}
         selectedIndex={this.state.filteredIndex}
         textStyle={styles.textStyleFilterButton}
+        selectedButtonStyle={styles.selectedFilterButtonStyle}
       />
     );
   };
@@ -333,6 +334,9 @@ const styles = StyleSheet.create({
   },
   textStyleFilterButton: {
     fontFamily: APP_FONTS.FONT_REGULAR,
+  },
+  selectedFilterButtonStyle: {
+    backgroundColor: APP_THEME.APP_BASE_COLOR,
   },
   pendingSurveyContainer: {
     minHeight: 50,
