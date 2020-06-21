@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { View, TouchableHighlight, Text, StyleSheet } from 'react-native';
+import { View, TouchableHighlight, StyleSheet } from 'react-native';
 import { TextHeading } from './TextHeading';
 import { TextSubheading } from './TextSubheading';
 import { APP_THEME } from '../constants';
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   innerContainer: {
     marginLeft: 20,
     flex: 1,
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   row: {
     minHeight: 44,
@@ -42,8 +42,8 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     borderRightColor: 'transparent',
     borderTopColor: APP_THEME.APP_BASE_COLOR,
-    transform: [{ rotate: '90deg' }]
-  }
+    transform: [{ rotate: '90deg' }],
+  },
 });
 
 export { ListItem };
