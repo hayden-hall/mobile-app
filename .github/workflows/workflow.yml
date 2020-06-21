@@ -23,7 +23,7 @@ jobs:
 
       # Create mock .env
       - name: 'Create mock env file'
-        run: echo LOGIN_API_URL=https://test.herokuapp.com/login > .env
+        run: echo "LOGIN_API_URL=https://test.herokuapp.com/login\nREFRESH_KEY=12345" > .env
 
       # Unit Test
       - name: 'Unit test'
