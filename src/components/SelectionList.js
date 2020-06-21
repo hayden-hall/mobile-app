@@ -2,7 +2,9 @@ import React, { PureComponent } from 'react';
 import { Alert, View, StyleSheet, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { SwipeListView } from 'react-native-swipe-list-view';
+import PropTypes from 'prop-types';
 import { APP_THEME, APP_FONTS } from '../constants';
+import { DB_TABLE, deleteRecord } from '../services/Database';
 import { SearchBar } from './SearchBar';
 import { ListItem } from './ListItem';
 import i18n from '../config/i18n';
@@ -49,6 +51,20 @@ const styles = StyleSheet.create({
 class SelectionList extends PureComponent {
   _keyExtractor = (item, index) => index.toString();
 
+  static get propTypes() {
+    return {
+      data: PropTypes.any,
+      titleKey: PropTypes.string,
+      subtitleKey: PropTypes.string,
+      onPress: PropTypes.func,
+      hideSearchBar: PropTypes.bool,
+      searchBarLabel: PropTypes.string,
+      searchTxt: PropTypes.string,
+      onSearchTextChanged: PropTypes.func,
+      onDelete: PropTypes.func,
+    };
+  }
+
   renderItem = item => {
     const { titleKey, subtitleKey, onPress } = this.props;
     return (
@@ -75,16 +91,20 @@ class SelectionList extends PureComponent {
     return <Divider style={{ backgroundColor: APP_THEME.APP_BORDER_COLOR }} />;
   };
 
-  async componentDidMount() {}
-
-  showDeleteConfirmAlert = () => {
+  showDeleteConfirmAlert = (rowMap, item, index) => {
     Alert.alert(
       i18n.t('DELETE'),
       i18n.t('DELETE_MESSAGE'),
       [
         {
           text: i18n.t('DELETE'),
-          onPress: async () => {},
+          onPress: async () => {
+            if (rowMap[index]) {
+              rowMap[index].closeRow();
+            }
+            await deleteRecord(DB_TABLE.SURVEY, item.LocalId);
+            return this.props.onDelete(item);
+          },
         },
         {
           text: i18n.t('CANCEL'),
@@ -92,32 +112,34 @@ class SelectionList extends PureComponent {
       ],
       { cancelable: true }
     );
-  }
+  };
 
   render() {
     return this.props.data ? (
       <View style={styles.flex1}>
         <SwipeListView
-          ListHeaderComponent={
-            !this.props.hideSearchBar && this._renderSearchBar()
-          }
+          ListHeaderComponent={!this.props.hideSearchBar && this._renderSearchBar()}
           data={this.props.data}
           renderItem={this.renderItem}
           keyExtractor={this._keyExtractor}
           ItemSeparatorComponent={this.renderSeparator}
-          renderHiddenItem={ (data, rowMap) => data.item.IsLocallyCreated ? (
-            <View style={styles.rowBack}>
-              <TouchableOpacity style={[styles.backRightBtn, styles.backRightBtnRight]} onPress={this.showDeleteConfirmAlert}>
-                <Text style={styles.backTextWhite}>{i18n.t('DELETE')}</Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View style={styles.rowBack}>
-              <TouchableOpacity style={[styles.backRightBtn, styles.backDisabledRightBtnRight]}>
-                <Text style={styles.backTextWhite}>{i18n.t('DELETE')}</Text>
-              </TouchableOpacity>
-            </View>
-          )
+          renderHiddenItem={(data, rowMap) =>
+            data.item.IsLocallyCreated ? (
+              <View style={styles.rowBack}>
+                <TouchableOpacity
+                  style={[styles.backRightBtn, styles.backRightBtnRight]}
+                  onPress={() => this.showDeleteConfirmAlert(rowMap, data.item, data.index)}
+                >
+                  <Text style={styles.backTextWhite}>{i18n.t('DELETE')}</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={styles.rowBack}>
+                <TouchableOpacity style={[styles.backRightBtn, styles.backDisabledRightBtnRight]}>
+                  <Text style={styles.backTextWhite}>{i18n.t('DELETE')}</Text>
+                </TouchableOpacity>
+              </View>
+            )
           }
           disableRightSwipe
           rightOpenValue={-75}

@@ -1,11 +1,12 @@
 import React, { PureComponent } from 'react';
 import { View, StyleSheet, Alert, ActivityIndicator, TextInput, Text, Modal } from 'react-native';
+import { Icon, Divider, Button, ButtonGroup } from 'react-native-elements';
+import NetInfo from '@react-native-community/netinfo';
+
 import i18n from '../../config/i18n';
 import { APP_FONTS, APP_THEME, ASYNC_STORAGE_KEYS } from '../../constants';
 import { SelectionList, SearchBar } from '../../components';
-import { Icon, Divider, Button, ButtonGroup } from 'react-native-elements';
 import { getAllSurveys, getOfflineCreatedSurvey } from '../../services/API/Salesforce/Survey';
-import NetInfo from '@react-native-community/netinfo';
 import { refreshAll } from '../../services/Refresh';
 import { formatDate } from '../../utility';
 import Login from '../Auth/Login';
@@ -155,6 +156,13 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
     }
   };
 
+  onSurveyDeleted = async item => {
+    const remainingSurveys = this.state.filteredSurveys.filter(
+      survey => survey.LocalId !== item.LocalId
+    );
+    this.prepareListdata(remainingSurveys);
+  };
+
   setRefreshButtonState = () => {
     const { surveys, isNetworkConnected } = this.state;
     const getDirtySurveys = surveys.filter(object => object.IsLocallyCreated);
@@ -291,6 +299,9 @@ export default class SurveyList extends PureComponent<SurveyListProps> {
           }}
           onSearchTextChanged={text => {
             this.filterSurveysByText(text);
+          }}
+          onDelete={item => {
+            this.onSurveyDeleted(item);
           }}
         />
         {this._renderLoginModal()}

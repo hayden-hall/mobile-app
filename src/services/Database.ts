@@ -131,6 +131,22 @@ export const markRecordNonDirty = (table, LocalId) => {
   });
 };
 
+export const deleteRecord = (table, LocalId) => {
+  return new Promise((resolve, reject) => {
+    const sqlStatement = `DELETE FROM ${table} WHERE LocalId = ${LocalId}`;
+    try {
+      database.transaction(tx => {
+        tx.executeSql(sqlStatement, [], (txn, result) => {
+          resolve(true);
+        });
+      });
+    } catch (error) {
+      console.log(error);
+      reject(error);
+    }
+  });
+};
+
 export const clearTable = table => {
   return new Promise((resolve, reject) => {
     const sqlStatement = `DROP TABLE IF EXISTS ${table};`;
