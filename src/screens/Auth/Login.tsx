@@ -3,7 +3,7 @@ import { View, StyleSheet, Image } from 'react-native';
 import { TextInput, CustomButton, Loader } from '../../components';
 import i18n from '../../config/i18n';
 import { validateEmail } from '../../utility';
-import { login } from '../../services/API/auth';
+import { login } from '../../services/api/auth';
 import { ASYNC_STORAGE_KEYS } from '../../constants';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 

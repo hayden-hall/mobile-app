@@ -2,8 +2,8 @@
 import React, { PureComponent } from 'react';
 import { SelectionList } from '../../../components';
 import i18n from '../../../config/i18n';
-import { getMothers, getAnteNatalMothers } from '../../../services/API/Salesforce/Contact';
-import { MotherChildPickerType__c } from '../../../services/API/Salesforce/Survey';
+import { getMothers, getAnteNatalMothers } from '../../../services/api/salesforce/Contact';
+import { MotherChildPickerType__c } from '../../../services/api/salesforce/Survey';
 
 interface MotherPickerProps {
   navigation: any;

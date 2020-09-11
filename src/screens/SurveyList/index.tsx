@@ -6,7 +6,7 @@ import NetInfo from '@react-native-community/netinfo';
 import i18n from '../../config/i18n';
 import { APP_FONTS, APP_THEME, ASYNC_STORAGE_KEYS } from '../../constants';
 import { SelectionList, SearchBar } from '../../components';
-import { getAllSurveys, getOfflineCreatedSurvey } from '../../services/API/Salesforce/Survey';
+import { getAllSurveys, getOfflineCreatedSurvey } from '../../services/api/salesforce/Survey';
 import { refreshAll } from '../../services/Refresh';
 import { formatDate } from '../../utility';
 import Login from '../auth/login';

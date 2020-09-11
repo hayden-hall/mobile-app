@@ -10,7 +10,7 @@ import {
   getOfflineSurveyQuestionsForSurveyMetadata,
   createNewSurvey,
   updateSurvey,
-} from '../../services/API/Salesforce/Survey';
+} from '../../services/api/salesforce/Survey';
 import { formatAPIDate, checkForDatabaseNull } from '../../utility';
 
 const styles = StyleSheet.create({

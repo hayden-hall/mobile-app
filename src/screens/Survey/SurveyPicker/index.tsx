@@ -5,7 +5,7 @@ import i18n from '../../../config/i18n';
 import {
   getOfflineStoredSurveyMetadata,
   MotherChildPickerType__c,
-} from '../../../services/API/Salesforce/Survey';
+} from '../../../services/api/salesforce/Survey';
 
 interface SurveyPickerProps {
   navigation: any;
