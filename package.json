@@ -19,6 +19,8 @@
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.5",
     "@react-native-community/netinfo": "^4.6.0",
+    "@react-navigation/native": "^5.7.3",
+    "@react-navigation/stack": "^5.9.0",
     "expo": "~36.0.0",
     "expo-localization": "~8.0.0",
     "expo-sqlite": "~8.0.0",
@@ -41,10 +43,6 @@
     "react-native-swipe-list-view": "^3.1.0",
     "react-native-vector-icons": "^6.4.2",
     "react-native-web": "~0.11.7",
-    "react-navigation": "^4.2.2",
-    "react-navigation-stack": "^2.2.3",
-    "react-navigation-tabs": "^2.8.2",
-    "recompose": "^0.30.0",
     "timers": "^0.1.1"
   },
   "devDependencies": {

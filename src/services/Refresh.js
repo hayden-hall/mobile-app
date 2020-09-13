@@ -1,8 +1,8 @@
 import {
   getLoggedInCDWContact,
   getLoggedInUserMothersChilds
-} from './API/Salesforce/Contact';
-import { getCDWClientJunctionObjects } from './API/Salesforce/CDWJunction';
+} from './api/salesforce/Contact';
+import { getCDWClientJunctionObjects } from './api/salesforce/CDWJunction';
 import {
   getAllSurveysFromSalesforce,
   getAllSurveyMetadataFromSalesforce,
@@ -10,7 +10,7 @@ import {
   getAllSurveyQuestionsFromSalesforce,
   getOfflineSurveys,
   uploadSurveyToSalesforce
-} from './API/Salesforce/Survey';
+} from './api/salesforce/Survey';
 import { ASYNC_STORAGE_KEYS } from '../constants';
 
 export const refreshAll = async () => {
