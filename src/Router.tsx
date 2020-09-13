@@ -3,8 +3,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 // screens
-import Login from './screens/auth/login';
-import AreaCode from './screens/auth/areaCode';
+import Login from './screens/login';
+import AreaCode from './screens/areaCode';
 import SurveyList from './screens/surveyList';
 import Survey from './screens/Survey';
 import SurveyCompleted from './screens/Survey/SurveyCompleted';

@@ -6,7 +6,7 @@ interface LoginResponse {
   instance_url: string;
 }
 
-export const login = async (email: string, password: string): Promise<LoginResponse> => {
+export const authenticate = async (email: string, password: string): Promise<LoginResponse> => {
   return new Promise(async (resolve, reject) => {
     const data = { email, password };
     try {

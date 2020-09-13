@@ -46,7 +46,6 @@ export const checkForDatabaseNull = value => {
 };
 
 export const initializeStorage = () => {
-  // @ts-ignore
   global.storage = new Storage({
     size: 1000,
     storageBackend: AsyncStorage,
@@ -57,7 +56,6 @@ export const initializeStorage = () => {
 
 export const clearStorage = () => {
   for (const k of Object.keys(ASYNC_STORAGE_KEYS)) {
-    // @ts-ignore
     storage.remove({
       key: ASYNC_STORAGE_KEYS[k],
     });
