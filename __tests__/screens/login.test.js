@@ -2,7 +2,6 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 
 import Login from '../../src/screens/Auth/Login';
-import { isExportDeclaration } from 'typescript';
 
 describe('<Login />', () => {
   it('Login', () => {
