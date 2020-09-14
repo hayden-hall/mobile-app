@@ -1,5 +1,8 @@
 import React from 'react';
 import { Icon } from 'react-native-elements';
+
+import { logout } from '../services/session';
+
 import { APP_THEME } from '../constants';
 
 export function BackButton() {
@@ -24,7 +27,7 @@ export function BackButton() {
   );
 }
 
-export function LogoutButton() {
+export function LogoutButton(navigation) {
   return (
     <Icon
       iconStyle={{ padding: 10 }}
@@ -33,8 +36,7 @@ export function LogoutButton() {
       color={APP_THEME.APP_BASE_COLOR}
       type="simple-line-icon"
       onPress={() => {
-        console.log('Logging out');
-        // makeLogout(navigation);
+        logout(navigation);
       }}
     />
   );

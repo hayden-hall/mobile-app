@@ -54,12 +54,12 @@ export default function Router() {
         <Stack.Screen
           name="SurveyList"
           component={SurveyList}
-          options={{
+          options={({ navigation }) => ({
             title: i18n.t('SURVEYS'),
-            headerLeft: () => LogoutButton(),
+            headerLeft: () => LogoutButton(navigation),
             headerRight: () => SettingsButton(),
             ...headerStyle,
-          }}
+          })}
         />
         <Stack.Screen name="Survey" component={Survey} />
         <Stack.Screen name="SurveyCompleted" component={SurveyCompleted} />
