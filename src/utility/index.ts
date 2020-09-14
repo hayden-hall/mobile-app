@@ -1,11 +1,4 @@
-import { Alert, AsyncStorage } from 'react-native';
-import Storage from 'react-native-storage';
 import moment from 'moment';
-
-import { ASYNC_STORAGE_KEYS } from '../constants';
-import { clearDatabase } from '../services/Database';
-
-import i18n from '../config/i18n';
 
 const DATE_FORMAT = 'MMM DD, YYYY';
 const DATE_FORMAT_API = 'YYYY-MM-DD';
@@ -43,42 +36,4 @@ export const prepareIdsForSqllite = contactsIds => {
 
 export const checkForDatabaseNull = value => {
   return value && value != null && value != 'null';
-};
-
-export const initializeStorage = () => {
-  global.storage = new Storage({
-    size: 1000,
-    storageBackend: AsyncStorage,
-    defaultExpires: 1000 * 3600 * 24,
-    enableCache: true,
-  });
-};
-
-export const clearStorage = () => {
-  for (const k of Object.keys(ASYNC_STORAGE_KEYS)) {
-    storage.remove({
-      key: ASYNC_STORAGE_KEYS[k],
-    });
-  }
-};
-
-export const makeLogout = navigation => {
-  Alert.alert(
-    i18n.t('LOGOUT'),
-    i18n.t('LOGOUT_MESSAGE'),
-    [
-      {
-        text: i18n.t('OK'),
-        onPress: async () => {
-          clearStorage();
-          await clearDatabase();
-          navigation.replace('Login', { headerTitle: i18n.t('LOGIN') });
-        },
-      },
-      {
-        text: i18n.t('CANCEL'),
-      },
-    ],
-    { cancelable: true }
-  );
 };

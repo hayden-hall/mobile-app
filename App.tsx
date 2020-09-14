@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import * as Font from 'expo-font';
 import Router from './src/Router';
-import { initializeStorage } from './src/utility';
+import { initializeStorage } from './src/utility/storage';
 
 console.disableYellowBox = true;
 initializeStorage();
