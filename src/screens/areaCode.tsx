@@ -128,11 +128,11 @@ export default function AreaCode({ navigation }) {
           <View style={inputButton}>
             <CustomButton
               title={i18n.t('GO_TO_SURVEY')}
-              onPress={() => {
+              onPress={async () => {
                 try {
                   validateInput();
-                  retrieveContactDetail();
-                  refreshAppData();
+                  await retrieveContactDetail();
+                  await refreshAppData();
                 } catch (error) {
                   logger('ERROR', 'AreaCode', `${error}`);
                 }
