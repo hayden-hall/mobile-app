@@ -6,5 +6,6 @@ const LoggingLevel = {
 type LoggingLevel = typeof LoggingLevel[keyof typeof LoggingLevel];
 
 export function logger(loggingLevel: LoggingLevel, name: string, message: string) {
-  console.log(`[${loggingLevel}] ${new Date().toString()} | ${name} | ${message}`);
+  const formattedLoggingLevel = `[${loggingLevel}]`.padEnd(7, ' ');
+  console.log(`${formattedLoggingLevel} ${new Date().toString()} | ${name} | ${message}`);
 }

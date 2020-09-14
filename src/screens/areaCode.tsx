@@ -77,7 +77,7 @@ export default function AreaCode({ navigation }) {
         key: ASYNC_STORAGE_KEYS.CDW_WORKED_NAME,
         data: workerContact.Name,
       });
-      refreshAppData();
+      await refreshAppData();
     } else {
       setTimeout(() => {
         alert(i18n.t('AREA_CODE_NOT_FOUND'));

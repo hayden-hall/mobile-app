@@ -2,6 +2,7 @@ import { getSalesforceRecords } from './core';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
 import { prepareIdsForSalesforce, prepareIdsForSqllite } from '../../../utility';
 import { saveRecords, DB_TABLE, clearTable, getRecords } from '../../Database';
+import { logger } from '../../../utility/logger';
 
 const getLoggedInCDWContact = async () => {
   // @ts-ignore
@@ -11,11 +12,9 @@ const getLoggedInCDWContact = async () => {
 };
 
 const getCDWContact = async areaCode => {
-  //TODO://const query = `SELECT Id,Name,Service_Role__c FROM contact WHERE Area_Code__c='${areaCode}' AND Active__c = true AND Service_Role__c = 'Health Worker'`;
-  const query = `SELECT Id,Name,Service_Role__c FROM contact WHERE Area_Code__c='${areaCode}' AND Service_Role__c = 'Health Worker'`;
-  console.log('Getting cdw contact... ' + query);
+  const query = `SELECT Id, Name, Service_Role__c FROM contact WHERE Area_Code__c='${areaCode}' AND Service_Role__c = 'Health Worker'`;
   const response = await getSalesforceRecords(query);
-  console.log(JSON.stringify(response));
+  logger('DEBUG', 'Contact API', `${JSON.stringify(response)}`);
   return response;
 };
 

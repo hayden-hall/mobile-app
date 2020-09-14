@@ -1,4 +1,5 @@
 import * as SQLite from 'expo-sqlite';
+import { logger } from '../utility/logger';
 
 const database = SQLite.openDatabase('AppDatabase.db');
 
@@ -30,7 +31,7 @@ export const saveRecords = (table, records) => {
 
     //Prepare insert statement
     const sqlInsertStatement = prepareInsertStatement(table, records, fields);
-    console.log('sqlInsertStatement: ', sqlInsertStatement);
+    logger('DEBUG', 'Database Insert', sqlInsertStatement);
 
     try {
       database.transaction(tx => {
