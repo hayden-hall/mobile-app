@@ -7,7 +7,7 @@ import Login from './screens/login';
 import AreaCode from './screens/areaCode';
 import SurveyList from './screens/surveyList';
 import Survey from './screens/Survey';
-import SurveyCompleted from './screens/Survey/SurveyCompleted';
+import SurveyCompleted from './screens/surveyCompleted';
 import Settings from './screens/Settings';
 
 // components
@@ -61,7 +61,8 @@ export default function Router() {
             ...headerStyle,
           })}
         />
-        <Stack.Screen name="Survey" component={Survey} />
+        <Stack.Screen name="SurveyTypePicker" component={Survey} />
+        <Stack.Screen name="SurveyEditor" component={Survey} />
         <Stack.Screen name="SurveyCompleted" component={SurveyCompleted} />
         <Stack.Screen name="Settings" component={Settings} />
       </Stack.Navigator>
