@@ -265,27 +265,32 @@ const checkAndCreateTableWithDataTypes = (table, fieldsWithDataType) => {
 };
 
 /**
- * @description Create table if not exists, given table name and field type mappings. 'developerName' field or 'localId' field will be primary.
+ * @description Create table if not exists, given table name and field type mappings. 'name' field or 'localId' field will be primary.
  * @param fieldName Name of table on sqlite
  * @param fieldTypeMappings Array of field type mapping
+ * @param hasLocalId
  */
-export const prepareTable = (tableName: string, fieldTypeMappings: Array<FieldTypeMapping>) => {
+export const prepareTable = (
+  tableName: string,
+  fieldTypeMappings: Array<FieldTypeMapping>,
+  hasLocalId: boolean
+) => {
   return new Promise((resolve, reject) => {
     const fieldsWithType = fieldTypeMappings
-      .map(m => {
-        if (m.field === 'developerName') {
-          return `${m.field} ${m.type} primary key`;
-        } else if (m.field === 'localId') {
-          return `${m.field} integer primary key autoincrement`;
+      .map(field => {
+        if (field.name === 'name') {
+          return `${field.name} ${field.type} primary key`;
         } else {
-          return `${m.field} ${m.type}`;
+          return `${field.name} ${field.type}`;
         }
       })
       .join(',');
+    const localId = 'localId integer primary key autoincrement';
+    const fieldsInStatement = hasLocalId ? `${localId},${fieldsWithType}` : fieldsWithType;
 
     try {
       database.transaction(tx => {
-        tx.executeSql(`create table if not exists ${tableName} (${fieldsWithType});`, [], () => {
+        tx.executeSql(`create table if not exists ${tableName} (${fieldsInStatement});`, [], () => {
           resolve(database);
         });
       });
@@ -303,7 +308,7 @@ export const prepareTable = (tableName: string, fieldTypeMappings: Array<FieldTy
  */
 const getFieldTypeMappings = (record: Record<string, any>): Array<FieldTypeMapping> => {
   const result: Array<FieldTypeMapping> = [];
-  for (const [field, value] of Object.entries(record)) {
+  for (const [name, value] of Object.entries(record)) {
     let type;
     if (typeof value === 'number' || typeof value === 'boolean') {
       type = 'integer';
@@ -311,7 +316,7 @@ const getFieldTypeMappings = (record: Record<string, any>): Array<FieldTypeMappi
       type = 'text';
     }
     result.push({
-      field,
+      name,
       type,
     });
   }
@@ -319,16 +324,17 @@ const getFieldTypeMappings = (record: Record<string, any>): Array<FieldTypeMappi
 };
 
 /**
- * @description
+ * @description Save records to the local sqlite table
  * @param tableName Name of table on local sqlite
  * @param records
+ * @param hasLocalId
  */
-export const saveRecords = (tableName: string, records) => {
+export const saveRecords = (tableName: string, records, hasLocalId) => {
   return new Promise(async (resolve, reject) => {
     const fieldTypeMappings: Array<FieldTypeMapping> = getFieldTypeMappings(records[0]);
-    await prepareTable(tableName, fieldTypeMappings);
+    await prepareTable(tableName, fieldTypeMappings, hasLocalId);
 
-    const keys = fieldTypeMappings.map(m => m.field).join(','); // e.g., 'developerName', 'recordTypeId', ...
+    const keys = fieldTypeMappings.map(field => field.name).join(','); // e.g., 'developerName', 'recordTypeId', ...
     const values = records.map(r => `(${Object.values(r).join(',')})`).join(','); // e.g,  ('a1', 'b2'), ('c1', 'd2')
     const statement = `insert into ${tableName} (${keys}) values ${values}`;
     logger('DEBUG', 'saveRecords', statement);
