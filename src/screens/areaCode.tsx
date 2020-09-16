@@ -3,7 +3,7 @@ import { View, StyleSheet, KeyboardAvoidingView, ImageBackground } from 'react-n
 
 import { getCDWContact } from '../services/api/salesforce/Contact';
 import { refreshAll } from '../services/Refresh';
-import { storeRecordTypeListBySObjectType } from '../services/recordType';
+import { storeRecordTypeList } from '../services/describe';
 
 import { TextInput, CustomButton, Loader } from '../components';
 
@@ -94,7 +94,7 @@ export default function AreaCode({ navigation }) {
     try {
       setShowsSpinner(true);
       await refreshAll(); // TODO: remove
-      await storeRecordTypeListBySObjectType('Survey__c'); // TODO: Dynamic
+      await storeRecordTypeList('Survey__c'); // TODO: Dynamic
       setShowsSpinner(false);
       navigation.navigate('SurveyList');
     } catch (error) {
