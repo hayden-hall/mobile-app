@@ -93,7 +93,9 @@ export const describeLayout = async (
     key: ASYNC_STORAGE_KEYS.SALESFORCE_ACCESS_TOKEN,
   });
   const endPoint =
-    (await buildEndpointUrl()) + `/sobjects/${sObjectType}/describe/layouts/${pageLayoutId}`;
+    (await buildEndpointUrl()) +
+    `/sobjects/${sObjectType}/describe/layouts/${pageLayoutId ? pageLayoutId : ''}`;
+
   const response = await fetch(endPoint, {
     method: 'GET',
     headers: {
