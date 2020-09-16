@@ -12,8 +12,10 @@
         "*": [
           "./node_modules/@types/*",
           "./node_modules/*",
-          "./src/types",
-        ]
+        ],
+        "@global": [
+          "./src/types/index.d.ts",
+        ],
       }
     },
     "exclude": ["node_modules"]

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, ImageBackground } from 'react-native';
 
-import { TextInput, CustomButton, Loader } from '../components';
-
 import { getCDWContact } from '../services/api/salesforce/Contact';
 import { refreshAll } from '../services/Refresh';
+import { storeRecordTypeListBySObjectType } from '../services/recordType';
+
+import { TextInput, CustomButton, Loader } from '../components';
 
 import i18n from '../config/i18n';
 import {
@@ -92,7 +93,8 @@ export default function AreaCode({ navigation }) {
   const refreshAppData = async () => {
     try {
       setShowsSpinner(true);
-      await refreshAll();
+      await refreshAll(); // TODO: remove
+      await storeRecordTypeListBySObjectType('Survey__c'); // TODO: Dynamic
       setShowsSpinner(false);
       navigation.navigate('SurveyList');
     } catch (error) {

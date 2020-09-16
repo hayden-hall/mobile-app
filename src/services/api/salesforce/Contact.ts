@@ -1,7 +1,7 @@
 import { getSalesforceRecords } from './core';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
 import { prepareIdsForSalesforce, prepareIdsForSqllite } from '../../../utility';
-import { saveRecordsOld, DB_TABLE, clearTable, getRecords } from '../../Database';
+import { saveRecordsOld, DB_TABLE, clearTable, getRecords } from '../../database';
 import { logger } from '../../../utility/logger';
 
 const getLoggedInCDWContact = async () => {

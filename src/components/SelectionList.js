@@ -1,12 +1,13 @@
+// @deprecated
 import React, { PureComponent } from 'react';
-import { Alert, View, StyleSheet, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { Alert, View, StyleSheet, Text, ActivityIndicator, } from 'react-native';
 import { Divider } from 'react-native-elements';
-import { SwipeListView } from 'react-native-swipe-list-view';
+
 import PropTypes from 'prop-types';
 import { APP_THEME, APP_FONTS } from '../constants';
-import { DB_TABLE, deleteRecord } from '../services/Database';
+import { DB_TABLE, deleteRecord } from '../services/database';
 import { SearchBar } from './SearchBar';
-import { ListItem } from './ListItem';
+
 import i18n from '../config/i18n';
 
 const styles = StyleSheet.create({
@@ -18,38 +19,11 @@ const styles = StyleSheet.create({
   flex1: {
     flex: 1,
   },
-  backTextWhite: {
-    color: '#FFF',
-    fontFamily: APP_FONTS.FONT_REGULAR,
-  },
-  rowBack: {
-    alignItems: 'center',
-    backgroundColor: '#FFF',
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingLeft: 15,
-  },
-  backRightBtn: {
-    alignItems: 'center',
-    bottom: 0,
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    width: 75,
-  },
-  backRightBtnRight: {
-    backgroundColor: '#c23934',
-    right: 0,
-  },
-  backDisabledRightBtnRight: {
-    backgroundColor: '#c9c7c5',
-    right: 0,
-  },
+  
 });
 
 class SelectionList extends PureComponent {
-  _keyExtractor = (item, index) => index.toString();
+  
 
   static get propTypes() {
     return {
@@ -88,7 +62,7 @@ class SelectionList extends PureComponent {
   );
 
   renderSeparator = () => {
-    return <Divider style={{ backgroundColor: APP_THEME.APP_BORDER_COLOR }} />;
+    return ;
   };
 
   showDeleteConfirmAlert = (rowMap, item, index) => {
@@ -117,33 +91,7 @@ class SelectionList extends PureComponent {
   render() {
     return this.props.data ? (
       <View style={styles.flex1}>
-        <SwipeListView
-          ListHeaderComponent={!this.props.hideSearchBar && this._renderSearchBar()}
-          data={this.props.data}
-          renderItem={this.renderItem}
-          keyExtractor={this._keyExtractor}
-          ItemSeparatorComponent={this.renderSeparator}
-          renderHiddenItem={(data, rowMap) =>
-            data.item.IsLocallyCreated ? (
-              <View style={styles.rowBack}>
-                <TouchableOpacity
-                  style={[styles.backRightBtn, styles.backRightBtnRight]}
-                  onPress={() => this.showDeleteConfirmAlert(rowMap, data.item, data.index)}
-                >
-                  <Text style={styles.backTextWhite}>{i18n.t('DELETE')}</Text>
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <View style={styles.rowBack}>
-                <TouchableOpacity style={[styles.backRightBtn, styles.backDisabledRightBtnRight]}>
-                  <Text style={styles.backTextWhite}>{i18n.t('DELETE')}</Text>
-                </TouchableOpacity>
-              </View>
-            )
-          }
-          disableRightSwipe
-          rightOpenValue={-75}
-        />
+        
       </View>
     ) : (
       <View style={styles.container}>
