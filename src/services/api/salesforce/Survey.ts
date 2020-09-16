@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { getSalesforceRecords, createSalesforceRecord } from './core';
 import {
-  saveRecords,
+  saveRecordsOld,
   updateRecord,
   DB_TABLE,
   clearTable,
   getRecords,
   saveRecordsWithFields,
   markRecordNonDirty,
-} from '../../Database';
+} from '../../database';
 import { prepareIdsForSqllite } from '../../../utility';
 import { getAllOfflineContacts } from './Contact';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
@@ -43,7 +43,7 @@ const getAllSurveyMetadataFromSalesforce = async () => {
   const query = `SELECT Id,isMotherChild__c,Name,SurveyRecordTypeId__c,MotherChildPickerType__c,Survey_Name_Nepali__c FROM SurveyMetadata__c`;
   const response = await getSalesforceRecords(query);
   await clearTable(DB_TABLE.SURVEY_METADATA);
-  await saveRecords(DB_TABLE.SURVEY_METADATA, response.records);
+  await saveRecordsOld(DB_TABLE.SURVEY_METADATA, response.records);
   return response;
 };
 
@@ -51,7 +51,7 @@ const getAllSurveySectionsFromSalesforce = async () => {
   const query = `SELECT Id,Name,Order__c,SurveyMetadata__c,Section_Name_Nepali__c FROM SurveySection__c`;
   const response = await getSalesforceRecords(query);
   await clearTable(DB_TABLE.SURVEY_SECTION);
-  await saveRecords(DB_TABLE.SURVEY_SECTION, response.records);
+  await saveRecordsOld(DB_TABLE.SURVEY_SECTION, response.records);
   return response;
 };
 
@@ -59,7 +59,7 @@ const getAllSurveyQuestionsFromSalesforce = async () => {
   const query = `SELECT APIName__c,Id,IsMandatory__c,Name,OptionsValue__c,Order__c,QuestionText__c,Question_Name_Nepali__c,QuestionType__c,SurveySection__c FROM SurveyQuestion__c`;
   const response = await getSalesforceRecords(query);
   await clearTable(DB_TABLE.SURVEY_QUESTION);
-  await saveRecords(DB_TABLE.SURVEY_QUESTION, response.records);
+  await saveRecordsOld(DB_TABLE.SURVEY_QUESTION, response.records);
   return response;
 };
 
@@ -300,9 +300,9 @@ export const createNewSurvey = async survey => {
     key: ASYNC_STORAGE_KEYS.NETWORK_CONNECTIVITY,
   });
   if (connectivity == true) {
-    return await saveRecords(DB_TABLE.SURVEY, [payload]);
+    return await saveRecordsOld(DB_TABLE.SURVEY, [payload]);
   } else {
-    return await saveRecords(DB_TABLE.SURVEY, [payload]);
+    return await saveRecordsOld(DB_TABLE.SURVEY, [payload]);
   }
 };
 

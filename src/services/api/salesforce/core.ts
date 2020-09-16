@@ -1,5 +1,7 @@
 import { refreshAccessToken } from '../auth';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
+import { logger } from '../../../utility/logger';
+import { DescribeLayouts } from '../../../../src/types/metadata';
 
 const SALESFORCE_API_VERSION = 'v45.0';
 
@@ -18,7 +20,7 @@ export const getSalesforceRecords = async (query: string) => {
       const records = await fetchQuery(query);
       return records;
     } catch (secondError) {
-      console.log('ERROR', secondError);
+      logger('ERROR', 'getSalesforceRecords', secondError);
     }
   }
 };
@@ -34,13 +36,12 @@ export const createSalesforceRecord = async (objectName, body) => {
       const result = await fetchInsert(objectName, body);
       return result;
     } catch (secondError) {
-      console.log('ERROR', secondError);
+      logger('ERROR', 'getSalesforceRecords', secondError);
     }
   }
 };
 
 const buildEndpointUrl = async () => {
-  // @ts-ignore
   const instanceUrl = await storage.load({
     key: ASYNC_STORAGE_KEYS.SALESFORCE_INSTANCE_URL,
   });
@@ -48,12 +49,11 @@ const buildEndpointUrl = async () => {
 };
 
 const fetchQuery = async query => {
-  // @ts-ignore
   const accessToken = await storage.load({
     key: ASYNC_STORAGE_KEYS.SALESFORCE_ACCESS_TOKEN,
   });
   const endPoint = (await buildEndpointUrl()) + `/query?q=${query}`;
-  console.log(endPoint);
+  logger('DEBUG', 'fetchQuery', endPoint);
   const response = await fetch(endPoint, {
     method: 'GET',
     headers: {
@@ -64,7 +64,6 @@ const fetchQuery = async query => {
 };
 
 const fetchInsert = async (objectName, record) => {
-  // @ts-ignore
   const accessToken = await storage.load({
     key: ASYNC_STORAGE_KEYS.SALESFORCE_ACCESS_TOKEN,
   });
@@ -77,6 +76,29 @@ const fetchInsert = async (objectName, record) => {
       Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify(record),
+  });
+  return await response.json();
+};
+
+/**
+ * Retrieve record type mappings or page layout information
+ * @param sObjectType
+ * @param pageLayoutId Salesforce Id of a page layout
+ */
+export const describeLayout = async (
+  sObjectType: string,
+  pageLayoutId: string
+): Promise<DescribeLayouts> => {
+  const accessToken = await storage.load({
+    key: ASYNC_STORAGE_KEYS.SALESFORCE_ACCESS_TOKEN,
+  });
+  const endPoint =
+    (await buildEndpointUrl()) + `/sobjects/${sObjectType}/describe/layouts/${pageLayoutId}`;
+  const response = await fetch(endPoint, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
   });
   return await response.json();
 };

@@ -1,7 +1,7 @@
 import { getSalesforceRecords } from './core';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
 import { prepareIdsForSalesforce, prepareIdsForSqllite } from '../../../utility';
-import { saveRecords, DB_TABLE, clearTable, getRecords } from '../../Database';
+import { saveRecordsOld, DB_TABLE, clearTable, getRecords } from '../../Database';
 import { logger } from '../../../utility/logger';
 
 const getLoggedInCDWContact = async () => {
@@ -23,7 +23,7 @@ const getLoggedInUserMothersChilds = async contactsIds => {
   const query = `SELECT Id,Name,Address_Locator__c,FirstName,LastName,Ante_natal_Mother__c FROM contact WHERE Id IN (${ids})`;
   const response = await getSalesforceRecords(query);
   await clearTable(DB_TABLE.CONTACT);
-  await saveRecords(DB_TABLE.CONTACT, response.records);
+  await saveRecordsOld(DB_TABLE.CONTACT, response.records);
   return response;
 };
 

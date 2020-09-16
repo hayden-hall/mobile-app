@@ -1,6 +1,6 @@
 import { Alert } from 'react-native';
 
-import { clearDatabase } from '../services/Database';
+import { clearDatabase } from './database';
 import { clearStorage } from '../utility/storage';
 
 import i18n from '../config/i18n';
