@@ -1,5 +1,5 @@
 export interface RecordType {
-  name: string;
+  name: string; // Primary key
   label: string;
   recordTypeId: string;
   layoutId: string;
@@ -10,10 +10,14 @@ export interface FieldTypeMapping {
   type: 'text' | 'integer' | 'blob'; // NOTICE: sqlite cannot have boolean type
 }
 
-export interface PageLayoutItem {
-  pageLayoutId: string;
-  pageLayoutLabel: string;
+export interface PageLayoutSection {
+  id: string; // Primary key
+  layoutId: string;
   sectionLabel: string;
+}
+
+export interface PageLayoutItem {
+  sectionId: string;
   fieldName: string;
   fieldLabel: string;
   fieldType: string;

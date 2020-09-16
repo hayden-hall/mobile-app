@@ -1,9 +1,9 @@
 import { refreshAccessToken } from '../auth';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
 import { logger } from '../../../utility/logger';
-import { DescribeLayouts } from '../../../../src/types/metadata';
+import { DescribeLayoutResult, DescribeLayout } from '../../../../src/types/metadata';
 
-const SALESFORCE_API_VERSION = 'v45.0';
+const SALESFORCE_API_VERSION = 'v49.0';
 
 export const SALESFORCE_CREATE_OBJECT_NAME = {
   SURVEYS: 'Surveys',
@@ -81,20 +81,43 @@ const fetchInsert = async (objectName, record) => {
 };
 
 /**
- * Retrieve record type mappings or page layout information
+ * Retrieve record type mappings information
  * @param sObjectType
- * @param pageLayoutId Salesforce Id of a page layout
+ * @see https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/resources_sobject_layouts.htm
+ */
+export const describeLayoutResult = async (sObjectType: string): Promise<DescribeLayoutResult> => {
+  const accessToken = await storage.load({
+    key: ASYNC_STORAGE_KEYS.SALESFORCE_ACCESS_TOKEN,
+  });
+  const endPoint = (await buildEndpointUrl()) + `/sobjects/${sObjectType}/describe/layouts`;
+  logger('DEBUG', 'describeLayoutResult', endPoint);
+
+  const response = await fetch(endPoint, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  return await response.json();
+};
+
+/**
+ * Retrieve page layout information
+ * @param sObjectType
+ * @param recordTypeId
+ * @see https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/resources_sobject_layouts.htm
  */
 export const describeLayout = async (
   sObjectType: string,
-  pageLayoutId: string
-): Promise<DescribeLayouts> => {
+  recordTypeId: string
+): Promise<DescribeLayout> => {
   const accessToken = await storage.load({
     key: ASYNC_STORAGE_KEYS.SALESFORCE_ACCESS_TOKEN,
   });
   const endPoint =
     (await buildEndpointUrl()) +
-    `/sobjects/${sObjectType}/describe/layouts/${pageLayoutId ? pageLayoutId : ''}`;
+    `/sobjects/${sObjectType}/describe/layouts/${recordTypeId ? recordTypeId : ''}`;
+  logger('DEBUG', 'describeLayout', endPoint);
 
   const response = await fetch(endPoint, {
     method: 'GET',

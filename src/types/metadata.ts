@@ -1,3 +1,7 @@
+/**
+ * @description List of mapping of record type and assigend page layout
+ * @see https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_calls_describelayout_describelayoutresult.htm#i1425854
+ */
 export interface DescribeLayoutResult {
   recordTypeMappings: Array<RecordTypeMapping>;
 }
@@ -16,13 +20,19 @@ export interface RecordTypeMapping {
   };
 }
 
+/**
+ * @description Page layout metadata
+ * @see https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_calls_describelayout_describelayoutresult.htm#i1425854
+ */
 export interface DescribeLayout {
   editLayoutSections: Array<DescribeLayoutSection>;
 }
 
 export interface DescribeLayoutSection {
   useHeading: boolean;
+  heading: string;
   parentLayoutId: string;
+  layoutSectionId: string;
   tabOrder: 'LeftToRight' | 'TopToBottom';
   layoutRows: Array<DescribeLayoutRow>;
 }

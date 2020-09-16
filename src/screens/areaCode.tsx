@@ -3,7 +3,7 @@ import { View, StyleSheet, KeyboardAvoidingView, ImageBackground } from 'react-n
 
 import { getCDWContact } from '../services/api/salesforce/Contact';
 import { refreshAll } from '../services/Refresh';
-import { storeRecordTypes } from '../services/describe';
+import { storeRecordTypes, storePageLayoutItems } from '../services/describe';
 
 import { TextInput, CustomButton, Loader } from '../components';
 
@@ -78,7 +78,6 @@ export default function AreaCode({ navigation }) {
         key: ASYNC_STORAGE_KEYS.CDW_WORKED_NAME,
         data: workerContact.Name,
       });
-      await refreshAppData();
     } else {
       setTimeout(() => {
         alert(i18n.t('AREA_CODE_NOT_FOUND'));
@@ -94,9 +93,9 @@ export default function AreaCode({ navigation }) {
     try {
       setShowsSpinner(true);
       await refreshAll(); // TODO: remove
-      await storeRecordTypes('Survey__c'); // TODO: Dynamic
+      const recordTypes = await storeRecordTypes('Survey__c'); // TODO: Dynamic
+      await storePageLayoutItems('Survey__c', recordTypes[0].recordTypeId); // TODO: Dynamic and all
       setShowsSpinner(false);
-      navigation.navigate('SurveyList');
     } catch (error) {
       setShowsSpinner(false);
       setTimeout(() => {
@@ -135,6 +134,7 @@ export default function AreaCode({ navigation }) {
                   validateInput();
                   await retrieveContactDetail();
                   await refreshAppData();
+                  navigation.navigate('SurveyList');
                 } catch (error) {
                   logger('ERROR', 'AreaCode', `${error}`);
                 }

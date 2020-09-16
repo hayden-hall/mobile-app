@@ -21,6 +21,8 @@ export const DB_TABLE = {
   CDW_JUNCTION: 'CDW_Client_Junction__c',
   SURVEY: 'Survey__c',
   RECORD_TYPE: 'RecordType',
+  PAGE_LAYOUT_SECTION: 'PageLayoutSection',
+  PAGE_LAYOUT_ITEM: 'PageLayoutItem',
 };
 
 /**
@@ -155,30 +157,37 @@ export const deleteRecord = (table, LocalId) => {
   });
 };
 
-export const clearTable = table => {
+/**
+ * @description Drop table
+ * @param tableName
+ */
+export const clearTable = (tableName: string) => {
   return new Promise((resolve, reject) => {
-    const sqlStatement = `DROP TABLE IF EXISTS ${table};`;
-    try {
-      database.transaction(tx => {
-        tx.executeSql(sqlStatement, [], (txn, result) => {
-          resolve(true);
-        });
+    logger('DEBUG', 'clearTable', `Deleting ${tableName}`);
+    const statement = `DROP TABLE IF EXISTS ${tableName};`;
+
+    executeTransaction(statement)
+      .then(result => {
+        resolve(result);
+      })
+      .catch(error => {
+        reject(error);
       });
-    } catch (error) {
-      console.log(error);
-      reject(error);
-    }
   });
 };
 
+/**
+ * @description Drop all the local tables
+ */
 export const clearDatabase = async () => {
   for (const [key, value] of Object.entries(DB_TABLE)) {
+    logger('DEBUG', 'clearDatabase', 'Deleting all the tables');
     await clearTable(value);
   }
 };
 
 /**
- * @description private function to generate insert statement
+ * @deprecated
  * @param table
  * @param records
  * @param fields
@@ -265,7 +274,7 @@ const checkAndCreateTableWithDataTypes = (table, fieldsWithDataType) => {
 };
 
 /**
- * @description Create table if not exists, given table name and field type mappings. 'name' field or 'localId' field will be primary.
+ * @description Create table if not exists, given table name and field type mappings. 'name', 'id' or 'localId' field will be primary.
  * @param fieldName Name of table on sqlite
  * @param fieldTypeMappings Array of field type mapping
  * @param hasLocalId
@@ -278,7 +287,7 @@ export const prepareTable = (
   return new Promise((resolve, reject) => {
     const fieldsWithType = fieldTypeMappings
       .map(field => {
-        if (field.name === 'name') {
+        if (field.name === 'name' || field.name === 'id') {
           return `${field.name} ${field.type} primary key`;
         } else {
           return `${field.name} ${field.type}`;
@@ -287,17 +296,19 @@ export const prepareTable = (
       .join(',');
     const localId = 'localId integer primary key autoincrement';
     const fieldsInStatement = hasLocalId ? `${localId},${fieldsWithType}` : fieldsWithType;
+    logger(
+      'DEBUG',
+      'prepareTable',
+      `create table if not exists ${tableName} (${fieldsInStatement});`
+    );
 
-    try {
-      database.transaction(tx => {
-        tx.executeSql(`create table if not exists ${tableName} (${fieldsInStatement});`, [], () => {
-          resolve(database);
-        });
+    executeTransaction(`create table if not exists ${tableName} (${fieldsInStatement});`)
+      .then(result => {
+        resolve(result);
+      })
+      .catch(error => {
+        reject(error);
       });
-    } catch (error) {
-      console.log(error);
-      reject(error);
-    }
   });
 };
 
@@ -313,6 +324,7 @@ const getFieldTypeMappings = (record: Record<string, any>): Array<FieldTypeMappi
     if (typeof value === 'number' || typeof value === 'boolean') {
       type = 'integer';
     } else {
+      // string
       type = 'text';
     }
     result.push({
@@ -321,6 +333,24 @@ const getFieldTypeMappings = (record: Record<string, any>): Array<FieldTypeMappi
     });
   }
   return result;
+};
+
+/**
+ * @description Convert values of a record into sqlite supported formated string for dml statement
+ * @param record
+ * @param fieldTypeMappings
+ * @example { name: 'Hello', id: 1} => ('Hello', 1)
+ */
+const convertValueToSQLite = (record): string => {
+  const values = Object.entries(record).map(([key, value]) => {
+    if (typeof value === 'string') {
+      return `'${value.replace(/'/g, "''")}'`;
+    } else if (typeof value === 'boolean') {
+      return value ? 1 : 0; // 1: true, 0: false
+    }
+    return value;
+  });
+  return `(${values})`;
 };
 
 /**
@@ -335,18 +365,48 @@ export const saveRecords = (tableName: string, records, hasLocalId) => {
     await prepareTable(tableName, fieldTypeMappings, hasLocalId);
 
     const keys = fieldTypeMappings.map(field => field.name).join(','); // e.g., 'developerName', 'recordTypeId', ...
-    const values = records.map(r => `(${Object.values(r).join(',')})`).join(','); // e.g,  ('a1', 'b2'), ('c1', 'd2')
+    const values = records
+      .map(record => {
+        return convertValueToSQLite(record);
+      })
+      .join(','); // e.g., ('a1', 'b2'), ('c1', 'd2')
     const statement = `insert into ${tableName} (${keys}) values ${values}`;
     logger('DEBUG', 'saveRecords', statement);
 
+    executeTransaction(statement)
+      .then(result => {
+        resolve(result);
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+};
+
+/**
+ * @description Wrapper private (async) function to execute sql statement.
+ * @param statement
+ */
+const executeTransaction = (statement: string) => {
+  return new Promise((resolve, reject) => {
     try {
       database.transaction(tx => {
-        tx.executeSql(statement, null, (txn, result) => {
-          resolve(result);
-        });
+        tx.executeSql(
+          statement,
+          null,
+          (txn, result) => {
+            logger('DEBUG', 'sqlite', 'success');
+            resolve(result);
+          },
+          (txn, error) => {
+            logger('ERROR', 'sqlite', error);
+            reject(error);
+            return false;
+          }
+        );
       });
     } catch (error) {
-      console.log(error);
+      logger('ERROR', 'sqlite', 'error');
       reject(error);
     }
   });
