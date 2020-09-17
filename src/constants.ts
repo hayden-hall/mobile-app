@@ -45,3 +45,10 @@ export const BACKGROUND_IMAGE_STYLE: ImageStyle = {
   position: 'absolute',
   top: '25%', // TODO: Put bottom
 };
+
+export const DB_TABLE = {
+  RecordType: 'RecordType',
+  PageLayoutSection: 'PageLayoutSection',
+  PageLayoutItem: 'PageLayoutItem',
+  Survey: 'Survey',
+};

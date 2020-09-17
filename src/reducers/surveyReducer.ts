@@ -1,5 +1,3 @@
-import { any } from 'prop-types';
-
 interface SurveyAction {
   type: SurveyActionType;
   surveys?: any;

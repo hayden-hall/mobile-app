@@ -1,16 +1,18 @@
 import { describeLayoutResult, describeLayout } from './api/salesforce/core';
-import { saveRecords } from './database';
+import { saveRecords, getAllRecords } from './database';
 
 import { RecordType, PageLayoutSection, PageLayoutItem } from '../types/sqlite';
 import { logger } from '../utility/logger';
 import { DescribeLayoutResult, DescribeLayout } from '../types/metadata';
 
+import { DB_TABLE } from '../constants';
+import { SURVEY_OBJECT } from 'react-native-dotenv';
+
 /**
  * @description Query record types by REST API (describe layouts) and save the results to local database.
- * @param sObjectType
  */
-export const storeRecordTypes = async (sObjectType: string) => {
-  const response: DescribeLayoutResult = await describeLayoutResult(sObjectType);
+export const storeRecordTypes = async () => {
+  const response: DescribeLayoutResult = await describeLayoutResult(SURVEY_OBJECT);
   const recordTypes: Array<RecordType> = response.recordTypeMappings
     .filter(r => r.active)
     .map(r => ({
@@ -20,18 +22,17 @@ export const storeRecordTypes = async (sObjectType: string) => {
       layoutId: r.layoutId,
     }));
   logger('DEBUG', 'storeRecordTypes', `${JSON.stringify(recordTypes)}`);
-  await saveRecords('RecordType', recordTypes, false);
+  await saveRecords(DB_TABLE.RecordType, recordTypes, false);
 
   return recordTypes;
 };
 
 /**
  * @description Query layouts and fields by Rest API (describe layout) and save the result to local database.
- * @param sObjectType
  * @param pageLayoutId
  */
-export const storePageLayoutItems = async (sObjectType: string, pageLayoutId: string) => {
-  const response: DescribeLayout = await describeLayout(sObjectType, pageLayoutId);
+export const storePageLayoutItems = async (pageLayoutId: string) => {
+  const response: DescribeLayout = await describeLayout(SURVEY_OBJECT, pageLayoutId);
   const pageLayoutSections: Array<PageLayoutSection> = response.editLayoutSections
     .filter(section => section.useHeading)
     .map(section => ({
@@ -40,7 +41,7 @@ export const storePageLayoutItems = async (sObjectType: string, pageLayoutId: st
       sectionLabel: section.heading,
     }));
   logger('FINE', 'storePageLayoutItems | sections', pageLayoutSections);
-  await saveRecords('PageLayoutSection', pageLayoutSections, false);
+  await saveRecords(DB_TABLE.PageLayoutSection, pageLayoutSections, false);
 
   const pageLayoutItems: Array<PageLayoutItem> = response.editLayoutSections
     .filter(section => section.useHeading)
@@ -60,7 +61,12 @@ export const storePageLayoutItems = async (sObjectType: string, pageLayoutId: st
     })
     .flat(3);
   logger('FINE', 'storePageLayoutItems | items', pageLayoutItems);
-  await saveRecords('PageLayoutItem', pageLayoutItems, true);
+  await saveRecords(DB_TABLE.PageLayoutItem, pageLayoutItems, true);
 
   return response;
+};
+
+export const getAllRecordTypes = async () => {
+  const recordTypes: Array<any> = await getAllRecords(DB_TABLE.RecordType);
+  return recordTypes;
 };

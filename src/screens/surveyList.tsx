@@ -86,7 +86,7 @@ export default function SurveyList({ navigation }) {
           size={22}
           color={APP_THEME.APP_BASE_FONT_COLOR}
           onPress={() => {
-            navigation.navigate('SurveyPicker');
+            navigation.navigate('SurveyTypePicker');
           }}
         />
       </View>

@@ -1,3 +1,5 @@
+import { LOGGING_LEVEL } from 'react-native-dotenv';
+
 const LoggingLevel = {
   ERROR: 0,
   INFO: 1,
@@ -7,7 +9,7 @@ const LoggingLevel = {
 type LoggingLevel = keyof typeof LoggingLevel;
 
 export function logger(loggingLevel: LoggingLevel, name: string, message: string | object) {
-  const userLoggingLevel = process.env.LOGGING_LEVEL ? process.env.LOGGING_LEVEL : 'DEBUG';
+  const userLoggingLevel = LOGGING_LEVEL ? LOGGING_LEVEL : 'DEBUG';
   if (LoggingLevel[loggingLevel] > LoggingLevel[userLoggingLevel]) {
     return;
   }

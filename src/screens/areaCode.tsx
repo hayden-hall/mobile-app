@@ -93,8 +93,8 @@ export default function AreaCode({ navigation }) {
     try {
       setShowsSpinner(true);
       await refreshAll(); // TODO: remove
-      const recordTypes = await storeRecordTypes('Survey__c'); // TODO: Dynamic
-      await storePageLayoutItems('Survey__c', recordTypes[0].recordTypeId); // TODO: Dynamic and all
+      const recordTypes = await storeRecordTypes();
+      await storePageLayoutItems(recordTypes[0].recordTypeId); // TODO: all
       setShowsSpinner(false);
     } catch (error) {
       setShowsSpinner(false);

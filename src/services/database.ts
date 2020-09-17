@@ -180,8 +180,8 @@ export const clearTable = (tableName: string) => {
  * @description Drop all the local tables
  */
 export const clearDatabase = async () => {
+  logger('DEBUG', 'clearDatabase', 'Deleting all the tables');
   for (const [key, value] of Object.entries(DB_TABLE)) {
-    logger('DEBUG', 'clearDatabase', 'Deleting all the tables');
     await clearTable(value);
   }
 };
@@ -388,7 +388,7 @@ export const saveRecords = (tableName: string, records, hasLocalId) => {
  * @param statement
  */
 const executeTransaction = (statement: string) => {
-  return new Promise((resolve, reject) => {
+  return new Promise<SQLite.SQLResultSet>((resolve, reject) => {
     try {
       database.transaction(tx => {
         tx.executeSql(
@@ -409,5 +409,24 @@ const executeTransaction = (statement: string) => {
       logger('ERROR', 'sqlite', 'error');
       reject(error);
     }
+  });
+};
+
+/**
+ * @description
+ * @oaram tableName
+ */
+export const getAllRecords = (tableName: string) => {
+  return new Promise<Array<any>>(async (resolve, reject) => {
+    const statement = `select * from ${tableName}`;
+    logger('DEBUG', 'getAllRecords', statement);
+
+    executeTransaction(statement)
+      .then(result => {
+        resolve(result.rows._array);
+      })
+      .catch(error => {
+        reject(error);
+      });
   });
 };
