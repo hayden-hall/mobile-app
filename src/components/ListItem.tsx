@@ -1,23 +1,26 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { View, TouchableHighlight, StyleSheet } from 'react-native';
 import { TextHeading } from './TextHeading';
 import { TextSubheading } from './TextSubheading';
 import { APP_THEME } from '../constants';
 
-class ListItem extends PureComponent {
-  render = () => {
-    const { innerContainer, row } = styles;
-    const { title, subtitle, onPress, showCaret } = this.props;
-    return (
-      <TouchableHighlight style={row} onPress={onPress} underlayColor={'#EEEEEE'}>
-        <View style={innerContainer}>
-          <TextHeading>{title}</TextHeading>
-          {subtitle && <TextSubheading>{subtitle}</TextSubheading>}
-          {showCaret && <View style={styles.triangleCorner} />}
-        </View>
-      </TouchableHighlight>
-    );
-  };
+interface ListItemProps {
+  title: string;
+  subtitle?: string;
+  onPress(): void;
+  showCaret?: boolean;
+}
+
+export default function ListItem(props: ListItemProps) {
+  return (
+    <TouchableHighlight style={styles.row} onPress={props.onPress} underlayColor={'#EEEEEE'}>
+      <View style={styles.innerContainer}>
+        <TextHeading>{props.title}</TextHeading>
+        {props.subtitle && <TextSubheading>{props.subtitle}</TextSubheading>}
+        {props.showCaret && <View style={styles.triangleCorner} />}
+      </View>
+    </TouchableHighlight>
+  );
 }
 
 const styles = StyleSheet.create({
