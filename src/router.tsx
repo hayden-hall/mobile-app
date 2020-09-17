@@ -62,7 +62,14 @@ export default function Router() {
             ...headerStyle,
           })}
         />
-        <Stack.Screen name="SurveyTypePicker" component={SurveyTypePicker} />
+        <Stack.Screen
+          name="SurveyTypePicker"
+          component={SurveyTypePicker}
+          options={{
+            title: i18n.t('CHOOSE_SURVEY'),
+            ...headerStyle,
+          }}
+        />
         <Stack.Screen name="SurveyEditor" component={Survey} />
         <Stack.Screen name="SurveyCompleted" component={SurveyCompleted} />
         <Stack.Screen name="Settings" component={Settings} />
