@@ -94,7 +94,9 @@ export default function AreaCode({ navigation }) {
       setShowsSpinner(true);
       await refreshAll(); // TODO: remove
       const recordTypes = await storeRecordTypes();
-      await storePageLayoutItems(recordTypes[0].recordTypeId); // TODO: all
+      for (const rt of recordTypes) {
+        await storePageLayoutItems(rt.recordTypeId); // TODO: all
+      }
       setShowsSpinner(false);
     } catch (error) {
       setShowsSpinner(false);

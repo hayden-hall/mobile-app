@@ -15,7 +15,7 @@ import { SURVEY_OBJECT } from 'react-native-dotenv';
 export const storeRecordTypes = async () => {
   const response: DescribeLayoutResult = await describeLayoutResult(SURVEY_OBJECT);
   const recordTypes: Array<RecordType> = response.recordTypeMappings
-    .filter(r => r.active)
+    .filter(r => r.active && r.name !== 'Master') // TODO: For single record type and navigation
     .map(r => ({
       name: r.developerName,
       label: r.name,
@@ -30,15 +30,15 @@ export const storeRecordTypes = async () => {
 
 /**
  * @description Query layouts and fields by Rest API (describe layout) and save the result to local database.
- * @param pageLayoutId
+ * @param recordTypeId
  */
-export const storePageLayoutItems = async (pageLayoutId: string) => {
-  const response: DescribeLayout = await describeLayout(SURVEY_OBJECT, pageLayoutId);
+export const storePageLayoutItems = async (recordTypeId: string) => {
+  const response: DescribeLayout = await describeLayout(SURVEY_OBJECT, recordTypeId);
   const pageLayoutSections: Array<PageLayoutSection> = response.editLayoutSections
     .filter(section => section.useHeading)
     .map(section => ({
       id: section.layoutSectionId,
-      layoutId: pageLayoutId,
+      layoutId: section.parentLayoutId,
       sectionLabel: section.heading,
     }));
   logger('FINE', 'storePageLayoutItems | sections', pageLayoutSections);
