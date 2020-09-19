@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, ImageBackground } from 'react-native';
 import { Divider } from 'react-native-elements';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 import { getAllRecordTypes } from '../services/describe';
 import { ListItem } from '../components';
@@ -13,9 +14,15 @@ import {
 } from '../constants';
 import { logger } from '../utility/logger';
 
-export default function SurveyTypePicker({ navigation }) {
+import { StackParamList } from '../router';
+type SurveyTypePickerNavigationProp = StackNavigationProp<StackParamList, 'SurveyTypePicker'>;
+
+type Props = {
+  navigation: SurveyTypePickerNavigationProp;
+};
+
+export default function SurveyTypePicker({ navigation }: Props) {
   const [recordTypes, setRecordTypes] = useState([]);
-  const [selectedRecordTypeId, setSelectedRecordTypeId] = useState('');
 
   useEffect(() => {
     const fetch = async () => {
@@ -39,8 +46,11 @@ export default function SurveyTypePicker({ navigation }) {
               key={item.name}
               title={item.label}
               onPress={() => {
-                setSelectedRecordTypeId(item.recordTypeId);
                 logger('DEBUG', 'SurveyTypePicker', item.recordTypeId);
+                navigation.navigate('SurveyEditor', {
+                  selectedLayoutId: item.layoutId,
+                  selectedRecordTypeId: item.recordTypeId,
+                });
               }}
             />
           )}

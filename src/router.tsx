@@ -30,6 +30,19 @@ const headerStyle = {
   },
 };
 
+export type StackParamList = {
+  Login: undefined;
+  AreaCode: undefined;
+  SurveyList: undefined;
+  SurveyTypePicker: undefined;
+  SurveyEditor: {
+    selectedRecordTypeId: string;
+    selectedLayoutId: string;
+  };
+  SurveyCompleted: undefined;
+  Settings: undefined;
+};
+
 const Stack = createStackNavigator();
 
 export default function Router() {
