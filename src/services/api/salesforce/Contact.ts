@@ -1,7 +1,7 @@
 import { getSalesforceRecords } from './core';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
 import { prepareIdsForSalesforce, prepareIdsForSqllite } from '../../../utility';
-import { saveRecordsOld, DB_TABLE, clearTable, getRecords } from '../../database';
+import { saveRecordsOld, DB_TABLE, clearTable, getRecords, getAllRecords } from '../../database';
 import { logger } from '../../../utility/logger';
 
 const getLoggedInCDWContact = async () => {
@@ -28,7 +28,7 @@ const getLoggedInUserMothersChilds = async contactsIds => {
 };
 
 const getBeneficiaries = async () => {
-  const CDWRecords = await getRecords(DB_TABLE.CDW_JUNCTION, '');
+  const CDWRecords = await getAllRecords(DB_TABLE.CDW_JUNCTION);
 
   const beneficiariesIds = CDWRecords.map(cdwRecord => cdwRecord.Beneficiary_Name__c);
 
@@ -38,7 +38,7 @@ const getBeneficiaries = async () => {
 };
 
 const getMothers = async () => {
-  const CDWRecords = await getRecords(DB_TABLE.CDW_JUNCTION, '');
+  const CDWRecords = await getAllRecords(DB_TABLE.CDW_JUNCTION);
 
   const mothersIds = CDWRecords.map(cdwRecord => cdwRecord.Mother__c);
 
@@ -48,7 +48,7 @@ const getMothers = async () => {
 };
 
 const getAnteNatalMothers = async () => {
-  const CDWRecords = await getRecords(DB_TABLE.CDW_JUNCTION, '');
+  const CDWRecords = await getAllRecords(DB_TABLE.CDW_JUNCTION);
 
   const mothersIds = CDWRecords.map(cdwRecord => cdwRecord.Mother__c);
 
@@ -71,7 +71,7 @@ const getChildsForMother = async motherId => {
 };
 
 const getAllOfflineContacts = async () => {
-  return await getRecords(DB_TABLE.CONTACT, '');
+  return await getAllRecords(DB_TABLE.CONTACT);
 };
 
 export {

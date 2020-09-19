@@ -25,36 +25,6 @@ export const DB_TABLE = {
   PAGE_LAYOUT_ITEM: 'PageLayoutItem',
 };
 
-/**
- * @deprecated
- * @param table
- * @param records
- */
-export const saveRecordsOld = (table, records) => {
-  return new Promise(async (resolve, reject) => {
-    const firstRecord = records[0];
-    const fields = getDatabaseFields(firstRecord);
-
-    //Check for table.
-    await checkAndCreateTable(table, fields);
-
-    //Prepare insert statement
-    const sqlInsertStatement = prepareInsertStatement(table, records, fields);
-    logger('DEBUG', 'Database Insert', sqlInsertStatement);
-
-    try {
-      database.transaction(tx => {
-        tx.executeSql(sqlInsertStatement, null, (txn, result) => {
-          resolve(result);
-        });
-      });
-    } catch (error) {
-      console.log(error);
-      reject(error);
-    }
-  });
-};
-
 export const updateRecord = async (table, record, LocalId) => {
   return new Promise((resolve, reject) => {
     const fields = getDatabaseFields(record);
@@ -100,28 +70,26 @@ export const saveRecordsWithFields = async (
   });
 };
 
-export const getRecords = (table, whereQuery): Promise<Array<any>> => {
-  return new Promise((resolve, reject) => {
-    const sqlStatement = `SELECT * FROM ${table} ${whereQuery || ''}`;
-    try {
-      database.transaction(tx => {
-        tx.executeSql(
-          sqlStatement,
-          [],
-          (txn, result) => {
-            const rows = result.rows as any;
-            resolve(rows._array);
-          },
-          () => {
-            resolve([]);
-            return true;
-          }
-        );
-      });
-    } catch (error) {
-      console.log(error);
-      reject(error);
+/**
+ *
+ * @param tableName
+ * @param whereClause
+ */
+export const getRecords = (tableName, whereClause): Promise<Array<any>> => {
+  return new Promise<Array<any>>(async (resolve, reject) => {
+    if (!whereClause) {
+      reject('Specify where clause or use "getAllRecords" instead.');
     }
+    const statement = `select * from ${tableName} ${whereClause}`;
+    logger('DEBUG', 'getAllRecords', statement);
+
+    executeTransaction(statement)
+      .then(result => {
+        resolve(result.rows._array);
+      })
+      .catch(error => {
+        reject(error);
+      });
   });
 };
 
@@ -141,9 +109,14 @@ export const markRecordNonDirty = (table, LocalId) => {
   });
 };
 
-export const deleteRecord = (table, LocalId) => {
+/**
+ * @description Delete a record in local table
+ * @param tableName
+ * @param LocalId
+ */
+export const deleteRecord = (tableName, LocalId) => {
   return new Promise((resolve, reject) => {
-    const sqlStatement = `DELETE FROM ${table} WHERE LocalId = ${LocalId}`;
+    const sqlStatement = `DELETE FROM ${tableName} WHERE LocalId = ${LocalId}`;
     try {
       database.transaction(tx => {
         tx.executeSql(sqlStatement, [], (txn, result) => {
@@ -174,47 +147,6 @@ export const clearTable = (tableName: string) => {
         reject(error);
       });
   });
-};
-
-/**
- * @description Drop all the local tables
- */
-export const clearDatabase = async () => {
-  logger('DEBUG', 'clearDatabase', 'Deleting all the tables');
-  for (const [key, value] of Object.entries(DB_TABLE)) {
-    await clearTable(value);
-  }
-};
-
-/**
- * @deprecated
- * @param table
- * @param records
- * @param fields
- */
-const prepareInsertStatement = (table, records, fields) => {
-  const valuesArray = [];
-  records.forEach(record => {
-    const values = [];
-    fields.forEach(field => {
-      values.push(`"${record[field]}"`);
-    });
-    valuesArray.push(`(${values.join(',')})`);
-  });
-
-  const keys = fields.join(',');
-  return `insert into ${table} (${keys}) values ${valuesArray.join(',')}`;
-};
-
-const prepareUpdateStatement = (table, record, fields, LocalId) => {
-  const pairArray = [];
-  fields.forEach(field => {
-    //Leave as it is for lookup fields
-    if (!SURVEY_LOOKUP_FIELDS.includes(field)) {
-      pairArray.push(`${field}="${record[field]}"`);
-    }
-  });
-  return `UPDATE ${table} SET ${pairArray.join(',')} WHERE LocalId = ${LocalId}`;
 };
 
 const getDatabaseFields = record => {
@@ -277,7 +209,7 @@ const checkAndCreateTableWithDataTypes = (table, fieldsWithDataType) => {
  * @description Create table if not exists, given table name and field type mappings. 'name', 'id' or 'localId' field will be primary.
  * @param fieldName Name of table on sqlite
  * @param fieldTypeMappings Array of field type mapping
- * @param hasLocalId
+ * @param hasLocalId // TODO: specify primary key field name
  */
 export const prepareTable = (
   tableName: string,
@@ -429,4 +361,82 @@ export const getAllRecords = (tableName: string) => {
         reject(error);
       });
   });
+};
+
+/**
+ * @deprecated
+ * @param table
+ * @param records
+ */
+export const saveRecordsOld = (table, records) => {
+  return new Promise(async (resolve, reject) => {
+    const firstRecord = records[0];
+    const fields = getDatabaseFields(firstRecord);
+
+    //Check for table.
+    await checkAndCreateTable(table, fields);
+
+    //Prepare insert statement
+    const sqlInsertStatement = prepareInsertStatement(table, records, fields);
+    logger('DEBUG', 'Database Insert', sqlInsertStatement);
+
+    try {
+      database.transaction(tx => {
+        tx.executeSql(sqlInsertStatement, null, (txn, result) => {
+          resolve(result);
+        });
+      });
+    } catch (error) {
+      console.log(error);
+      reject(error);
+    }
+  });
+};
+
+/**
+ * @description Drop all the local tables
+ */
+export const clearDatabase = async () => {
+  logger('DEBUG', 'clearDatabase', 'Deleting all the tables');
+  for (const [key, value] of Object.entries(DB_TABLE)) {
+    await clearTable(value);
+  }
+};
+
+/**
+ * @deprecated
+ * @param table
+ * @param records
+ * @param fields
+ */
+const prepareInsertStatement = (table, records, fields) => {
+  const valuesArray = [];
+  records.forEach(record => {
+    const values = [];
+    fields.forEach(field => {
+      values.push(`"${record[field]}"`);
+    });
+    valuesArray.push(`(${values.join(',')})`);
+  });
+
+  const keys = fields.join(',');
+  return `insert into ${table} (${keys}) values ${valuesArray.join(',')}`;
+};
+
+/**
+ * @deprecated
+ * @param table
+ * @param record
+ * @param fields
+ * @param LocalId
+ */
+const prepareUpdateStatement = (table, record, fields, LocalId) => {
+  const pairArray = [];
+  fields.forEach(field => {
+    //Leave as it is for lookup fields
+    if (!SURVEY_LOOKUP_FIELDS.includes(field)) {
+      pairArray.push(`${field}="${record[field]}"`);
+    }
+  });
+  return `UPDATE ${table} SET ${pairArray.join(',')} WHERE LocalId = ${LocalId}`;
 };

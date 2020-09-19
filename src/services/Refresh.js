@@ -1,7 +1,5 @@
-import {
-  getLoggedInCDWContact,
-  getLoggedInUserMothersChilds
-} from './api/salesforce/Contact';
+/* eslint-disable @typescript-eslint/camelcase */
+import { getLoggedInCDWContact, getLoggedInUserMothersChilds } from './api/salesforce/Contact';
 import { getCDWClientJunctionObjects } from './api/salesforce/CDWJunction';
 import {
   getAllSurveysFromSalesforce,
@@ -9,14 +7,14 @@ import {
   getAllSurveySectionsFromSalesforce,
   getAllSurveyQuestionsFromSalesforce,
   getOfflineSurveys,
-  uploadSurveyToSalesforce
+  uploadSurveyToSalesforce,
 } from './api/salesforce/Survey';
 import { ASYNC_STORAGE_KEYS } from '../constants';
 
 export const refreshAll = async () => {
   const CDW_Worker_Id = await getLoggedInCDWContact();
   const AREA_CODE = await storage.load({
-    key: ASYNC_STORAGE_KEYS.AREA_CODE
+    key: ASYNC_STORAGE_KEYS.AREA_CODE,
   });
   if (CDW_Worker_Id && AREA_CODE) {
     await syncUpData();
@@ -27,13 +25,9 @@ export const refreshAll = async () => {
       const cdwRecords = cdwResponse.records;
       //Fetch all mother belongs to this CDW.
 
-      const motherIds = cdwRecords.map(
-        record => record.Mother__c && record.Mother__c
-      );
+      const motherIds = cdwRecords.map(record => record.Mother__c && record.Mother__c);
       //Fetch all childs belongs to this CDW.
-      const childIds = cdwRecords.map(
-        record => record.Child__c && record.Child__c
-      );
+      const childIds = cdwRecords.map(record => record.Child__c && record.Child__c);
       //Fetch all beneficiaries belongs to this CDW.
       const beneIds = cdwRecords.map(
         record => record.Beneficiary_Name__c && record.Beneficiary_Name__c
@@ -43,7 +37,7 @@ export const refreshAll = async () => {
       await getLoggedInUserMothersChilds([
         ...(motherIds || []),
         ...(childIds || []),
-        ...(beneIds || [])
+        ...(beneIds || []),
       ]);
 
       //Download all available survey metadata
@@ -98,12 +92,12 @@ const getSurveyFields = questions => {
     'Mother__c#TEXT',
     'Area_Code__c#TEXT',
     'RecordTypeId#TEXT',
-    'Name#TEXT'
+    'Name#TEXT',
   ];
 
   fields = [...fields, ...additionalFields];
 
-  let uniqueFields = [...new Set(fields)];
+  const uniqueFields = [...new Set(fields)];
   console.log(uniqueFields);
   return uniqueFields;
 };

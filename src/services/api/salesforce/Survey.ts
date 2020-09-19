@@ -6,6 +6,7 @@ import {
   DB_TABLE,
   clearTable,
   getRecords,
+  getAllRecords,
   saveRecordsWithFields,
   markRecordNonDirty,
 } from '../../database';
@@ -64,7 +65,7 @@ const getAllSurveyQuestionsFromSalesforce = async () => {
 };
 
 export const getAllSurveys = async () => {
-  let records = await getRecords(DB_TABLE.SURVEY, '');
+  let records = await getAllRecords(DB_TABLE.SURVEY, '');
   const contacts = await getAllOfflineContacts();
   const surveyMetadata = await getOfflineStoredSurveyMetadata();
 
