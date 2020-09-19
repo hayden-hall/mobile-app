@@ -1,4 +1,4 @@
-import { ImageStyle, ViewStyle } from 'react-native';
+import { ImageStyle, ViewStyle, Dimensions } from 'react-native';
 
 export const APP_FONTS = {
   FONT_REGULAR: 'SalesforceSans-Regular',
@@ -29,21 +29,19 @@ export const ASYNC_STORAGE_KEYS = {
 };
 
 export const BACKGROUND_IMAGE_SOURCE = require('../assets/images/background3x.png');
+const ratio = Dimensions.get('window').width / 1050; // 1050 is image width
+const height = 534 * ratio;
 
 // Style for background container
 export const BACKGROUND_STYLE: ViewStyle = {
   flex: 1,
-  width: '100%',
-  height: '100%',
   backgroundColor: '#FFF',
 };
 
 // Style for background image itself
 export const BACKGROUND_IMAGE_STYLE: ImageStyle = {
   resizeMode: 'contain',
-  alignSelf: 'flex-end',
-  position: 'absolute',
-  top: '25%', // TODO: Put bottom
+  top: Dimensions.get('window').height / 2 + height / 2,
 };
 
 export const DB_TABLE = {
