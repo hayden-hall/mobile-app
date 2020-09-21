@@ -25,7 +25,7 @@ export const ASYNC_STORAGE_KEYS = {
   CDW_WORKED_NAME: '@CdwWorkedName',
   AREA_CODE: '@AreaCode',
   NETWORK_CONNECTIVITY: '@NetworkConnectivity',
-  LANGUAGE: '@Language',
+  LANGUAGE: '@Language', // Will be deprecated for using device locale
 };
 
 export const BACKGROUND_IMAGE_SOURCE = require('../assets/images/background3x.png');

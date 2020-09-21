@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { Icon, Divider, ListItem } from 'react-native-elements';
 
@@ -17,13 +17,19 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Settings() {
+export default function Settings({ navigation }) {
+  const isInitialMount = useRef(true);
   const [selectedLanguageCode, setSelectedLanguageCode] = useState('');
 
   useEffect(() => {
-    logger('DEBUG', 'Settings', `current locale: ${i18n.locale}`);
-    setSelectedLanguageCode(i18n.locale);
-  }, []);
+    if (isInitialMount.current) {
+      logger('DEBUG', 'Settings', `(init) current locale: ${i18n.locale}`);
+      setSelectedLanguageCode(i18n.locale);
+      isInitialMount.current = false;
+    } else {
+      navigation.setOptions({ title: i18n.t('SETTINGS') });
+    }
+  }, [selectedLanguageCode]);
 
   const onChoiceChanged = async item => {
     i18n.locale = item.code;
@@ -43,11 +49,9 @@ export default function Settings() {
           onChoiceChanged(item);
         }}
       >
-        {() => {
-          if (item.code === selectedLanguageCode) {
-            return <Icon name="check" size={20} />;
-          }
-        }}
+        {item.code === selectedLanguageCode && (
+          <Icon name="check" size={20} color={APP_THEME.APP_BASE_COLOR} />
+        )}
         <ListItem.Content>
           <ListItem.Title>{item.name}</ListItem.Title>
         </ListItem.Content>
