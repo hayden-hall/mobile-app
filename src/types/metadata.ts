@@ -54,3 +54,12 @@ export interface DescribeFieldProperties {
   name: string; // Field API Name
   type: string; // Data, Reference,
 }
+
+export interface LocalizationCustomMetadata {
+  MasterLabel: string;
+  DeveloperName: string;
+  Locale__c: string;
+  OriginalName__c: string;
+  TranslatedLabel__c: string;
+  Type__c: string;
+}

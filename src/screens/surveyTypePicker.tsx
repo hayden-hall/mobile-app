@@ -13,6 +13,7 @@ import {
   BACKGROUND_IMAGE_STYLE,
 } from '../constants';
 import { logger } from '../utility/logger';
+import i18n from '../config/i18n';
 
 import { StackParamList } from '../router';
 type SurveyTypePickerNavigationProp = StackNavigationProp<StackParamList, 'SurveyTypePicker'>;
@@ -44,7 +45,7 @@ export default function SurveyTypePicker({ navigation }: Props) {
           renderItem={({ item }) => (
             <ListItem
               key={item.name}
-              title={item.label}
+              title={i18n.t(`RECORD_TYPE_${item.name}`)}
               onPress={() => {
                 logger('DEBUG', 'SurveyTypePicker', item.recordTypeId);
                 navigation.navigate('SurveyEditor', {

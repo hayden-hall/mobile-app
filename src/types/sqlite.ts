@@ -22,3 +22,10 @@ export interface PageLayoutItem {
   fieldLabel: string;
   fieldType: string;
 }
+
+export interface Localization {
+  type: string; // TODO: 'RecordType' | 'PageLayoutSection' | 'PageLayoutItem';
+  locale: string; // TODO: 'en' | 'ne'
+  name: string;
+  label: string;
+}

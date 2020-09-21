@@ -23,6 +23,7 @@ export const DB_TABLE = {
   RECORD_TYPE: 'RecordType',
   PAGE_LAYOUT_SECTION: 'PageLayoutSection',
   PAGE_LAYOUT_ITEM: 'PageLayoutItem',
+  LOCALIZATION: 'Localization',
 };
 
 export const updateRecord = async (table, record, LocalId) => {

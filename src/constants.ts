@@ -49,4 +49,9 @@ export const DB_TABLE = {
   PageLayoutSection: 'PageLayoutSection',
   PageLayoutItem: 'PageLayoutItem',
   Survey: 'Survey',
+  Localization: 'Localization',
+};
+
+export const PREFIX = {
+  RECORD_TYPE: 'RECORD_TYPE_',
 };

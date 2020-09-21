@@ -3,7 +3,7 @@ import { View, StyleSheet, KeyboardAvoidingView, ImageBackground } from 'react-n
 
 import { getCDWContact } from '../services/api/salesforce/Contact';
 import { refreshAll } from '../services/Refresh';
-import { storeRecordTypes, storePageLayoutItems } from '../services/describe';
+import { storeRecordTypes, storePageLayoutItems, storeLocalization } from '../services/describe';
 
 import { TextInput, CustomButton, Loader } from '../components';
 
@@ -97,6 +97,7 @@ export default function AreaCode({ navigation }) {
       for (const rt of recordTypes) {
         await storePageLayoutItems(rt.recordTypeId); // TODO: all
       }
+      await storeLocalization();
       setShowsSpinner(false);
     } catch (error) {
       setShowsSpinner(false);

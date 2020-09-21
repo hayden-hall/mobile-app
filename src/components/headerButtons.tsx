@@ -42,7 +42,7 @@ export function LogoutButton(navigation) {
   );
 }
 
-export function SettingsButton() {
+export function SettingsButton(navigation) {
   return (
     <Icon
       iconStyle={{ padding: 10 }}
@@ -51,13 +51,7 @@ export function SettingsButton() {
       color={APP_THEME.APP_BASE_COLOR}
       type="font-awesome"
       onPress={() => {
-        console.log('Go to setting page');
-        /*
-                navigation.push('Settings', {
-                  headerTitle: i18n.t('LANGUAGE'),
-                  isSettingPage: true,
-                });
-                */
+        navigation.navigate('Settings');
       }}
     />
   );

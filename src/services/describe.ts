@@ -1,13 +1,18 @@
-import { describeLayoutResult, describeLayout } from './api/salesforce/core';
+import { describeLayoutResult, describeLayout, getSalesforceRecords } from './api/salesforce/core';
 import { saveRecords, getAllRecords, getRecords } from './database';
 
-import { RecordType, PageLayoutSection, PageLayoutItem } from '../types/sqlite';
+import { RecordType, PageLayoutSection, PageLayoutItem, Localization } from '../types/sqlite';
 import { SurveyLayout } from '../types/survey';
-import { DescribeLayoutResult, DescribeLayout } from '../types/metadata';
+import {
+  DescribeLayoutResult,
+  DescribeLayout,
+  LocalizationCustomMetadata,
+} from '../types/metadata';
 
 import { logger } from '../utility/logger';
 import { DB_TABLE } from '../constants';
 import { SURVEY_OBJECT } from 'react-native-dotenv';
+import i18n from '../config/i18n';
 
 /**
  * @description Query record types by REST API (describe layouts) and save the results to local database.
@@ -67,6 +72,9 @@ export const storePageLayoutItems = async (recordTypeId: string) => {
   return response;
 };
 
+/**
+ * @description Get all the record types of the survey object from local database
+ */
 export const getAllRecordTypes = async (): Promise<Array<RecordType>> => {
   const recordTypes: Array<RecordType> = await getAllRecords(DB_TABLE.RecordType);
   return recordTypes;
@@ -112,4 +120,55 @@ export const getLayoutDetail = async (layoutId: string): Promise<SurveyLayout> =
   };
 
   return layout;
+};
+
+/**
+ * @description Retrieve Salesforce 'Localization__mdt' Custom Metadata records and save them to local database
+ */
+export const storeLocalization = async () => {
+  const query =
+    'SELECT Type__c, Locale__c, OriginalName__c, TranslatedLabel__c FROM Localization__mdt';
+  const response = await getSalesforceRecords(query);
+  if (response.records.length === 0) {
+    return;
+  }
+  const cmdts: Array<LocalizationCustomMetadata> = response.records;
+  const records: Array<Localization> = cmdts.map(r => {
+    return {
+      locale: r.Locale__c,
+      type: r.Type__c,
+      name: r.OriginalName__c,
+      label: r.TranslatedLabel__c,
+    };
+  });
+  await saveRecords(DB_TABLE.Localization, records, false);
+};
+
+/**
+ * @description [WIP] Build expo-localization object from locally stored tables
+ */
+export const buildRecordTypeDictionary = async () => {
+  // record type (en)
+  const recordTypes = await getAllRecordTypes();
+  const enRecordTypes = recordTypes.reduce((result, current) => {
+    result[`RECORD_TYPE_${current.name}`] = current.label;
+    return result;
+  }, {});
+  // record type (translated). TODO: create localization table first.
+  const translatedRecordTypes = await getRecords(DB_TABLE.Localization, "where type='RecordType'");
+  const neRecordTypes = translatedRecordTypes.reduce((result, current) => {
+    result[`RECORD_TYPE_${current.name}`] = current.label;
+    return result;
+  }, {});
+  logger('DEBUG', 'buildRecordTypeDictionary', `ne:${Object.values(neRecordTypes).length}`);
+  i18n.translations = {
+    en: {
+      ...i18n.translations.en,
+      ...enRecordTypes,
+    },
+    ne: {
+      ...i18n.translations.ne,
+      ...neRecordTypes,
+    },
+  };
 };

@@ -9,7 +9,7 @@ import SurveyList from './screens/surveyList';
 import SurveyTypePicker from './screens/surveyTypePicker';
 import SurveyEditor from './screens/surveyEditor';
 import SurveyCompleted from './screens/surveyCompleted';
-import Settings from './screens/Settings';
+import Settings from './screens/settings';
 
 // components
 import { SettingsButton, LogoutButton } from './components/headerButtons';
@@ -33,7 +33,9 @@ const headerStyle = {
 export type StackParamList = {
   Login: undefined;
   AreaCode: undefined;
-  SurveyList: undefined;
+  SurveyList: {
+    isLocalizationPrepared?: boolean;
+  };
   SurveyTypePicker: undefined;
   SurveyEditor: {
     selectedRecordTypeId: string;
@@ -71,7 +73,7 @@ export default function Router() {
           options={({ navigation }) => ({
             title: i18n.t('SURVEYS'),
             headerLeft: () => LogoutButton(navigation),
-            headerRight: () => SettingsButton(),
+            headerRight: () => SettingsButton(navigation),
             ...headerStyle,
           })}
         />
@@ -85,7 +87,14 @@ export default function Router() {
         />
         <Stack.Screen name="SurveyEditor" component={SurveyEditor} />
         <Stack.Screen name="SurveyCompleted" component={SurveyCompleted} />
-        <Stack.Screen name="Settings" component={Settings} />
+        <Stack.Screen
+          name="Settings"
+          component={Settings}
+          options={{
+            title: i18n.t('SETTINGS'),
+            ...headerStyle,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
