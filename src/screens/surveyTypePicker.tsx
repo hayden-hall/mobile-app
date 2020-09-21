@@ -41,10 +41,12 @@ export default function SurveyTypePicker({ navigation }: Props) {
     >
       <View>
         <FlatList
+          keyExtractor={(item, index) => {
+            return index.toString();
+          }}
           data={recordTypes}
           renderItem={({ item }) => (
             <ListItem
-              key={item.name}
               title={i18n.t(`RECORD_TYPE_${item.name}`)}
               onPress={() => {
                 logger('DEBUG', 'SurveyTypePicker', item.recordTypeId);
