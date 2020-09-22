@@ -45,57 +45,70 @@ export type StackParamList = {
   Settings: undefined;
 };
 
+export const LocalizationContext = React.createContext(null);
 const Stack = createStackNavigator();
 
 export default function Router() {
+  const [locale, setLocale] = React.useState(i18n.locale);
+  const localizationContext = React.useMemo(
+    () => ({
+      t: (scope, options) => i18n.t(scope, { locale, ...options }),
+      locale,
+      setLocale,
+    }),
+    [locale]
+  );
+
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{
-            title: i18n.t('LOGIN'),
-            ...headerStyle,
-          }}
-        />
-        <Stack.Screen
-          name="AreaCode"
-          component={AreaCode}
-          options={{
-            title: i18n.t('ENTER_AREA_CODE'),
-            ...headerStyle,
-          }}
-        />
-        <Stack.Screen
-          name="SurveyList"
-          component={SurveyList}
-          options={({ navigation }) => ({
-            title: i18n.t('SURVEYS'),
-            headerLeft: () => LogoutButton(navigation),
-            headerRight: () => SettingsButton(navigation),
-            ...headerStyle,
-          })}
-        />
-        <Stack.Screen
-          name="SurveyTypePicker"
-          component={SurveyTypePicker}
-          options={{
-            title: i18n.t('CHOOSE_SURVEY'),
-            ...headerStyle,
-          }}
-        />
-        <Stack.Screen name="SurveyEditor" component={SurveyEditor} />
-        <Stack.Screen name="SurveyCompleted" component={SurveyCompleted} />
-        <Stack.Screen
-          name="Settings"
-          component={Settings}
-          options={{
-            title: i18n.t('SETTINGS'),
-            ...headerStyle,
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <LocalizationContext.Provider value={localizationContext}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{
+              title: i18n.t('LOGIN'),
+              ...headerStyle,
+            }}
+          />
+          <Stack.Screen
+            name="AreaCode"
+            component={AreaCode}
+            options={{
+              title: i18n.t('ENTER_AREA_CODE'),
+              ...headerStyle,
+            }}
+          />
+          <Stack.Screen
+            name="SurveyList"
+            component={SurveyList}
+            options={({ navigation }) => ({
+              title: i18n.t('SURVEYS'),
+              headerLeft: () => LogoutButton(navigation),
+              headerRight: () => SettingsButton(navigation),
+              ...headerStyle,
+            })}
+          />
+          <Stack.Screen
+            name="SurveyTypePicker"
+            component={SurveyTypePicker}
+            options={{
+              title: i18n.t('CHOOSE_SURVEY'),
+              ...headerStyle,
+            }}
+          />
+          <Stack.Screen name="SurveyEditor" component={SurveyEditor} />
+          <Stack.Screen name="SurveyCompleted" component={SurveyCompleted} />
+          <Stack.Screen
+            name="Settings"
+            component={Settings}
+            options={{
+              title: i18n.t('SETTINGS'),
+              ...headerStyle,
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </LocalizationContext.Provider>
   );
 }
