@@ -1,12 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import * as Font from 'expo-font';
+import FlashMessage from 'react-native-flash-message';
 
 import Router from './src/router';
 import i18n from './src/config/i18n';
 import { initializeStorage } from './src/utility/storage';
 import LocalizationContext from './src/context/localizationContext';
-
-console.disableYellowBox = true;
 initializeStorage();
 
 export default function App() {
@@ -37,6 +36,7 @@ export default function App() {
   return fontLoaded ? (
     <LocalizationContext.Provider value={localizationContext}>
       <Router />
+      <FlashMessage position="top" />
     </LocalizationContext.Provider>
   ) : null;
 }

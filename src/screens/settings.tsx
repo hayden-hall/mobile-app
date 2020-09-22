@@ -1,6 +1,7 @@
-import React, { useContext } from 'react';
-import { View, FlatList, ImageBackground } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { FlatList, ImageBackground } from 'react-native';
 import { Card, Icon, Divider, ListItem } from 'react-native-elements';
+import { Loader } from '../components';
 
 import LocalizationContext from '../context/localizationContext';
 import {
@@ -11,6 +12,8 @@ import {
   APP_FONTS,
 } from '../constants';
 import { logger } from '../utility/logger';
+import { retrieveAll } from '../services/describe';
+import { showMessage } from 'react-native-flash-message';
 
 type Language = {
   name: string;
@@ -18,6 +21,7 @@ type Language = {
 };
 
 export default function Settings() {
+  const [showsSpinner, setShowsSpinner] = useState(false);
   const { t, locale, setLocale } = useContext(LocalizationContext);
 
   const languages: Array<Language> = [
@@ -49,6 +53,7 @@ export default function Settings() {
       style={BACKGROUND_STYLE}
       imageStyle={BACKGROUND_IMAGE_STYLE}
     >
+      <Loader loading={showsSpinner} />
       <Card>
         <Card.Title>{t('LANGUAGE')}</Card.Title>
         <FlatList
@@ -65,8 +70,14 @@ export default function Settings() {
       <Card>
         <Card.Title>{t('SYSTEM')}</Card.Title>
         <ListItem
-          onPress={() => {
-            console.log('refreshing...');
+          onPress={async () => {
+            setShowsSpinner(true);
+            await retrieveAll();
+            setShowsSpinner(false);
+            showMessage({
+              message: 'Successfully refreshed metadata.',
+              type: 'success',
+            });
           }}
           topDivider
           bottomDivider
