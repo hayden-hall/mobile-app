@@ -1,21 +1,21 @@
 import React, { useContext } from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
-import { Icon, Divider, ListItem } from 'react-native-elements';
+import { View, FlatList, ImageBackground } from 'react-native';
+import { Card, Icon, Divider, ListItem } from 'react-native-elements';
 
 import LocalizationContext from '../context/localizationContext';
-import { APP_THEME } from '../constants';
+import {
+  APP_THEME,
+  BACKGROUND_IMAGE_SOURCE,
+  BACKGROUND_STYLE,
+  BACKGROUND_IMAGE_STYLE,
+  APP_FONTS,
+} from '../constants';
 import { logger } from '../utility/logger';
 
 type Language = {
   name: string;
   code: string;
 };
-
-const styles = StyleSheet.create({
-  flex1: {
-    flex: 1,
-  },
-});
 
 export default function Settings() {
   const { locale, setLocale } = useContext(LocalizationContext);
@@ -35,24 +35,48 @@ export default function Settings() {
       >
         {item.code === locale && <Icon name="check" size={20} color={APP_THEME.APP_BASE_COLOR} />}
         <ListItem.Content>
-          <ListItem.Title>{item.name}</ListItem.Title>
+          <ListItem.Title style={{ fontFamily: APP_FONTS.FONT_REGULAR }}>
+            {item.name}
+          </ListItem.Title>
         </ListItem.Content>
       </ListItem>
     );
   };
 
   return (
-    <View style={styles.flex1}>
-      <FlatList
-        data={languages}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => {
-          return index.toString();
-        }}
-        ItemSeparatorComponent={() => {
-          return <Divider style={{ backgroundColor: APP_THEME.APP_BORDER_COLOR }} />;
-        }}
-      />
-    </View>
+    <ImageBackground
+      source={BACKGROUND_IMAGE_SOURCE}
+      style={BACKGROUND_STYLE}
+      imageStyle={BACKGROUND_IMAGE_STYLE}
+    >
+      <Card>
+        <Card.Title>Language</Card.Title>
+        <FlatList
+          data={languages}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => {
+            return index.toString();
+          }}
+          ItemSeparatorComponent={() => {
+            return <Divider style={{ backgroundColor: APP_THEME.APP_BORDER_COLOR }} />;
+          }}
+        />
+      </Card>
+      <Card>
+        <Card.Title>System</Card.Title>
+        <ListItem
+          onPress={() => {
+            console.log('refreshing...');
+          }}
+          topDivider
+          bottomDivider
+        >
+          <Icon name="cloud-download" color={APP_THEME.APP_LIGHT_FONT_COLOR} />
+          <ListItem.Content>
+            <ListItem.Title>Reload Metadata</ListItem.Title>
+          </ListItem.Content>
+        </ListItem>
+      </Card>
+    </ImageBackground>
   );
 }
