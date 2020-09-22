@@ -50,14 +50,12 @@ const saveToken = async (response): Promise<LoginResponse> => {
     if (response.status === 200) {
       const responseJson: LoginResponse = await response.json();
       if (responseJson.access_token) {
-        // @ts-ignore
         storage.save({
           key: ASYNC_STORAGE_KEYS.SALESFORCE_ACCESS_TOKEN,
           data: responseJson.access_token,
         });
       }
       if (responseJson.instance_url) {
-        // @ts-ignore
         storage.save({
           key: ASYNC_STORAGE_KEYS.SALESFORCE_INSTANCE_URL,
           data: responseJson.instance_url,

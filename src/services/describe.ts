@@ -1,13 +1,9 @@
-import { describeLayoutResult, describeLayout, getSalesforceRecords } from './api/salesforce/core';
+import { describeLayoutResult, describeLayout, fetchSalesforceRecords } from './api/salesforce/core';
 import { saveRecords, getAllRecords, getRecords, clearTable } from './database';
 
 import { RecordType, PageLayoutSection, PageLayoutItem, Localization } from '../types/sqlite';
 import { SurveyLayout } from '../types/survey';
-import {
-  DescribeLayoutResult,
-  DescribeLayout,
-  LocalizationCustomMetadata,
-} from '../types/metadata';
+import { DescribeLayoutResult, DescribeLayout, LocalizationCustomMetadata } from '../types/metadata';
 
 import { logger } from '../utility/logger';
 import { DB_TABLE } from '../constants';
@@ -126,14 +122,12 @@ export const getLayoutDetail = async (layoutId: string): Promise<SurveyLayout> =
  * @description Retrieve Salesforce 'Localization__mdt' Custom Metadata records and save them to local database
  */
 export const storeLocalization = async () => {
-  const query =
-    'SELECT Type__c, Locale__c, OriginalName__c, TranslatedLabel__c FROM Localization__mdt';
-  const response = await getSalesforceRecords(query);
-  if (response.records.length === 0) {
+  const query = 'SELECT Type__c, Locale__c, OriginalName__c, TranslatedLabel__c FROM Localization__mdt';
+  const records: Array<LocalizationCustomMetadata> = await fetchSalesforceRecords(query);
+  if (records.length === 0) {
     return;
   }
-  const cmdts: Array<LocalizationCustomMetadata> = response.records;
-  const records: Array<Localization> = cmdts.map(r => {
+  const localizations: Array<Localization> = records.map(r => {
     return {
       locale: r.Locale__c,
       type: r.Type__c,
@@ -141,7 +135,7 @@ export const storeLocalization = async () => {
       label: r.TranslatedLabel__c,
     };
   });
-  await saveRecords(DB_TABLE.Localization, records, false);
+  await saveRecords(DB_TABLE.Localization, localizations, false);
 };
 
 /**
