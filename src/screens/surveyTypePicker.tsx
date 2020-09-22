@@ -7,12 +7,7 @@ import { getAllRecordTypes } from '../services/describe';
 import { ListItem } from '../components';
 
 import LocalizationContext from '../context/localizationContext';
-import {
-  APP_THEME,
-  BACKGROUND_IMAGE_SOURCE,
-  BACKGROUND_STYLE,
-  BACKGROUND_IMAGE_STYLE,
-} from '../constants';
+import { APP_THEME, BACKGROUND_IMAGE_SOURCE, BACKGROUND_STYLE, BACKGROUND_IMAGE_STYLE } from '../constants';
 import { logger } from '../utility/logger';
 
 import { StackParamList } from '../router';
@@ -35,11 +30,7 @@ export default function SurveyTypePicker({ navigation }: Props) {
   }, []);
 
   return (
-    <ImageBackground
-      source={BACKGROUND_IMAGE_SOURCE}
-      style={BACKGROUND_STYLE}
-      imageStyle={BACKGROUND_IMAGE_STYLE}
-    >
+    <ImageBackground source={BACKGROUND_IMAGE_SOURCE} style={BACKGROUND_STYLE} imageStyle={BACKGROUND_IMAGE_STYLE}>
       <View>
         <FlatList
           keyExtractor={(item, index) => {
@@ -58,9 +49,7 @@ export default function SurveyTypePicker({ navigation }: Props) {
               }}
             />
           )}
-          ItemSeparatorComponent={() => (
-            <Divider style={{ backgroundColor: APP_THEME.APP_BORDER_COLOR }} />
-          )}
+          ItemSeparatorComponent={() => <Divider style={{ backgroundColor: APP_THEME.APP_BORDER_COLOR }} />}
         />
       </View>
     </ImageBackground>

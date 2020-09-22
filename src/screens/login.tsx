@@ -5,12 +5,7 @@ import { TextInput, CustomButton, Loader } from '../components';
 
 import { validateEmail } from '../utility';
 import { logger } from '../utility/logger';
-import {
-  ASYNC_STORAGE_KEYS,
-  BACKGROUND_IMAGE_SOURCE,
-  BACKGROUND_STYLE,
-  BACKGROUND_IMAGE_STYLE,
-} from '../constants';
+import { ASYNC_STORAGE_KEYS, BACKGROUND_IMAGE_SOURCE, BACKGROUND_STYLE, BACKGROUND_IMAGE_STYLE } from '../constants';
 import LocalizationContext from '../context/localizationContext';
 
 import { authenticate } from '../services/api/auth';
@@ -123,11 +118,7 @@ export default function Login({ navigation }) {
 
   const { flex1, inputBoxesView, container, logoStyle, inputButton } = styles;
   return (
-    <ImageBackground
-      source={BACKGROUND_IMAGE_SOURCE}
-      style={BACKGROUND_STYLE}
-      imageStyle={BACKGROUND_IMAGE_STYLE}
-    >
+    <ImageBackground source={BACKGROUND_IMAGE_SOURCE} style={BACKGROUND_STYLE} imageStyle={BACKGROUND_IMAGE_STYLE}>
       <KeyboardAwareScrollView style={flex1}>
         <Loader loading={showsSpinner} />
         <View style={container}>

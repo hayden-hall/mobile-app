@@ -8,12 +8,7 @@ import LocalizationContext from '../context/localizationContext';
 
 import { TextInput, CustomButton, Loader } from '../components';
 
-import {
-  ASYNC_STORAGE_KEYS,
-  BACKGROUND_IMAGE_SOURCE,
-  BACKGROUND_STYLE,
-  BACKGROUND_IMAGE_STYLE,
-} from '../constants';
+import { ASYNC_STORAGE_KEYS, BACKGROUND_IMAGE_SOURCE, BACKGROUND_STYLE, BACKGROUND_IMAGE_STYLE } from '../constants';
 import { logger } from '../utility/logger';
 
 const styles = StyleSheet.create({
@@ -108,11 +103,7 @@ export default function AreaCode({ navigation }) {
 
   const { flex1, flex2, inputBoxesView, container, inputButton } = styles;
   return (
-    <ImageBackground
-      source={BACKGROUND_IMAGE_SOURCE}
-      style={BACKGROUND_STYLE}
-      imageStyle={BACKGROUND_IMAGE_STYLE}
-    >
+    <ImageBackground source={BACKGROUND_IMAGE_SOURCE} style={BACKGROUND_STYLE} imageStyle={BACKGROUND_IMAGE_STYLE}>
       <KeyboardAvoidingView style={flex1}>
         <Loader loading={showsSpinner} />
         <View style={container} />

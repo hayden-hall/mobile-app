@@ -46,11 +46,7 @@ export const updateRecord = async (table, record, LocalId) => {
   });
 };
 
-export const saveRecordsWithFields = async (
-  table: any,
-  records: any,
-  fieldsWithDataTypes: Array<any>
-) => {
+export const saveRecordsWithFields = async (table: any, records: any, fieldsWithDataTypes: Array<any>) => {
   return new Promise(async (resolve, reject) => {
     //Check for table.
     await checkAndCreateTableWithDataTypes(table, fieldsWithDataTypes);
@@ -167,13 +163,9 @@ const checkAndCreateTable = (table, fields) => {
     fieldsWithType = `${fieldsWithType}, LocalId INTEGER PRIMARY KEY AUTOINCREMENT`;
     try {
       database.transaction(tx => {
-        tx.executeSql(
-          `CREATE TABLE IF NOT EXISTS ${table}( ${fieldsWithType});`,
-          [],
-          (txn, result) => {
-            resolve(database);
-          }
-        );
+        tx.executeSql(`CREATE TABLE IF NOT EXISTS ${table}( ${fieldsWithType});`, [], (txn, result) => {
+          resolve(database);
+        });
       });
     } catch (error) {
       console.log(error);
@@ -184,20 +176,14 @@ const checkAndCreateTable = (table, fields) => {
 
 const checkAndCreateTableWithDataTypes = (table, fieldsWithDataType) => {
   return new Promise((resolve, reject) => {
-    let fieldsWithType = fieldsWithDataType
-      .map(field => `${field.split('#')[0]} ${field.split('#')[1]}`)
-      .join(',');
+    let fieldsWithType = fieldsWithDataType.map(field => `${field.split('#')[0]} ${field.split('#')[1]}`).join(',');
     fieldsWithType = `${fieldsWithType}, IsLocallyCreated INTEGER DEFAULT 0`;
     fieldsWithType = `${fieldsWithType}, LocalId INTEGER PRIMARY KEY AUTOINCREMENT`;
     try {
       database.transaction(tx => {
-        tx.executeSql(
-          `CREATE TABLE IF NOT EXISTS ${table}( ${fieldsWithType});`,
-          [],
-          (txn, result) => {
-            resolve(database);
-          }
-        );
+        tx.executeSql(`CREATE TABLE IF NOT EXISTS ${table}( ${fieldsWithType});`, [], (txn, result) => {
+          resolve(database);
+        });
       });
     } catch (error) {
       console.log(error);
@@ -212,11 +198,7 @@ const checkAndCreateTableWithDataTypes = (table, fieldsWithDataType) => {
  * @param fieldTypeMappings Array of field type mapping
  * @param hasLocalId // TODO: specify primary key field name
  */
-export const prepareTable = (
-  tableName: string,
-  fieldTypeMappings: Array<FieldTypeMapping>,
-  hasLocalId: boolean
-) => {
+export const prepareTable = (tableName: string, fieldTypeMappings: Array<FieldTypeMapping>, hasLocalId: boolean) => {
   return new Promise((resolve, reject) => {
     const fieldsWithType = fieldTypeMappings
       .map(field => {
@@ -229,11 +211,7 @@ export const prepareTable = (
       .join(',');
     const localId = 'localId integer primary key autoincrement';
     const fieldsInStatement = hasLocalId ? `${localId},${fieldsWithType}` : fieldsWithType;
-    logger(
-      'DEBUG',
-      'prepareTable',
-      `create table if not exists ${tableName} (${fieldsInStatement});`
-    );
+    logger('DEBUG', 'prepareTable', `create table if not exists ${tableName} (${fieldsInStatement});`);
 
     executeTransaction(`create table if not exists ${tableName} (${fieldsInStatement});`)
       .then(result => {
