@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, StyleSheet, Image, ImageBackground } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { TextInput, CustomButton, Loader } from '../components';
@@ -11,7 +11,7 @@ import {
   BACKGROUND_STYLE,
   BACKGROUND_IMAGE_STYLE,
 } from '../constants';
-import i18n from '../config/i18n';
+import LocalizationContext from '../context/localizationContext';
 
 import { authenticate } from '../services/api/auth';
 
@@ -46,6 +46,8 @@ export default function Login({ navigation }) {
   const [passwordError, setPasswordError] = useState('');
   const [showsSpinner, setShowsSpinner] = useState(false);
 
+  const { t } = useContext(LocalizationContext);
+
   useEffect(() => {
     hasLoggedIn();
   }, []);
@@ -73,15 +75,15 @@ export default function Login({ navigation }) {
 
   const validateInput = () => {
     if (email.length == 0) {
-      setEmailError(i18n.t('ENTER_EMAIL'));
+      setEmailError(t('ENTER_EMAIL'));
       return false;
     }
     if (!validateEmail(email)) {
-      setEmailError(i18n.t('ENTER_VALID_EMAIL'));
+      setEmailError(t('ENTER_VALID_EMAIL'));
       return false;
     }
     if (password.length == 0) {
-      setPasswordError(i18n.t('ENTER_PASSWORD'));
+      setPasswordError(t('ENTER_PASSWORD'));
       return false;
     }
     setEmailError(undefined);
@@ -137,7 +139,7 @@ export default function Login({ navigation }) {
               setEmail(email);
             }}
             value={email}
-            label={i18n.t('EMAIL')}
+            label={t('EMAIL')}
             placeholder="yourname@example.com"
             errorStyle={{ color: 'red' }}
             keyboardType="email-address"
@@ -148,14 +150,14 @@ export default function Login({ navigation }) {
               setPassword(password);
             }}
             value={password}
-            label={i18n.t('PASSWORD')}
+            label={t('PASSWORD')}
             placeholder="password"
             errorStyle={{ color: 'red' }}
             secureTextEntry
             errorMessage={passwordError}
           />
           <View style={inputButton}>
-            <CustomButton title={i18n.t('LOGIN')} onPress={() => login()} />
+            <CustomButton title={t('LOGIN')} onPress={() => login()} />
           </View>
         </View>
       </KeyboardAwareScrollView>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, FlatList, ImageBackground } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -6,6 +6,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { getAllRecordTypes } from '../services/describe';
 import { ListItem } from '../components';
 
+import LocalizationContext from '../context/localizationContext';
 import {
   APP_THEME,
   BACKGROUND_IMAGE_SOURCE,
@@ -13,7 +14,6 @@ import {
   BACKGROUND_IMAGE_STYLE,
 } from '../constants';
 import { logger } from '../utility/logger';
-import i18n from '../config/i18n';
 
 import { StackParamList } from '../router';
 type SurveyTypePickerNavigationProp = StackNavigationProp<StackParamList, 'SurveyTypePicker'>;
@@ -24,6 +24,7 @@ type Props = {
 
 export default function SurveyTypePicker({ navigation }: Props) {
   const [recordTypes, setRecordTypes] = useState([]);
+  const { t } = useContext(LocalizationContext);
 
   useEffect(() => {
     const fetch = async () => {
@@ -47,7 +48,7 @@ export default function SurveyTypePicker({ navigation }: Props) {
           data={recordTypes}
           renderItem={({ item }) => (
             <ListItem
-              title={i18n.t(`RECORD_TYPE_${item.name}`)}
+              title={t(`RECORD_TYPE_${item.name}`)}
               onPress={() => {
                 logger('DEBUG', 'SurveyTypePicker', item.recordTypeId);
                 navigation.navigate('SurveyEditor', {

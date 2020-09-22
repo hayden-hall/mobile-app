@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, ImageBackground } from 'react-native';
 
 import { getCDWContact } from '../services/api/salesforce/Contact';
 import { refreshAll } from '../services/Refresh';
 import { storeRecordTypes, storePageLayoutItems, storeLocalization } from '../services/describe';
+import LocalizationContext from '../context/localizationContext';
 
 import { TextInput, CustomButton, Loader } from '../components';
 
-import i18n from '../config/i18n';
 import {
   ASYNC_STORAGE_KEYS,
   BACKGROUND_IMAGE_SOURCE,
@@ -44,12 +44,14 @@ export default function AreaCode({ navigation }) {
   const [areaCodeError, setAreaCodeError] = useState('');
   const [showsSpinner, setShowsSpinner] = useState(false);
 
+  const { t } = useContext(LocalizationContext);
+
   /**
    * @description Validate area code. Only empty check here.
    */
   const validateInput = () => {
     if (areaCode.length == 0) {
-      setAreaCodeError(i18n.t('ENTER_AREA_CODE'));
+      setAreaCodeError(t('ENTER_AREA_CODE'));
       throw new Error('Validation error');
     }
     setAreaCodeError(undefined);
@@ -80,7 +82,7 @@ export default function AreaCode({ navigation }) {
       });
     } else {
       setTimeout(() => {
-        alert(i18n.t('AREA_CODE_NOT_FOUND'));
+        alert(t('AREA_CODE_NOT_FOUND'));
       }, 500);
       throw new Error(`Retrieve contact details. ${JSON.stringify(response)}`);
     }
@@ -124,14 +126,14 @@ export default function AreaCode({ navigation }) {
               setAreaCode(areaCode);
             }}
             value={areaCode}
-            label={i18n.t('AREA_CODE')}
+            label={t('AREA_CODE')}
             placeholder="3A2276BB"
             errorStyle={{ color: 'red' }}
             errorMessage={areaCodeError}
           />
           <View style={inputButton}>
             <CustomButton
-              title={i18n.t('GO_TO_SURVEY')}
+              title={t('GO_TO_SURVEY')}
               onPress={async () => {
                 try {
                   validateInput();

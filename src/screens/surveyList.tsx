@@ -1,24 +1,33 @@
-import React, { useState, useReducer, useEffect } from 'react';
+import React, { useState, useReducer, useEffect, useContext } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Icon, Divider } from 'react-native-elements';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import NetInfo from '@react-native-community/netinfo';
-
-import i18n from '../config/i18n';
-import { APP_FONTS, APP_THEME, ASYNC_STORAGE_KEYS } from '../constants';
-import { SelectionList, SearchBar } from '../components';
-import { getAllSurveys, getOfflineCreatedSurvey } from '../services/api/salesforce/Survey';
-import { refreshAll } from '../services/Refresh';
-import { formatDate } from '../utility';
-import { surveyFilterReducer } from '../reducers/surveyFilterReducer';
-import { surveyReducer } from '../reducers/surveyReducer';
+import { StackNavigationProp } from '@react-navigation/stack';
+// components
+import { SearchBar, ListItem, Loader } from '../components';
 import FilterButtonGroup from './surveyListFilter';
 import SurveyListHeader from './surveyListHeader';
-import { ListItem, Loader } from '../components';
-import { logger } from '../utility/logger';
+// services
+import { getAllSurveys, getOfflineCreatedSurvey } from '../services/api/salesforce/Survey';
+// import { refreshAll } from '../services/Refresh';
+import { buildRecordTypeDictionary } from '../services/describe';
+// store
+import { surveyFilterReducer } from '../reducers/surveyFilterReducer';
+import { surveyReducer } from '../reducers/surveyReducer';
 import SurveyListContext from '../context/surveyListContext';
+import LocalizationContext from '../context/localizationContext';
+// util, constants
+import { formatDate } from '../utility';
+import { logger } from '../utility/logger';
+import { APP_FONTS, APP_THEME } from '../constants';
+// types
+import { StackParamList } from '../router';
+type SurveyTypePickerNavigationProp = StackNavigationProp<StackParamList, 'SurveyList'>;
 
-// import Login from './login';
+type Props = {
+  navigation: SurveyTypePickerNavigationProp;
+};
 // TODO: navigate to login screen when session timeout
 
 export default function SurveyList({ navigation }) {
@@ -28,6 +37,8 @@ export default function SurveyList({ navigation }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [showsSpinner, setShowsSpinner] = useState(false);
   const [isNetworkConnected, setIsNetworkConnected] = useState(false);
+
+  const { t } = useContext(LocalizationContext);
 
   /**
    * @description Initialization. Subscribe NetInfo and retrieve all surveys from local database.
@@ -39,6 +50,10 @@ export default function SurveyList({ navigation }) {
       setIsNetworkConnected(state.isConnected);
     });
     setShowsSpinner(true);
+    const build = async () => {
+      await buildRecordTypeDictionary();
+    };
+    build();
     getAllSurveys()
       .then(response => {
         dispatchSurveys({
@@ -115,12 +130,12 @@ export default function SurveyList({ navigation }) {
       <Loader loading={showsSpinner} />
       <View style={flex1}>
         <SearchBar
-          placeholder={i18n.t('SEARCH_SURVEYS')}
+          placeholder={t('SEARCH_SURVEYS')}
           value={searchTerm}
           onChangeText={searchTerm => setSearchTerm(searchTerm)}
         />
         <SurveyListHeader isNetworkConnected={isNetworkConnected} surveys={surveys} />
-        <Text style={textStyleTotalSurvey}>{`${i18n.t('TOTAL_SURVEYS')} ${surveys.length}`}</Text>
+        <Text style={textStyleTotalSurvey}>{`${t('TOTAL_SURVEYS')} ${surveys.length}`}</Text>
         <FilterButtonGroup dispatch={dispatchFilter} />
         <Divider style={{ backgroundColor: APP_THEME.APP_BORDER_COLOR }} />
         <SwipeListView
@@ -137,13 +152,13 @@ export default function SurveyList({ navigation }) {
                   style={[styles.backRightBtn, styles.backRightBtnRight]}
                   onPress={() => this.showDeleteConfirmAlert(rowMap, data.item, data.index)}
                 >
-                  <Text style={styles.backTextWhite}>{i18n.t('DELETE')}</Text>
+                  <Text style={styles.backTextWhite}>{t('DELETE')}</Text>
                 </TouchableOpacity>
               </View>
             ) : (
               <View style={styles.rowBack}>
                 <TouchableOpacity style={[styles.backRightBtn, styles.backDisabledRightBtnRight]}>
-                  <Text style={styles.backTextWhite}>{i18n.t('DELETE')}</Text>
+                  <Text style={styles.backTextWhite}>{t('DELETE')}</Text>
                 </TouchableOpacity>
               </View>
             )

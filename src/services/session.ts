@@ -1,17 +1,19 @@
+import { useContext } from 'React';
 import { Alert } from 'react-native';
 
 import { clearDatabase } from './database';
 import { clearStorage } from '../utility/storage';
-
-import i18n from '../config/i18n';
+import LocalizationContext from '../context/localizationContext';
 
 export const logout = navigation => {
+  const { t } = useContext(LocalizationContext);
+
   Alert.alert(
-    i18n.t('LOGOUT'),
-    i18n.t('LOGOUT_MESSAGE'),
+    t('LOGOUT'),
+    t('LOGOUT_MESSAGE'),
     [
       {
-        text: i18n.t('OK'),
+        text: t('OK'),
         onPress: async () => {
           clearStorage();
           await clearDatabase();
@@ -19,7 +21,7 @@ export const logout = navigation => {
         },
       },
       {
-        text: i18n.t('CANCEL'),
+        text: t('CANCEL'),
       },
     ],
     { cancelable: true }

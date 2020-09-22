@@ -1,10 +1,10 @@
-import React, { useState, useReducer, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { View, StyleSheet, Alert, TextInput } from 'react-native';
 import { Button } from 'react-native-elements';
 
 import { APP_FONTS, APP_THEME, ASYNC_STORAGE_KEYS } from '../constants';
-import i18n from '../config/i18n';
 import { Survey } from '../types/survey';
+import LocalizationContext from '../context/localizationContext';
 
 type SurveyListHeaderProps = {
   isNetworkConnected: boolean;
@@ -12,20 +12,22 @@ type SurveyListHeaderProps = {
 };
 
 export default function SurveyListHeader(props: SurveyListHeaderProps) {
+  const { t } = useContext(LocalizationContext);
+
   const showRefreshPopup = () => {
     Alert.alert(
-      i18n.t('SYNCING'),
-      i18n.t('UPLOAD_SURVEY_MESSAGE'),
+      t('SYNCING'),
+      t('UPLOAD_SURVEY_MESSAGE'),
       [
         {
-          text: i18n.t('OK'),
+          text: t('OK'),
           onPress: () => {
             // this.props.navigation.pop();
             // this.refreshAppData();
           },
         },
         {
-          text: i18n.t('CANCEL'),
+          text: t('CANCEL'),
         },
       ],
       { cancelable: true }
@@ -36,9 +38,9 @@ export default function SurveyListHeader(props: SurveyListHeaderProps) {
     <View style={styles.pendingSurveyContainer}>
       <TextInput
         underlineColorAndroid="transparent"
-        placeholder={i18n.t('SEARCH_SURVEYS')}
+        placeholder={t('SEARCH_SURVEYS')}
         style={styles.textStylePendingSurvey}
-        value={`0 - ${i18n.t('QUEUED_FOR_SYNC')}`} // dirtySurveyCount
+        value={`0 - ${t('QUEUED_FOR_SYNC')}`} // dirtySurveyCount
         editable={false}
       />
       <View style={styles.syncIconStyle}>
