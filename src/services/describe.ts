@@ -1,5 +1,5 @@
 import { describeLayoutResult, describeLayout, getSalesforceRecords } from './api/salesforce/core';
-import { saveRecords, getAllRecords, getRecords } from './database';
+import { saveRecords, getAllRecords, getRecords, clearTable } from './database';
 
 import { RecordType, PageLayoutSection, PageLayoutItem, Localization } from '../types/sqlite';
 import { SurveyLayout } from '../types/survey';
@@ -171,4 +171,21 @@ export const buildRecordTypeDictionary = async () => {
       ...neRecordTypes,
     },
   };
+};
+
+/**
+ * @description Download record types, all the page layouts, and localization custom metadata.
+ * @todo For surveys and contacts?
+ */
+export const retrieveAll = async () => {
+  await clearTable(DB_TABLE.RecordType);
+  await clearTable(DB_TABLE.PageLayoutSection);
+  await clearTable(DB_TABLE.PageLayoutItem);
+  await clearTable(DB_TABLE.Localization);
+
+  const recordTypes = await storeRecordTypes();
+  for (const rt of recordTypes) {
+    await storePageLayoutItems(rt.recordTypeId); // TODO: all
+  }
+  await storeLocalization();
 };
