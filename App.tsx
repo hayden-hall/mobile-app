@@ -6,7 +6,6 @@ import Router from './src/router';
 import i18n from './src/config/i18n';
 import { initializeStorage } from './src/utility/storage';
 import LocalizationContext from './src/context/localizationContext';
-initializeStorage();
 
 export default function App() {
   const [locale, setLocale] = useState(i18n.locale);
@@ -22,6 +21,7 @@ export default function App() {
   );
 
   useEffect(() => {
+    initializeStorage();
     const loadFont = async () => {
       await Font.loadAsync({
         'SalesforceSans-Regular': require('./assets/fonts/SalesforceSans-Regular.ttf'),
