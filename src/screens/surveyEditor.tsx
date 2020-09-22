@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet, SectionList } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/core';
 
 import { getLayoutDetail } from '../services/describe';
 
-import {
-  APP_THEME,
-  BACKGROUND_IMAGE_SOURCE,
-  BACKGROUND_STYLE,
-  BACKGROUND_IMAGE_STYLE,
-} from '../constants';
+import { APP_THEME, APP_FONTS } from '../constants';
 import { logger } from '../utility/logger';
 import { StackParamList } from '../router';
 import { SurveyLayout } from '../types/survey';
@@ -28,7 +23,7 @@ export default function SurveyEditor({ route, navigation }: Props) {
 
   useEffect(() => {
     const fetch = async () => {
-      const result = await getLayoutDetail(route.params.selectedRecordTypeId);
+      const result = await getLayoutDetail(route.params.selectedLayoutId);
       setLayout(result);
     };
     fetch();
@@ -36,18 +31,35 @@ export default function SurveyEditor({ route, navigation }: Props) {
 
   return (
     <View>
-      {layout.sections.map(s => {
-        return (
-          <View key={s.id}>
-            <Text>s.label</Text>
-            <ul>
-              {s.items.map(i => {
-                <li>{i.label}</li>;
-              })}
-            </ul>
-          </View>
-        );
-      })}
+      {layout.sections && (
+        <SectionList
+          sections={layout.sections}
+          keyExtractor={item => item.name}
+          renderSectionHeader={({ section: { title } }) => (
+            <View style={styles.headerView}>
+              <Text style={styles.sectionTitle}>{title.toUpperCase()}</Text>
+            </View>
+          )}
+          renderItem={({ item }) => <Text>{item.label}</Text>}
+        />
+      )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  headerView: {
+    backgroundColor: APP_THEME.APP_LIST_HEADER_COLOR,
+    justifyContent: 'center',
+  },
+  sectionTitle: {
+    fontSize: 10,
+    color: APP_THEME.APP_LIGHT_FONT_COLOR,
+    letterSpacing: 0.42,
+    padding: 10,
+    fontFamily: APP_FONTS.FONT_REGULAR,
+  },
+  flex1: {
+    flex: 1,
+  },
+});

@@ -6,8 +6,8 @@ export interface Survey {
 export interface SurveyLayout {
   sections?: Array<{
     id: string;
-    label: string;
-    items?: Array<{
+    title: string;
+    data: Array<{
       name: string;
       label: string;
       type: string;

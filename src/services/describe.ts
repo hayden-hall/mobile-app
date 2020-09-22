@@ -110,8 +110,8 @@ export const getLayoutDetail = async (layoutId: string): Promise<SurveyLayout> =
   const layout: SurveyLayout = {
     sections: sections.map(s => ({
       id: s.id,
-      label: s.sectionLabel,
-      items: sectionIdToItems[s.id].map(item => ({
+      title: s.sectionLabel,
+      data: sectionIdToItems[s.id].map(item => ({
         name: item.fieldName,
         label: item.fieldLabel,
         type: item.fieldType,
