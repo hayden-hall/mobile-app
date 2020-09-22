@@ -75,7 +75,7 @@ export default function Router() {
           component={SurveyList}
           options={({ navigation }) => ({
             title: t('SURVEYS'),
-            headerLeft: () => LogoutButton(navigation),
+            headerLeft: () => LogoutButton(navigation, t),
             headerRight: () => SettingsButton(navigation),
             ...headerStyle,
           })}

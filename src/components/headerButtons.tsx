@@ -27,7 +27,7 @@ export function BackButton() {
   );
 }
 
-export function LogoutButton(navigation) {
+export function LogoutButton(navigation, t) {
   return (
     <Icon
       iconStyle={{ padding: 10 }}
@@ -36,7 +36,7 @@ export function LogoutButton(navigation) {
       color={APP_THEME.APP_BASE_COLOR}
       type="simple-line-icon"
       onPress={() => {
-        logout(navigation);
+        logout(navigation, t);
       }}
     />
   );
@@ -46,10 +46,10 @@ export function SettingsButton(navigation) {
   return (
     <Icon
       iconStyle={{ padding: 10 }}
-      name="language"
+      name="settings"
       size={22}
       color={APP_THEME.APP_BASE_COLOR}
-      type="font-awesome"
+      type="material"
       onPress={() => {
         navigation.navigate('Settings');
       }}
