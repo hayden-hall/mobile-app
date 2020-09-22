@@ -18,7 +18,7 @@ type Language = {
 };
 
 export default function Settings() {
-  const { locale, setLocale } = useContext(LocalizationContext);
+  const { t, locale, setLocale } = useContext(LocalizationContext);
 
   const languages: Array<Language> = [
     { name: 'English', code: 'en' },
@@ -50,7 +50,7 @@ export default function Settings() {
       imageStyle={BACKGROUND_IMAGE_STYLE}
     >
       <Card>
-        <Card.Title>Language</Card.Title>
+        <Card.Title>{t('LANGUAGE')}</Card.Title>
         <FlatList
           data={languages}
           renderItem={renderItem}
@@ -63,7 +63,7 @@ export default function Settings() {
         />
       </Card>
       <Card>
-        <Card.Title>System</Card.Title>
+        <Card.Title>{t('SYSTEM')}</Card.Title>
         <ListItem
           onPress={() => {
             console.log('refreshing...');

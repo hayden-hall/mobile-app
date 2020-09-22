@@ -47,5 +47,6 @@
     "LANGUAGE": "भाषा",
     "SETTINGS": "सेटिङ",
     "DELETE": "Delete",
-    "DELETE_MESSAGE": "Are you sure to delete this survey? This cannot be undone."
+    "DELETE_MESSAGE": "Are you sure to delete this survey? This cannot be undone.",
+    "SYSTEM": "रणाली"
   }

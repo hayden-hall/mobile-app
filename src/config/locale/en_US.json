@@ -45,5 +45,6 @@
         "Error while creating record on salesforce.",
     "SETTINGS": "Settings",
     "DELETE": "Delete",
-    "DELETE_MESSAGE": "Are you sure to delete this survey? This cannot be undone."
+    "DELETE_MESSAGE": "Are you sure to delete this survey? This cannot be undone.",
+    "SYSTEM": "System"
   }
