@@ -1,16 +1,11 @@
 import React, { useState, useContext } from 'react';
 import { FlatList, ImageBackground } from 'react-native';
 import { Card, Icon, Divider, ListItem } from 'react-native-elements';
+import NetInfo from '@react-native-community/netinfo';
 import { Loader } from '../components';
 
 import LocalizationContext from '../context/localizationContext';
-import {
-  APP_THEME,
-  BACKGROUND_IMAGE_SOURCE,
-  BACKGROUND_STYLE,
-  BACKGROUND_IMAGE_STYLE,
-  APP_FONTS,
-} from '../constants';
+import { APP_THEME, BACKGROUND_IMAGE_SOURCE, BACKGROUND_STYLE, BACKGROUND_IMAGE_STYLE, APP_FONTS } from '../constants';
 import { logger } from '../utility/logger';
 import { retrieveAll } from '../services/describe';
 import { showMessage } from 'react-native-flash-message';
@@ -39,20 +34,14 @@ export default function Settings() {
       >
         {item.code === locale && <Icon name="check" size={20} color={APP_THEME.APP_BASE_COLOR} />}
         <ListItem.Content>
-          <ListItem.Title style={{ fontFamily: APP_FONTS.FONT_REGULAR }}>
-            {item.name}
-          </ListItem.Title>
+          <ListItem.Title style={{ fontFamily: APP_FONTS.FONT_REGULAR }}>{item.name}</ListItem.Title>
         </ListItem.Content>
       </ListItem>
     );
   };
 
   return (
-    <ImageBackground
-      source={BACKGROUND_IMAGE_SOURCE}
-      style={BACKGROUND_STYLE}
-      imageStyle={BACKGROUND_IMAGE_STYLE}
-    >
+    <ImageBackground source={BACKGROUND_IMAGE_SOURCE} style={BACKGROUND_STYLE} imageStyle={BACKGROUND_IMAGE_STYLE}>
       <Loader loading={showsSpinner} />
       <Card>
         <Card.Title>{t('LANGUAGE')}</Card.Title>
@@ -71,13 +60,26 @@ export default function Settings() {
         <Card.Title>{t('SYSTEM')}</Card.Title>
         <ListItem
           onPress={async () => {
+            const netInfo = await NetInfo.fetch();
+            if (!netInfo.isInternetReachable) {
+              showMessage({
+                message: 'No network connection. Confirm your network connectivity and try again.',
+                type: 'success',
+              });
+              return;
+            }
             setShowsSpinner(true);
-            await retrieveAll();
-            setShowsSpinner(false);
-            showMessage({
-              message: 'Successfully refreshed metadata.',
-              type: 'success',
-            });
+            try {
+              await retrieveAll();
+              showMessage({
+                message: 'Successfully refreshed metadata.',
+                type: 'success',
+              });
+            } catch (e) {
+              // TODO: log in again?
+            } finally {
+              setShowsSpinner(false);
+            }
           }}
           topDivider
           bottomDivider
