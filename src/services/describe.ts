@@ -11,6 +11,23 @@ import { SURVEY_OBJECT } from 'react-native-dotenv';
 import i18n from '../config/i18n';
 
 /**
+ * @description Download record types, all the page layouts, and localization custom metadata.
+ * @todo For surveys and contacts?
+ */
+export const retrieveAll = async () => {
+  await clearTable(DB_TABLE.RecordType);
+  await clearTable(DB_TABLE.PageLayoutSection);
+  await clearTable(DB_TABLE.PageLayoutItem);
+  await clearTable(DB_TABLE.Localization);
+
+  const recordTypes = await storeRecordTypes();
+  for (const rt of recordTypes) {
+    await storePageLayoutItems(rt.recordTypeId);
+  }
+  await storeLocalization();
+};
+
+/**
  * @description Query record types by REST API (describe layouts) and save the results to local database.
  */
 export const storeRecordTypes = async () => {
@@ -33,7 +50,7 @@ export const storeRecordTypes = async () => {
  * @description Query layouts and fields by Rest API (describe layout) and save the result to local database.
  * @param recordTypeId
  */
-export const storePageLayoutItems = async (recordTypeId: string) => {
+const storePageLayoutItems = async (recordTypeId: string) => {
   const response: DescribeLayout = await describeLayout(SURVEY_OBJECT, recordTypeId);
   const pageLayoutSections: Array<PageLayoutSection> = response.editLayoutSections
     .filter(section => section.useHeading)
@@ -69,6 +86,26 @@ export const storePageLayoutItems = async (recordTypeId: string) => {
 };
 
 /**
+ * @description Retrieve Salesforce 'Localization__mdt' Custom Metadata records and save them to local database
+ */
+const storeLocalization = async () => {
+  const query = 'SELECT Type__c, Locale__c, OriginalName__c, TranslatedLabel__c FROM Localization__mdt';
+  const records: Array<LocalizationCustomMetadata> = await fetchSalesforceRecords(query);
+  if (records.length === 0) {
+    return;
+  }
+  const localizations: Array<Localization> = records.map(r => {
+    return {
+      locale: r.Locale__c,
+      type: r.Type__c,
+      name: r.OriginalName__c,
+      label: r.TranslatedLabel__c,
+    };
+  });
+  await saveRecords(DB_TABLE.Localization, localizations, false);
+};
+
+/**
  * @description Get all the record types of the survey object from local database
  */
 export const getAllRecordTypes = async (): Promise<Array<RecordType>> => {
@@ -80,7 +117,7 @@ export const getAllRecordTypes = async (): Promise<Array<RecordType>> => {
  * Construct page layout object from locally stored page layout sections and items
  * @param layoutId
  */
-export const getLayoutDetail = async (layoutId: string): Promise<SurveyLayout> => {
+export const buildLayoutDetail = async (layoutId: string): Promise<SurveyLayout> => {
   // sections in the layout
   const sections: Array<PageLayoutSection> = await getRecords(
     DB_TABLE.PageLayoutSection,
@@ -92,7 +129,7 @@ export const getLayoutDetail = async (layoutId: string): Promise<SurveyLayout> =
     DB_TABLE.PageLayoutItem,
     `where sectionId in (${sectionIds.map(id => `'${id}'`).join(',')})`
   );
-  logger('FINE', 'getLayoutDetail', items);
+  logger('FINE', 'buildLayoutDetail', items);
 
   // group items by section id
   const sectionIdToItems = items.reduce(
@@ -116,26 +153,6 @@ export const getLayoutDetail = async (layoutId: string): Promise<SurveyLayout> =
   };
 
   return layout;
-};
-
-/**
- * @description Retrieve Salesforce 'Localization__mdt' Custom Metadata records and save them to local database
- */
-export const storeLocalization = async () => {
-  const query = 'SELECT Type__c, Locale__c, OriginalName__c, TranslatedLabel__c FROM Localization__mdt';
-  const records: Array<LocalizationCustomMetadata> = await fetchSalesforceRecords(query);
-  if (records.length === 0) {
-    return;
-  }
-  const localizations: Array<Localization> = records.map(r => {
-    return {
-      locale: r.Locale__c,
-      type: r.Type__c,
-      name: r.OriginalName__c,
-      label: r.TranslatedLabel__c,
-    };
-  });
-  await saveRecords(DB_TABLE.Localization, localizations, false);
 };
 
 /**
@@ -165,21 +182,4 @@ export const buildRecordTypeDictionary = async () => {
       ...neRecordTypes,
     },
   };
-};
-
-/**
- * @description Download record types, all the page layouts, and localization custom metadata.
- * @todo For surveys and contacts?
- */
-export const retrieveAll = async () => {
-  await clearTable(DB_TABLE.RecordType);
-  await clearTable(DB_TABLE.PageLayoutSection);
-  await clearTable(DB_TABLE.PageLayoutItem);
-  await clearTable(DB_TABLE.Localization);
-
-  const recordTypes = await storeRecordTypes();
-  for (const rt of recordTypes) {
-    await storePageLayoutItems(rt.recordTypeId); // TODO: all
-  }
-  await storeLocalization();
 };

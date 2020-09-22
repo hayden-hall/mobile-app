@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, SectionList } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/core';
 
-import { getLayoutDetail } from '../services/describe';
+import { buildLayoutDetail } from '../services/describe';
 
 import { APP_THEME, APP_FONTS } from '../constants';
 import { logger } from '../utility/logger';
@@ -23,7 +23,7 @@ export default function SurveyEditor({ route, navigation }: Props) {
 
   useEffect(() => {
     const fetch = async () => {
-      const result = await getLayoutDetail(route.params.selectedLayoutId);
+      const result = await buildLayoutDetail(route.params.selectedLayoutId);
       setLayout(result);
     };
     fetch();
