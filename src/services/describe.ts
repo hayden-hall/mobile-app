@@ -25,6 +25,7 @@ export const retrieveAll = async () => {
     await storePageLayoutItems(rt.recordTypeId);
   }
   await storeLocalization();
+  await buildRecordTypeDictionary();
 };
 
 /**
