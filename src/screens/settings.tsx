@@ -64,7 +64,11 @@ export default function Settings() {
             if (!netInfo.isInternetReachable) {
               showMessage({
                 message: 'No network connection. Confirm your network connectivity and try again.',
-                type: 'success',
+                type: 'danger',
+                icon: {
+                  icon: 'danger',
+                  position: 'left',
+                },
               });
               return;
             }
@@ -74,6 +78,10 @@ export default function Settings() {
               showMessage({
                 message: 'Successfully refreshed metadata.',
                 type: 'success',
+                icon: {
+                  icon: 'success',
+                  position: 'left',
+                },
               });
             } catch (e) {
               // TODO: log in again?
