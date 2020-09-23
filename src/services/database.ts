@@ -46,6 +46,12 @@ export const updateRecord = async (table, record, LocalId) => {
   });
 };
 
+/**
+ * @deprecated
+ * @param table
+ * @param records
+ * @param fieldsWithDataTypes
+ */
 export const saveRecordsWithFields = async (table: any, records: any, fieldsWithDataTypes: Array<any>) => {
   return new Promise(async (resolve, reject) => {
     //Check for table.
@@ -282,7 +288,7 @@ export const saveRecords = (tableName: string, records, hasLocalId) => {
       })
       .join(','); // e.g., ('a1', 'b2'), ('c1', 'd2')
     const statement = `insert into ${tableName} (${keys}) values ${values}`;
-    logger('DEBUG', 'saveRecords', statement);
+    logger('FINE', 'saveRecords', statement);
 
     executeTransaction(statement)
       .then(result => {
