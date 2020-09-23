@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, ImageBackground } from 'react-native';
 
-import { getCDWContact } from '../services/api/salesforce/Contact';
+import { getCDWContact } from '../services/api/salesforce/contact';
 import { refreshAll } from '../services/Refresh';
 import { retrieveAll } from '../services/describe';
 import LocalizationContext from '../context/localizationContext';

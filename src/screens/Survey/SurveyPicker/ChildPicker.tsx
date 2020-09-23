@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { SelectionList } from '../../../components';
-import { getChildsForMother } from '../../../services/api/salesforce/Contact';
+import { getChildsForMother } from '../../../services/api/salesforce/contact';
 import i18n from '../../../config/i18n';
 
 interface ChildPickerProps {

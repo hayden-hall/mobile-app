@@ -11,7 +11,7 @@ import {
   markRecordNonDirty,
 } from '../../database';
 import { prepareIdsForSqllite } from '../../../utility';
-import { getAllOfflineContacts } from './Contact';
+import { getAllOfflineContacts } from './contact';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
 import i18n from '../../../config/i18n';
 import { checkForDatabaseNull } from '../../../utility';
@@ -65,7 +65,7 @@ const getAllSurveyQuestionsFromSalesforce = async () => {
 };
 
 export const getAllSurveys = async () => {
-  let records = await getAllRecords(DB_TABLE.SURVEY, '');
+  let records = await getAllRecords(DB_TABLE.SURVEY);
   const contacts = await getAllOfflineContacts();
   const surveyMetadata = await getOfflineStoredSurveyMetadata();
 
@@ -126,7 +126,7 @@ export const getAllSurveys = async () => {
 };
 
 export const getOfflineStoredSurveyMetadata = async () => {
-  let records = await getRecords(DB_TABLE.SURVEY_METADATA, '');
+  let records = await getAllRecords(DB_TABLE.SURVEY_METADATA);
 
   const selectedLanguage = i18n.locale;
   if (selectedLanguage && selectedLanguage === 'ne') {

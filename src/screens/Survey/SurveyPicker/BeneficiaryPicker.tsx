@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { SelectionList } from '../../../components';
 import i18n from '../../../config/i18n';
-import { getBeneficiaries } from '../../../services/api/salesforce/Contact';
+import { getBeneficiaries } from '../../../services/api/salesforce/contact';
 
 interface BeneficiaryPickerProps {
   navigation: any;

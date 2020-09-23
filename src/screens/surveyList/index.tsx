@@ -1,3 +1,4 @@
+// @deprecated
 import React, { PureComponent } from 'react';
 import { View, StyleSheet, Alert, ActivityIndicator, TextInput, Text, Modal } from 'react-native';
 import { Icon, Divider, Button, ButtonGroup } from 'react-native-elements';
@@ -9,7 +10,7 @@ import { SelectionList, SearchBar } from '../../components';
 import { getAllSurveys, getOfflineCreatedSurvey } from '../../services/api/salesforce/Survey';
 import { refreshAll } from '../../services/Refresh';
 import { formatDate } from '../../utility';
-import Login from '../auth/login';
+import Login from '../login';
 
 interface SurveyListProps {
   navigation: any;
