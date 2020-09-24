@@ -1,18 +1,18 @@
-interface SurveyAction {
-  type: SurveyActionType;
+interface SurveyListAction {
+  type: SurveyListActionType;
   surveys?: any;
 }
 
-const SurveyActionType = {
+const SurveyListActionType = {
   INITALIZE: 'INITIALIZE',
   REFRESH: 'REFRESH',
   ADD_SURVEY: 'ADD_SURVEY',
   DELETE_SURVEY: 'DELETE_SURVEY',
   SYNC_SURVEY: 'SYNC_SURVEY',
 } as const;
-type SurveyActionType = typeof SurveyActionType[keyof typeof SurveyActionType];
+type SurveyListActionType = typeof SurveyListActionType[keyof typeof SurveyListActionType];
 
-export const surveyReducer = (state, action: SurveyAction) => {
+export const surveyListReducer = (state, action: SurveyListAction) => {
   switch (action.type) {
     case 'INITIALIZE':
       return action.surveys;

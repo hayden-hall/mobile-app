@@ -14,7 +14,7 @@ import { getAllSurveys, getOfflineCreatedSurvey } from '../services/api/salesfor
 import { buildRecordTypeDictionary } from '../services/describe';
 // store
 import { surveyFilterReducer } from '../reducers/surveyFilterReducer';
-import { surveyReducer } from '../reducers/surveyReducer';
+import { surveyListReducer } from '../reducers/surveyListReducer';
 import SurveyListContext from '../context/surveyListContext';
 import LocalizationContext from '../context/localizationContext';
 // util, constants
@@ -31,7 +31,7 @@ type Props = {
 // TODO: navigate to login screen when session timeout
 
 export default function SurveyList({ navigation }) {
-  const [surveys, dispatchSurveys] = useReducer(surveyReducer, []);
+  const [surveys, dispatchSurveys] = useReducer(surveyListReducer, []);
   const [filter, dispatchFilter] = useReducer(surveyFilterReducer, 'SHOW_UNSYNCED');
 
   const [searchTerm, setSearchTerm] = useState('');
