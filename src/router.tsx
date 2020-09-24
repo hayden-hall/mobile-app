@@ -88,7 +88,14 @@ export default function Router() {
             ...headerStyle,
           }}
         />
-        <Stack.Screen name="SurveyEditor" component={SurveyEditor} />
+        <Stack.Screen
+          name="SurveyEditor"
+          component={SurveyEditor}
+          options={{
+            title: t('NEW_SURVEY'),
+            ...headerStyle,
+          }}
+        />
         <Stack.Screen name="SurveyCompleted" component={SurveyCompleted} />
         <Stack.Screen
           name="Settings"
