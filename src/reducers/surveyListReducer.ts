@@ -21,6 +21,6 @@ export const surveyListReducer = (state, action: SurveyListAction) => {
     case 'DELETE_SURVEY':
       return state;
     default:
-      throw new Error('Invalid action type for SurveyReducer');
+      throw new Error('Invalid action type for SurveyListReducer');
   }
 };
