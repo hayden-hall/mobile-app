@@ -71,7 +71,7 @@ const buildEndpointUrl = async () => {
 
 /**
  * @deprecated
- * @param query 
+ * @param query
  */
 const fetchQuery = async query => {
   const accessToken = await storage.load({
@@ -124,13 +124,9 @@ export const describeLayoutResult = async (sObjectType: string): Promise<Describ
  * @param recordTypeId
  * @see https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/resources_sobject_layouts.htm
  */
-export const describeLayout = async (
-  sObjectType: string,
-  recordTypeId: string
-): Promise<DescribeLayout> => {
+export const describeLayout = async (sObjectType: string, recordTypeId: string): Promise<DescribeLayout> => {
   const endPoint =
-    (await buildEndpointUrl()) +
-    `/sobjects/${sObjectType}/describe/layouts/${recordTypeId ? recordTypeId : ''}`;
+    (await buildEndpointUrl()) + `/sobjects/${sObjectType}/describe/layouts/${recordTypeId ? recordTypeId : ''}`;
   logger('DEBUG', 'describeLayout', endPoint);
 
   const response = await fetchRetriable(endPoint, 'GET', undefined);

@@ -1,16 +1,71 @@
-import { getSalesforceRecords } from './core';
+import { fetchSalesforceRecords, getSalesforceRecords } from './core';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
 import { prepareIdsForSalesforce, prepareIdsForSqllite } from '../../../utility';
-import { saveRecordsOld, DB_TABLE, clearTable, getRecords, getAllRecords } from '../../database';
+import { saveRecordsOld, DB_TABLE, clearTable, getRecords, getAllRecords, saveRecords } from '../../database';
 import { logger } from '../../../utility/logger';
+import { Contact } from '../../../types/sqlite';
 
 const getLoggedInCDWContact = async () => {
-  // @ts-ignore
   return await storage.load({
     key: ASYNC_STORAGE_KEYS.CDW_WORKED_ID,
   });
 };
 
+/**
+ * @description Fetch contacts, resolve relationships and then save them to local database.
+ * @param appUserId contact Id of community development worker
+ */
+export const storeContacts = async (appUserId: string) => {
+  const junctionQuery = `SELECT Id, Child__c, Child__r.Name, Mother__c, Mother__r.Name, Mother__r.Ante_Natal_Mother__c, Beneficiary_Name__c, Beneficiary_Name__r.Name
+    FROM CDW_Client_Junction__c
+    WHERE Community_Development_Worker__c = '${appUserId}'`;
+  const junctionRecords = await fetchSalesforceRecords(junctionQuery);
+  const contacts: Array<Contact> = junctionRecords
+    .map(junctionRecord => {
+      return [
+        junctionRecord.Child__c
+          ? {
+              id: junctionRecord.Child__c,
+              name: junctionRecord.Child__r.Name,
+              type: 'Child',
+              motherId: junctionRecord.Mother__c,
+              userId: appUserId,
+            }
+          : undefined,
+        junctionRecord.Mother__c && !junctionRecord.Mother__r.Ante_Natal_Mother__c
+          ? { id: junctionRecord.Child__c, name: junctionRecord.Child__r.Name, type: 'Mother', userId: appUserId }
+          : undefined,
+        junctionRecord.Mother__c && junctionRecord.Mother__r.Ante_Natal_Mother__c
+          ? {
+              id: junctionRecord.Child__c,
+              name: junctionRecord.Child__r.Name,
+              type: 'AnteNatelMother',
+              userId: appUserId,
+            }
+          : undefined,
+        junctionRecord.Beneficiary__c
+          ? { id: junctionRecord.Child__c, name: junctionRecord.Child__r.Name, type: 'Beneficiary', userId: appUserId }
+          : undefined,
+      ];
+    })
+    .flat();
+
+  logger('FINE', 'storeContacts', contacts);
+  await saveRecords(DB_TABLE.CONTACT, contacts, true);
+};
+
+/**
+ * @description Get contacts by type
+ * @param type Contact type (Mother, Child, Beneficiary, AnteNatalMother)
+ */
+export const getContactByType = async (type: string) => {
+  return await getRecords(DB_TABLE.CONTACT, `where type='${type}'`);
+};
+
+/**
+ * @description Fetch contact by area code.
+ * @param areaCode area code entered in area code screen
+ */
 const getCDWContact = async areaCode => {
   const query = `SELECT Id, Name, Service_Role__c FROM contact WHERE Area_Code__c='${areaCode}' AND Service_Role__c = 'Health Worker'`;
   const response = await getSalesforceRecords(query);
@@ -54,6 +109,7 @@ const getAnteNatalMothers = async () => {
 
   const motherIdsForSql = prepareIdsForSqllite(mothersIds);
 
+  // eslint-disable-next-line prettier/prettier
   return await getRecords(
     DB_TABLE.CONTACT,
     `WHERE Id IN (${motherIdsForSql}) AND Ante_natal_Mother__c = 'true'`

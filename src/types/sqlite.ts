@@ -29,3 +29,14 @@ export interface Localization {
   name: string;
   label: string;
 }
+
+/**
+ * TODO: Make this generic. Now this data model is specific for hayden hall.
+ */
+export interface Contact {
+  id: string; // salesforce id,
+  name: string;
+  type: 'AnteNatelMother' | 'Mother' | 'Child' | 'Beneficiary';
+  motherId: string;
+  userId: string; // cdw contactid
+}

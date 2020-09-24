@@ -50,6 +50,7 @@ export const DB_TABLE = {
   PageLayoutItem: 'PageLayoutItem',
   Survey: 'Survey',
   Localization: 'Localization',
+  CONTACT: 'Contact',
 };
 
 export const PREFIX = {
