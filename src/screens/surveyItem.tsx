@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-import { CheckBoxButton } from '../components';
+import { TextInput, CheckboxButton, DatePicker } from '../components/surveyEditor';
 
 import { SurveyAction } from '../reducers/surveyReducer';
 import SurveyContext from '../context/surveyContext';
@@ -20,12 +20,46 @@ export default function SurveyItem(props: SurveyItemProps) {
 
   const renderItem = () => {
     switch (item.type) {
+      case 'string':
+        return (
+          <TextInput
+            title={item.label}
+            onValueChange={value => dispatchSurvey({ type: 'UPDATE', field: { name: item.name, value } })}
+            value={survey[item.name]}
+          />
+        );
+      case 'textarea':
+        return (
+          <TextInput
+            title={item.label}
+            onValueChange={value => dispatchSurvey({ type: 'UPDATE', field: { name: item.name, value } })}
+            value={survey[item.name]}
+            multiline
+          />
+        );
+      case 'double':
+        return (
+          <TextInput
+            title={item.label}
+            onValueChange={value => dispatchSurvey({ type: 'UPDATE', field: { name: item.name, value } })}
+            value={survey[item.name]}
+            keyboardType="numeric"
+          />
+        );
       case 'boolean':
         return (
-          <CheckBoxButton
+          <CheckboxButton
             title={item.label}
             onPress={() => dispatchSurvey({ type: 'UPDATE', field: { name: item.name, value: !survey[item.name] } })}
             selected={survey[item.name]}
+          />
+        );
+      case 'date':
+        return (
+          <DatePicker
+            title={item.label}
+            onValueChange={date => dispatchSurvey({ type: 'UPDATE', field: { name: item.name, value: date } })}
+            value={survey[item.name]}
           />
         );
       default:
