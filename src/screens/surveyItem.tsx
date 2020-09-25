@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-import { TextInput, CheckboxButton, DatePicker } from '../components/surveyEditor';
+import { TextInput, CheckboxButton, DatePicker, Picklist } from '../components/surveyEditor';
 
 import { SurveyAction } from '../reducers/surveyReducer';
 import SurveyContext from '../context/surveyContext';
@@ -60,6 +60,15 @@ export default function SurveyItem(props: SurveyItemProps) {
             title={item.label}
             onValueChange={date => dispatchSurvey({ type: 'UPDATE', field: { name: item.name, value: date } })}
             value={survey[item.name]}
+          />
+        );
+      case 'picklist':
+        return (
+          <Picklist
+            title={item.label}
+            onValueChange={value => dispatchSurvey({ type: 'UPDATE', field: { name: item.name, value } })}
+            value={survey[item.name]}
+            fieldName={item.name}
           />
         );
       default:

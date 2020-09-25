@@ -169,6 +169,15 @@ export const buildLayoutDetail = async (layoutId: string): Promise<SurveyLayout>
 };
 
 /**
+ * @description
+ * @param fieldName
+ */
+export const getPicklistValues = async (fieldName: string) => {
+  const recordTypes: Array<PicklistValue> = await getRecords(DB_TABLE.RecordType, `where fieldName='${fieldName}'`);
+  return recordTypes;
+};
+
+/**
  * @description [WIP] Build expo-localization object from locally stored tables
  */
 export const buildRecordTypeDictionary = async () => {

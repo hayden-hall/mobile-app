@@ -2291,6 +2291,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-4.7.0.tgz#7482d36836cac69d0a0ae25581f65bc472639930"
   integrity sha512-a/sDB+AsLEUNmhAUlAaTYeXKyQdFGBUfatqKkX5jluBo2CB3OAuTHfm7rSjcaLB9EmG5iSq3fOTpync2E7EYTA==
 
+"@react-native-community/picker@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@react-native-community/picker/-/picker-1.8.0.tgz#32425321af1e29e3da882fbd627a71ea142c75e4"
+  integrity sha512-aS506wjynNzKDZjynlDasbc665GKGHdhrCob9KdOprPFlE+zMnoR3k0Ce0OkIuGHcY/GMVvQqTc+LYVm2UOmbg==
+
 "@react-navigation/core@^5.12.3":
   version "5.12.3"
   resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-5.12.3.tgz#0484fcca290569a0dc10b70b99f00edd3f1fd93c"
