@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { getLoggedInCDWContact, getLoggedInUserMothersChilds } from './api/salesforce/Contact';
+import { getLoggedInCDWContact, getLoggedInUserMothersChilds } from './api/salesforce/contact';
 import { getCDWClientJunctionObjects } from './api/salesforce/CDWJunction';
 import {
   getAllSurveysFromSalesforce,
@@ -10,57 +10,59 @@ import {
   uploadSurveyToSalesforce,
 } from './api/salesforce/Survey';
 import { ASYNC_STORAGE_KEYS } from '../constants';
+import { logger } from '../utility/logger';
 
 export const refreshAll = async () => {
+  logger('DEBUG', 'refreshAll', 'start');
   const CDW_Worker_Id = await getLoggedInCDWContact();
   const AREA_CODE = await storage.load({
     key: ASYNC_STORAGE_KEYS.AREA_CODE,
   });
-  if (CDW_Worker_Id && AREA_CODE) {
-    await syncUpData();
+  if (!CDW_Worker_Id || !AREA_CODE) {
+    return Promise.reject('Logged In user not found, Please login again.');
+  }
 
-    //fetch CDW juncton objects first.
-    const cdwResponse = await getCDWClientJunctionObjects(CDW_Worker_Id);
-    if (cdwResponse.records) {
-      const cdwRecords = cdwResponse.records;
-      //Fetch all mother belongs to this CDW.
+  // await syncUpData();
 
-      const motherIds = cdwRecords.map(record => record.Mother__c && record.Mother__c);
-      //Fetch all childs belongs to this CDW.
-      const childIds = cdwRecords.map(record => record.Child__c && record.Child__c);
-      //Fetch all beneficiaries belongs to this CDW.
-      const beneIds = cdwRecords.map(
-        record => record.Beneficiary_Name__c && record.Beneficiary_Name__c
-      );
+  logger('DEBUG', 'refreshAll', 'retrieving junction object');
+  //fetch CDW juncton objects first.
+  const cdwResponse = await getCDWClientJunctionObjects(CDW_Worker_Id);
+  if (cdwResponse.records) {
+    const cdwRecords = cdwResponse.records;
+    //Fetch all mother belongs to this CDW.
 
-      //Now fetch all contacts for mothers and childs fall under logged in cdw worker.
-      await getLoggedInUserMothersChilds([
-        ...(motherIds || []),
-        ...(childIds || []),
-        ...(beneIds || []),
-      ]);
+    const motherIds = cdwRecords.map(record => record.Mother__c && record.Mother__c);
+    //Fetch all childs belongs to this CDW.
+    const childIds = cdwRecords.map(record => record.Child__c && record.Child__c);
+    //Fetch all beneficiaries belongs to this CDW.
+    const beneIds = cdwRecords.map(
+      record => record.Beneficiary_Name__c && record.Beneficiary_Name__c
+    );
 
-      //Download all available survey metadata
-      await getAllSurveyMetadataFromSalesforce();
-      await getAllSurveySectionsFromSalesforce();
-      const surveyQuestionsResponse = await getAllSurveyQuestionsFromSalesforce();
+    //Now fetch all contacts for mothers and childs fall under logged in cdw worker.
+    await getLoggedInUserMothersChilds([
+      ...(motherIds || []),
+      ...(childIds || []),
+      ...(beneIds || []),
+    ]);
+    logger('DEBUG', 'refreshAll', 'retrieving survey metadata records (old) from salesforce');
+    //Download all available survey metadata
+    await getAllSurveyMetadataFromSalesforce();
+    await getAllSurveySectionsFromSalesforce();
+    const surveyQuestionsResponse = await getAllSurveyQuestionsFromSalesforce();
 
-      //Fetch all surveys for logged in user:
-      const surveyFields = getSurveyFields(surveyQuestionsResponse.records);
-      await getAllSurveysFromSalesforce(AREA_CODE, surveyFields);
-
-      return Promise.resolve(true);
-    } else {
-      return Promise.reject('Login Failed');
-    }
-
+    //Fetch all surveys for logged in user:
+    const surveyFields = getSurveyFields(surveyQuestionsResponse.records);
+    logger('DEBUG', 'refreshAll', 'retrieving surveys from salesforce');
+    await getAllSurveysFromSalesforce(AREA_CODE, surveyFields);
+    logger('DEBUG', 'refreshAll', 'end');
     return Promise.resolve(true);
   } else {
-    return Promise.reject('Logged In user not found, Please login again.');
+    return Promise.reject('Login Failed');
   }
 };
 
-const syncUpData = async () => {
+export const syncUpData = async () => {
   try {
     const offlineSurveys = await getOfflineSurveys();
     await Promise.all(
