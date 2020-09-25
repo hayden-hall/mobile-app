@@ -2,6 +2,7 @@ import React, { useState, useEffect, useReducer } from 'react';
 import { View, Text, StyleSheet, SectionList } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/core';
+import { KeyboardAwareSectionList } from 'react-native-keyboard-aware-scroll-view';
 
 import { buildLayoutDetail } from '../services/describe';
 import { surveyReducer } from '../reducers/surveyReducer';
@@ -39,7 +40,7 @@ export default function SurveyEditor({ route, navigation }: Props) {
     <SurveyContext.Provider value={surveyContext}>
       <View>
         {layout.sections && (
-          <SectionList
+          <KeyboardAwareSectionList
             sections={layout.sections}
             keyExtractor={item => item.name}
             renderSectionHeader={({ section: { title } }) => (
