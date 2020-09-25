@@ -23,6 +23,12 @@ export interface PageLayoutItem {
   fieldType: string;
 }
 
+export interface PicklistValue {
+  fieldName: string;
+  label: string;
+  value: string;
+}
+
 export interface Localization {
   type: string; // TODO: 'RecordType' | 'PageLayoutSection' | 'PageLayoutItem';
   locale: string; // TODO: 'en' | 'ne'

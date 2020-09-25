@@ -44,10 +44,12 @@ export const BACKGROUND_IMAGE_STYLE: ImageStyle = {
   top: Dimensions.get('window').height / 2 + height / 2,
 };
 
+// TODO: Capitalize
 export const DB_TABLE = {
   RecordType: 'RecordType',
   PageLayoutSection: 'PageLayoutSection',
   PageLayoutItem: 'PageLayoutItem',
+  PICKLIST_VALUE: 'PicklistValue',
   Survey: 'Survey',
   Localization: 'Localization',
   CONTACT: 'Contact',

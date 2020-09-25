@@ -53,6 +53,15 @@ export interface DescribeFieldProperties {
   label: string; // Field Label;
   name: string; // Field API Name
   type: string; // Data, Reference,
+  picklistValues?: Array<DescribePicklistValue>;
+}
+
+export interface DescribePicklistValue {
+  active: boolean;
+  defaultValue: string;
+  label: string;
+  validFor: string;
+  value: string;
 }
 
 export interface LocalizationCustomMetadata {

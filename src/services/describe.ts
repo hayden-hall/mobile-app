@@ -1,7 +1,7 @@
 import { describeLayoutResult, describeLayout, fetchSalesforceRecords } from './api/salesforce/core';
 import { saveRecords, getAllRecords, getRecords, clearTable } from './database';
 
-import { RecordType, PageLayoutSection, PageLayoutItem, Localization } from '../types/sqlite';
+import { RecordType, PageLayoutSection, PageLayoutItem, PicklistValue, Localization } from '../types/sqlite';
 import { SurveyLayout } from '../types/survey';
 import { DescribeLayoutResult, DescribeLayout, LocalizationCustomMetadata } from '../types/metadata';
 
@@ -48,7 +48,7 @@ export const storeRecordTypes = async () => {
 };
 
 /**
- * @description Query layouts and fields by Rest API (describe layout) and save the result to local database.
+ * @description Query layouts and fields including picklist values by Rest API (describe layout) and save the result to local database.
  * @param recordTypeId
  */
 const storePageLayoutItems = async (recordTypeId: string) => {
@@ -63,12 +63,23 @@ const storePageLayoutItems = async (recordTypeId: string) => {
   logger('FINE', 'storePageLayoutItems | sections', pageLayoutSections);
   await saveRecords(DB_TABLE.PageLayoutSection, pageLayoutSections, false);
 
+  const picklistValues: Array<PicklistValue> = [];
   const pageLayoutItems: Array<PageLayoutItem> = response.editLayoutSections
     .filter(section => section.useHeading)
     .map(section => {
       return section.layoutRows.map(row => {
         return row.layoutItems.map(item => {
           return item.layoutComponents.map(c => {
+            if (c.details.type === 'picklist') {
+              const values: Array<PicklistValue> = c.details.picklistValues
+                .filter(v => v.active)
+                .map(v => ({
+                  fieldName: c.details.name,
+                  label: v.label,
+                  value: v.value,
+                }));
+              picklistValues.push(...values);
+            }
             return {
               sectionId: section.layoutSectionId,
               fieldName: c.details.name,
@@ -82,6 +93,7 @@ const storePageLayoutItems = async (recordTypeId: string) => {
     .flat(3);
   logger('FINE', 'storePageLayoutItems | items', pageLayoutItems);
   await saveRecords(DB_TABLE.PageLayoutItem, pageLayoutItems, true);
+  await saveRecords(DB_TABLE.PICKLIST_VALUE, picklistValues, true);
 
   return response;
 };
