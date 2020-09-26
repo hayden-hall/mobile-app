@@ -173,7 +173,7 @@ export const buildLayoutDetail = async (layoutId: string): Promise<SurveyLayout>
  * @param fieldName
  */
 export const getPicklistValues = async (fieldName: string) => {
-  const recordTypes: Array<PicklistValue> = await getRecords(DB_TABLE.RecordType, `where fieldName='${fieldName}'`);
+  const recordTypes: Array<PicklistValue> = await getRecords(DB_TABLE.PICKLIST_VALUE, `where fieldName='${fieldName}'`);
   return recordTypes;
 };
 

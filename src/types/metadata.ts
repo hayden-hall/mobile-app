@@ -58,7 +58,7 @@ export interface DescribeFieldProperties {
 
 export interface DescribePicklistValue {
   active: boolean;
-  defaultValue: string;
+  defaultValue: boolean;
   label: string;
   validFor: string;
   value: string;
