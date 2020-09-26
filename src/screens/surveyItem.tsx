@@ -65,10 +65,18 @@ export default function SurveyItem(props: SurveyItemProps) {
       case 'picklist':
         return (
           <Picklist
-            title={item.label}
             onValueChange={value => dispatchSurvey({ type: 'UPDATE', field: { name: item.name, value } })}
             value={survey[item.name]}
             fieldName={item.name}
+          />
+        );
+      case 'phone':
+        return (
+          <TextInput
+            title={item.label}
+            onValueChange={value => dispatchSurvey({ type: 'UPDATE', field: { name: item.name, value } })}
+            value={survey[item.name]}
+            keyboardType="phone-pad"
           />
         );
       default:
