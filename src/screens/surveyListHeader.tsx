@@ -3,12 +3,12 @@ import { View, StyleSheet, Alert, TextInput } from 'react-native';
 import { Button } from 'react-native-elements';
 
 import { APP_FONTS, APP_THEME, ASYNC_STORAGE_KEYS } from '../constants';
-import { Survey } from '../types/survey';
+import { SurveyItem } from '../types/survey';
 import LocalizationContext from '../context/localizationContext';
 
 type SurveyListHeaderProps = {
   isNetworkConnected: boolean;
-  surveys: Array<Survey>;
+  surveys: Array<SurveyItem>;
 };
 
 export default function SurveyListHeader(props: SurveyListHeaderProps) {

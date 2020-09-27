@@ -1,4 +1,4 @@
-export interface Survey {
+export interface SurveyItem {
   subtitle: string;
   showCaret: boolean;
 }
