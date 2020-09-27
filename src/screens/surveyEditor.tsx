@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useReducer } from 'react';
-import { View, Text, StyleSheet, SectionList } from 'react-native';
+import React, { useState, useEffect, useReducer, useContext } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/core';
 import { KeyboardAwareSectionList } from 'react-native-keyboard-aware-scroll-view';
@@ -8,11 +8,12 @@ import { buildLayoutDetail } from '../services/describe';
 import { surveyReducer } from '../reducers/surveyReducer';
 
 import { APP_THEME, APP_FONTS } from '../constants';
-import { logger } from '../utility/logger';
 import { StackParamList } from '../router';
 import { SurveyLayout } from '../types/survey';
 import SurveyItem from './surveyItem';
 import SurveyContext from '../context/surveyContext';
+import LocalizationContext from '../context/localizationContext';
+import { CustomButton } from '../components';
 
 type SurveyEditorNavigationProp = StackNavigationProp<StackParamList, 'SurveyEditor'>;
 type SurveyEditorRouteProp = RouteProp<StackParamList, 'SurveyEditor'>;
@@ -25,6 +26,8 @@ type Props = {
 export default function SurveyEditor({ route, navigation }: Props) {
   const [layout, setLayout] = useState<SurveyLayout>({});
   const [survey, dispatchSurvey] = useReducer(surveyReducer, {});
+
+  const { t } = useContext(LocalizationContext);
 
   const surveyContext = { survey, dispatchSurvey };
 
@@ -51,6 +54,14 @@ export default function SurveyEditor({ route, navigation }: Props) {
             renderItem={({ item }) => <SurveyItem item={item} />}
           />
         )}
+        <View style={styles.inputButton}>
+          <CustomButton
+            title={true ? t('SAVE') : t('UPDATE')}
+            onPress={() => {
+              console.log('Save');
+            }}
+          />
+        </View>
       </View>
     </SurveyContext.Provider>
   );
@@ -71,4 +82,5 @@ const styles = StyleSheet.create({
   flex1: {
     flex: 1,
   },
+  inputButton: { width: '40%', alignSelf: 'center', paddingTop: 20 },
 });
