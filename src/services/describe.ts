@@ -25,7 +25,7 @@ export const retrieveAll = async () => {
     await storePageLayoutItems(rt.recordTypeId);
   }
   await storeLocalization();
-  await buildRecordTypeDictionary();
+  await buildDictionary();
 };
 
 /**
@@ -181,24 +181,35 @@ export const getPicklistValues = async (fieldName: string) => {
  * @description Build expo-localization object from locally stored tables
  * @todo Remove duplicates in the table (i.e., field used in multiple layouts)
  */
-export const buildRecordTypeDictionary = async () => {
+export const buildDictionary = async () => {
   // original labels
-  let originalLabels = {};
-  for (const tableName of [DB_TABLE.RecordType, DB_TABLE.PageLayoutSection, DB_TABLE.PageLayoutItem]) {
-    const records = await getAllRecords(tableName);
-    originalLabels = records.reduce((result, current) => {
-      result[`${L10N_PREFIX[tableName]}${current.name}`] = current.label;
-      return result;
-    }, originalLabels);
-  }
+  const recordTypes = await getAllRecordTypes();
+  const recordTypeLabels = recordTypes.reduce((result, current) => {
+    result[`${L10N_PREFIX.RecordType}${current.name}`] = current.label;
+    return result;
+  }, {});
+  const sections = await getAllRecords(DB_TABLE.PageLayoutSection);
+  const sectionLabels = sections.reduce((result, current) => {
+    result[`${L10N_PREFIX.PageLayoutSection}${current.sectionLabel}`] = current.sectionLabel;
+    return result;
+  }, {});
+  const fields = await getAllRecords(DB_TABLE.PageLayoutItem);
+  const fieldLabels = fields.reduce((result, current) => {
+    result[`${L10N_PREFIX.PageLayoutItem}${current.fieldName}`] = current.fieldLabel;
+    return result;
+  }, {});
+
+  const originalLabels = { ...recordTypeLabels, ...sectionLabels, ...fieldLabels };
+  logger('DEBUG', 'buildDictionary', originalLabels);
   // localization.
   // TODO: create localization table first for no records in salesforce
   const translatedRecordTypes = await getAllRecords(DB_TABLE.Localization);
-  const neRecordTypes = translatedRecordTypes.reduce((result, current) => {
+  const translatedLabels = translatedRecordTypes.reduce((result, current) => {
     result[`${L10N_PREFIX[current.type]}${current.name}`] = current.label;
     return result;
   }, {});
-  logger('DEBUG', 'buildRecordTypeDictionary', `ne:${Object.values(neRecordTypes).length}`);
+  logger('DEBUG', 'buildDictionary', translatedLabels);
+
   i18n.translations = {
     en: {
       ...i18n.translations.en,
@@ -206,7 +217,7 @@ export const buildRecordTypeDictionary = async () => {
     },
     ne: {
       ...i18n.translations.ne,
-      ...neRecordTypes,
+      ...translatedLabels,
     },
   };
   // field

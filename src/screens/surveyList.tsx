@@ -11,7 +11,7 @@ import SurveyListHeader from './surveyListHeader';
 // services
 import { getAllSurveys, getOfflineCreatedSurvey } from '../services/api/salesforce/Survey';
 // import { refreshAll } from '../services/Refresh';
-import { buildRecordTypeDictionary } from '../services/describe';
+import { buildDictionary } from '../services/describe';
 // store
 import { surveyFilterReducer } from '../reducers/surveyFilterReducer';
 import { surveyListReducer } from '../reducers/surveyListReducer';
@@ -51,7 +51,7 @@ export default function SurveyList({ navigation }) {
     });
     setShowsSpinner(true);
     const build = async () => {
-      await buildRecordTypeDictionary();
+      await buildDictionary();
     };
     build();
     getAllSurveys()
