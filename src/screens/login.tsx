@@ -1,38 +1,22 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, StyleSheet, Image, ImageBackground } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { TextInput, CustomButton, Loader } from '../components';
+import { CustomButton, Loader } from '../components';
+import { Input } from 'react-native-elements';
 
 import { validateEmail } from '../utility';
 import { logger } from '../utility/logger';
-import { ASYNC_STORAGE_KEYS, BACKGROUND_IMAGE_SOURCE, BACKGROUND_STYLE, BACKGROUND_IMAGE_STYLE } from '../constants';
+import {
+  ASYNC_STORAGE_KEYS,
+  BACKGROUND_IMAGE_SOURCE,
+  BACKGROUND_STYLE,
+  BACKGROUND_IMAGE_STYLE,
+  APP_FONTS,
+  APP_THEME,
+} from '../constants';
 import LocalizationContext from '../context/localizationContext';
 
 import { authenticate } from '../services/api/auth';
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginTop: 20,
-  },
-  logoStyle: { height: 181, width: 181 },
-  inputBoxesView: {
-    flex: 3,
-    width: '90%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-  },
-  flex1: {
-    flex: 1,
-  },
-  flex2: {
-    flex: 2,
-  },
-  inputButton: { width: '40%', alignSelf: 'center', paddingTop: 20 },
-});
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
@@ -116,7 +100,8 @@ export default function Login({ navigation }) {
     }
   };
 
-  const { flex1, inputBoxesView, container, logoStyle, inputButton } = styles;
+  const { flex1, inputBoxesView, container, logoStyle, inputButton, errorStyle, font } = styles;
+
   return (
     <ImageBackground source={BACKGROUND_IMAGE_SOURCE} style={BACKGROUND_STYLE} imageStyle={BACKGROUND_IMAGE_STYLE}>
       <KeyboardAwareScrollView style={flex1}>
@@ -125,25 +110,31 @@ export default function Login({ navigation }) {
           <Image source={require('../../assets/images/haydenhallicon.png')} style={logoStyle} />
         </View>
         <View style={inputBoxesView}>
-          <TextInput
+          <Input
             onChangeText={email => {
               setEmail(email);
             }}
             value={email}
             label={t('EMAIL')}
             placeholder="yourname@example.com"
-            errorStyle={{ color: 'red' }}
+            leftIcon={{ type: 'material-community', name: 'email-outline', color: APP_THEME.APP_LIGHT_FONT_COLOR }}
+            errorStyle={errorStyle}
+            labelStyle={font}
+            inputStyle={font}
             keyboardType="email-address"
             errorMessage={emailError}
           />
-          <TextInput
+          <Input
             onChangeText={password => {
               setPassword(password);
             }}
             value={password}
             label={t('PASSWORD')}
             placeholder="password"
-            errorStyle={{ color: 'red' }}
+            leftIcon={{ type: 'material-community', name: 'lock-outline', color: APP_THEME.APP_LIGHT_FONT_COLOR }}
+            errorStyle={errorStyle}
+            labelStyle={font}
+            inputStyle={font}
             secureTextEntry
             errorMessage={passwordError}
           />
@@ -155,3 +146,34 @@ export default function Login({ navigation }) {
     </ImageBackground>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    marginTop: 20,
+  },
+  logoStyle: { height: 181, width: 181 },
+  inputBoxesView: {
+    flex: 3,
+    width: '90%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
+  flex1: {
+    flex: 1,
+  },
+  flex2: {
+    flex: 2,
+  },
+  font: {
+    fontFamily: APP_FONTS.FONT_REGULAR,
+  },
+  inputButton: { width: '40%', alignSelf: 'center', paddingTop: 20 },
+  errorStyle: {
+    color: APP_THEME.APP_ERROR_COLOR,
+    fontFamily: APP_FONTS.FONT_REGULAR,
+  },
+});

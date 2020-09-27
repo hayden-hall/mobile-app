@@ -1,12 +1,13 @@
 import React, { useState, useContext } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, ImageBackground } from 'react-native';
+import { Input } from 'react-native-elements';
 
 import { getCDWContact } from '../services/api/salesforce/contact';
 import { refreshAll } from '../services/Refresh';
 import { retrieveAll } from '../services/describe';
 import LocalizationContext from '../context/localizationContext';
 
-import { TextInput, CustomButton, Loader } from '../components';
+import { CustomButton, Loader } from '../components';
 
 import { ASYNC_STORAGE_KEYS, BACKGROUND_IMAGE_SOURCE, BACKGROUND_STYLE, BACKGROUND_IMAGE_STYLE } from '../constants';
 import { logger } from '../utility/logger';
@@ -108,7 +109,7 @@ export default function AreaCode({ navigation }) {
         <Loader loading={showsSpinner} />
         <View style={container} />
         <View style={inputBoxesView}>
-          <TextInput
+          <Input
             onChangeText={areaCode => {
               setAreaCode(areaCode);
             }}
