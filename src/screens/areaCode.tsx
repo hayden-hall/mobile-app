@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, ImageBackground } from 'react-native';
 import { Input } from 'react-native-elements';
 
-import { getCDWContact } from '../services/api/salesforce/contact';
+import { getCDWContact, storeContacts } from '../services/api/salesforce/contact';
 import { refreshAll } from '../services/Refresh';
 import { retrieveAll } from '../services/describe';
 import LocalizationContext from '../context/localizationContext';
@@ -75,6 +75,7 @@ export default function AreaCode({ navigation }) {
     try {
       setShowsSpinner(true);
       await refreshAll(); // TODO: remove
+      await storeContacts();
       await retrieveAll();
       setShowsSpinner(false);
     } catch (error) {
