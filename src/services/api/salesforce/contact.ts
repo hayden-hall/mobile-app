@@ -15,43 +15,45 @@ const getLoggedInCDWContact = async () => {
  * @description Fetch contacts, resolve relationships and then save them to local database.
  * @param appUserId contact Id of community development worker
  */
-export const storeContacts = async (appUserId: string) => {
+export const storeContacts = async () => {
+  const appUserId = await getLoggedInCDWContact();
   const junctionQuery = `SELECT Id, Child__c, Child__r.Name, Mother__c, Mother__r.Name, Mother__r.Ante_Natal_Mother__c, Beneficiary_Name__c, Beneficiary_Name__r.Name
     FROM CDW_Client_Junction__c
     WHERE Community_Development_Worker__c = '${appUserId}'`;
   const junctionRecords = await fetchSalesforceRecords(junctionQuery);
   const contacts: Array<Contact> = junctionRecords
     .map(junctionRecord => {
-      return [
-        junctionRecord.Child__c
-          ? {
-              id: junctionRecord.Child__c,
-              name: junctionRecord.Child__r.Name,
-              type: 'Child',
-              motherId: junctionRecord.Mother__c,
-              userId: appUserId,
-            }
-          : undefined,
-        junctionRecord.Mother__c && !junctionRecord.Mother__r.Ante_Natal_Mother__c
-          ? { id: junctionRecord.Child__c, name: junctionRecord.Child__r.Name, type: 'Mother', userId: appUserId }
-          : undefined,
-        junctionRecord.Mother__c && junctionRecord.Mother__r.Ante_Natal_Mother__c
-          ? {
-              id: junctionRecord.Child__c,
-              name: junctionRecord.Child__r.Name,
-              type: 'AnteNatelMother',
-              userId: appUserId,
-            }
-          : undefined,
-        junctionRecord.Beneficiary__c
-          ? { id: junctionRecord.Child__c, name: junctionRecord.Child__r.Name, type: 'Beneficiary', userId: appUserId }
-          : undefined,
-      ];
+      if (junctionRecord.Child__c) {
+        return {
+          id: junctionRecord.Child__c,
+          name: junctionRecord.Child__r.Name,
+          type: 'Child',
+          motherId: junctionRecord.Mother__c || '',
+          userId: appUserId,
+        };
+      } else if (junctionRecord.Mother__c && !junctionRecord.Mother__r.Ante_Natal_Mother__c) {
+        return { id: junctionRecord.Mother__c, name: junctionRecord.Mother__r.Name, type: 'Mother', userId: appUserId };
+      } else if (junctionRecord.Mother__c && junctionRecord.Mother__r.Ante_Natal_Mother__c) {
+        return {
+          id: junctionRecord.Mother__c,
+          name: junctionRecord.Mother__r.Name,
+          type: 'AnteNatelMother',
+          userId: appUserId,
+        };
+      } else if (junctionRecord.Beneficiary__c) {
+        return {
+          id: junctionRecord.Beneficiary_Name__c,
+          name: junctionRecord.Beneficiary_Name__r.Name,
+          type: 'Beneficiary',
+          userId: appUserId,
+        };
+      }
+      return undefined;
     })
-    .flat();
+    .filter(r => r !== undefined);
 
-  logger('FINE', 'storeContacts', contacts);
-  await saveRecords(DB_TABLE.CONTACT, contacts, true);
+  logger('DEBUG', 'storeContacts', contacts);
+  await saveRecords(DB_TABLE.CONTACT, contacts, 'id');
 };
 
 /**

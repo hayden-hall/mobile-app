@@ -203,13 +203,13 @@ const checkAndCreateTableWithDataTypes = (table, fieldsWithDataType) => {
  * @description Create table if not exists, given table name and field type mappings. 'name', 'id' or 'localId' field will be primary.
  * @param fieldName Name of table on sqlite
  * @param fieldTypeMappings Array of field type mapping
- * @param hasLocalId // TODO: specify primary key field name
+ * @param primaryKey Field name of primary key
  */
-export const prepareTable = (tableName: string, fieldTypeMappings: Array<FieldTypeMapping>, hasLocalId: boolean) => {
+export const prepareTable = (tableName: string, fieldTypeMappings: Array<FieldTypeMapping>, primaryKey: string) => {
   return new Promise((resolve, reject) => {
     const fieldsWithType = fieldTypeMappings
       .map(field => {
-        if (field.name === 'name' || field.name === 'id') {
+        if (field.name === primaryKey) {
           return `${field.name} ${field.type} primary key`;
         } else {
           return `${field.name} ${field.type}`;
@@ -217,7 +217,7 @@ export const prepareTable = (tableName: string, fieldTypeMappings: Array<FieldTy
       })
       .join(',');
     const localId = 'localId integer primary key autoincrement';
-    const fieldsInStatement = hasLocalId ? `${localId},${fieldsWithType}` : fieldsWithType;
+    const fieldsInStatement = !primaryKey ? `${localId},${fieldsWithType}` : fieldsWithType;
     logger('DEBUG', 'prepareTable', `create table if not exists ${tableName} (${fieldsInStatement});`);
 
     executeTransaction(`create table if not exists ${tableName} (${fieldsInStatement});`)
@@ -275,12 +275,12 @@ const convertValueToSQLite = (record): string => {
  * @description Save records to the local sqlite table
  * @param tableName Name of table on local sqlite
  * @param records
- * @param hasLocalId
+ * @param primaryKey
  */
-export const saveRecords = (tableName: string, records, hasLocalId) => {
+export const saveRecords = (tableName: string, records, primaryKey: string) => {
   return new Promise(async (resolve, reject) => {
     const fieldTypeMappings: Array<FieldTypeMapping> = getFieldTypeMappings(records[0]);
-    await prepareTable(tableName, fieldTypeMappings, hasLocalId);
+    await prepareTable(tableName, fieldTypeMappings, primaryKey);
 
     const keys = fieldTypeMappings.map(field => field.name).join(','); // e.g., 'developerName', 'recordTypeId', ...
     const values = records

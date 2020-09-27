@@ -42,7 +42,7 @@ export const storeRecordTypes = async () => {
       layoutId: r.layoutId,
     }));
   logger('DEBUG', 'storeRecordTypes', `${JSON.stringify(recordTypes)}`);
-  await saveRecords(DB_TABLE.RecordType, recordTypes, false);
+  await saveRecords(DB_TABLE.RecordType, recordTypes, 'name');
 
   return recordTypes;
 };
@@ -61,7 +61,7 @@ const storePageLayoutItems = async (recordTypeId: string) => {
       sectionLabel: section.heading,
     }));
   logger('FINE', 'storePageLayoutItems | sections', pageLayoutSections);
-  await saveRecords(DB_TABLE.PageLayoutSection, pageLayoutSections, false);
+  await saveRecords(DB_TABLE.PageLayoutSection, pageLayoutSections, 'id');
 
   const picklistValues: Array<PicklistValue> = [];
   const pageLayoutItems: Array<PageLayoutItem> = response.editLayoutSections
@@ -92,8 +92,8 @@ const storePageLayoutItems = async (recordTypeId: string) => {
     })
     .flat(3);
   logger('FINE', 'storePageLayoutItems | items', pageLayoutItems);
-  await saveRecords(DB_TABLE.PageLayoutItem, pageLayoutItems, true);
-  await saveRecords(DB_TABLE.PICKLIST_VALUE, picklistValues, true);
+  await saveRecords(DB_TABLE.PageLayoutItem, pageLayoutItems, undefined);
+  await saveRecords(DB_TABLE.PICKLIST_VALUE, picklistValues, undefined);
 
   return response;
 };
@@ -115,7 +115,7 @@ const storeLocalization = async () => {
       label: r.TranslatedLabel__c ? r.TranslatedLabel__c.replace(/'/g, "''") : '', // escape single quote for sqlite
     };
   });
-  await saveRecords(DB_TABLE.Localization, localizations, false);
+  await saveRecords(DB_TABLE.Localization, localizations, undefined);
 };
 
 /**
