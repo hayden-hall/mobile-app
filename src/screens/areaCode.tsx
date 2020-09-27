@@ -9,31 +9,15 @@ import LocalizationContext from '../context/localizationContext';
 
 import { CustomButton, Loader } from '../components';
 
-import { ASYNC_STORAGE_KEYS, BACKGROUND_IMAGE_SOURCE, BACKGROUND_STYLE, BACKGROUND_IMAGE_STYLE } from '../constants';
+import {
+  APP_FONTS,
+  APP_THEME,
+  ASYNC_STORAGE_KEYS,
+  BACKGROUND_IMAGE_SOURCE,
+  BACKGROUND_STYLE,
+  BACKGROUND_IMAGE_STYLE,
+} from '../constants';
 import { logger } from '../utility/logger';
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  logoStyle: { height: 61, width: 181 },
-  inputBoxesView: {
-    flex: 3,
-    width: '90%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-  },
-  flex1: {
-    flex: 1,
-  },
-  flex2: {
-    flex: 2,
-  },
-  inputButton: { width: '40%', alignSelf: 'center', paddingTop: 20 },
-});
 
 export default function AreaCode({ navigation }) {
   const [areaCode, setAreaCode] = useState('');
@@ -102,7 +86,7 @@ export default function AreaCode({ navigation }) {
     }
   };
 
-  const { flex1, flex2, inputBoxesView, container, inputButton } = styles;
+  const { flex1, flex2, inputBoxesView, container, inputButton, font, errorStyle } = styles;
   return (
     <ImageBackground source={BACKGROUND_IMAGE_SOURCE} style={BACKGROUND_STYLE} imageStyle={BACKGROUND_IMAGE_STYLE}>
       <KeyboardAvoidingView style={flex1}>
@@ -115,8 +99,10 @@ export default function AreaCode({ navigation }) {
             }}
             value={areaCode}
             label={t('AREA_CODE')}
+            labelStyle={font}
+            inputStyle={font}
             placeholder="3A2276BB"
-            errorStyle={{ color: 'red' }}
+            errorStyle={errorStyle}
             errorMessage={areaCodeError}
           />
           <View style={inputButton}>
@@ -140,3 +126,33 @@ export default function AreaCode({ navigation }) {
     </ImageBackground>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  logoStyle: { height: 61, width: 181 },
+  inputBoxesView: {
+    flex: 3,
+    width: '90%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
+  flex1: {
+    flex: 1,
+  },
+  flex2: {
+    flex: 2,
+  },
+  font: {
+    fontFamily: APP_FONTS.FONT_REGULAR,
+  },
+  inputButton: { width: '40%', alignSelf: 'center', paddingTop: 20 },
+  errorStyle: {
+    color: APP_THEME.APP_ERROR_COLOR,
+    fontFamily: APP_FONTS.FONT_REGULAR,
+  },
+});
