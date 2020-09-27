@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { getLoggedInCDWContact, getLoggedInUserMothersChilds } from './api/salesforce/contact';
-import { getAllSurveysFromSalesforce, getOfflineSurveys, uploadSurveyToSalesforce } from './api/salesforce/Survey';
+import {
+  getAllSurveysFromSalesforce,
+  getOfflineSurveys,
+  uploadSurveyToSalesforce,
+  getAllSurveyQuestionsFromSalesforce,
+} from './api/salesforce/Survey';
 import { ASYNC_STORAGE_KEYS } from '../constants';
 import { logger } from '../utility/logger';
 
@@ -13,6 +18,10 @@ export const refreshAll = async () => {
   if (!CDW_Worker_Id || !AREA_CODE) {
     return Promise.reject('Logged In user not found, Please login again.');
   }
+  const surveyQuestionsResponse = await getAllSurveyQuestionsFromSalesforce();
+
+  //Fetch all surveys for logged in user:
+  const surveyFields = getSurveyFields(surveyQuestionsResponse.records);
   await getAllSurveysFromSalesforce(AREA_CODE, surveyFields);
   // logger('DEBUG', 'refreshAll', 'end');
   return Promise.resolve(true);
