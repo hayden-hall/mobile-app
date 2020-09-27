@@ -46,3 +46,8 @@ export interface Contact {
   motherId: string;
   userId: string; // cdw contactid
 }
+
+export interface Survey {
+  syncStatus: 'Unsynced' | 'Synced';
+  // Following the fields on the survey object in Salesforce
+}
