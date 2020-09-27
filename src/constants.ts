@@ -55,6 +55,8 @@ export const DB_TABLE = {
   CONTACT: 'Contact',
 };
 
-export const PREFIX = {
-  RECORD_TYPE: 'RECORD_TYPE_',
+export const L10N_PREFIX = {
+  RecordType: 'RECORD_TYPE_',
+  PageLayoutSection: 'PAGE_LAYOUT_SECTION_',
+  PageLayoutItem: 'PAGE_LAYOUT_ITEM_',
 };

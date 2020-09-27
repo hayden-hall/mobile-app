@@ -44,7 +44,7 @@ function Picklist(props: PicklistPropType) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titleLabel}>{fieldName}</Text>
+      <Text style={styles.titleLabel}>{displayLabel}</Text>
       <RNPickerSelect
         disabled={disabled}
         value={value}

@@ -6,7 +6,7 @@ import { SurveyLayout } from '../types/survey';
 import { DescribeLayoutResult, DescribeLayout, LocalizationCustomMetadata } from '../types/metadata';
 
 import { logger } from '../utility/logger';
-import { DB_TABLE } from '../constants';
+import { DB_TABLE, L10N_PREFIX } from '../constants';
 import { SURVEY_OBJECT } from 'react-native-dotenv';
 import i18n from '../config/i18n';
 
@@ -112,7 +112,7 @@ const storeLocalization = async () => {
       locale: r.Locale__c,
       type: r.Type__c,
       name: r.OriginalName__c,
-      label: r.TranslatedLabel__c,
+      label: r.TranslatedLabel__c ? r.TranslatedLabel__c.replace(/'/g, "''") : '', // escape single quote for sqlite
     };
   });
   await saveRecords(DB_TABLE.Localization, localizations, false);
@@ -178,30 +178,36 @@ export const getPicklistValues = async (fieldName: string) => {
 };
 
 /**
- * @description [WIP] Build expo-localization object from locally stored tables
+ * @description Build expo-localization object from locally stored tables
+ * @todo Remove duplicates in the table (i.e., field used in multiple layouts)
  */
 export const buildRecordTypeDictionary = async () => {
-  // record type (en)
-  const recordTypes = await getAllRecordTypes();
-  const enRecordTypes = recordTypes.reduce((result, current) => {
-    result[`RECORD_TYPE_${current.name}`] = current.label;
-    return result;
-  }, {});
-  // record type (translated). TODO: create localization table first.
-  const translatedRecordTypes = await getRecords(DB_TABLE.Localization, "where type='RecordType'");
+  // original labels
+  let originalLabels = {};
+  for (const tableName of [DB_TABLE.RecordType, DB_TABLE.PageLayoutSection, DB_TABLE.PageLayoutItem]) {
+    const records = await getAllRecords(tableName);
+    originalLabels = records.reduce((result, current) => {
+      result[`${L10N_PREFIX[tableName]}${current.name}`] = current.label;
+      return result;
+    }, originalLabels);
+  }
+  // localization.
+  // TODO: create localization table first for no records in salesforce
+  const translatedRecordTypes = await getAllRecords(DB_TABLE.Localization);
   const neRecordTypes = translatedRecordTypes.reduce((result, current) => {
-    result[`RECORD_TYPE_${current.name}`] = current.label;
+    result[`${L10N_PREFIX[current.type]}${current.name}`] = current.label;
     return result;
   }, {});
   logger('DEBUG', 'buildRecordTypeDictionary', `ne:${Object.values(neRecordTypes).length}`);
   i18n.translations = {
     en: {
       ...i18n.translations.en,
-      ...enRecordTypes,
+      ...originalLabels,
     },
     ne: {
       ...i18n.translations.ne,
       ...neRecordTypes,
     },
   };
+  // field
 };

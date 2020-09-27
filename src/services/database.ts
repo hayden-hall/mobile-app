@@ -313,18 +313,18 @@ const executeTransaction = (statement: string) => {
           statement,
           null,
           (txn, result) => {
-            logger('DEBUG', 'sqlite', 'success');
+            logger('FINE', 'sqlite', 'success');
             resolve(result);
           },
           (txn, error) => {
-            logger('ERROR', 'sqlite', error);
+            logger('ERROR', 'sqlite', `${JSON.stringify(error)} ${JSON.stringify(txn)}`);
             reject(error);
             return false;
           }
         );
       });
     } catch (error) {
-      logger('ERROR', 'sqlite', 'error');
+      logger('ERROR', 'sqlite', error);
       reject(error);
     }
   });
