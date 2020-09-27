@@ -3,7 +3,7 @@ import { View, StyleSheet, Text } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import { Icon } from 'react-native-elements';
 
-import { APP_THEME, APP_FONTS } from '../../constants';
+import { APP_THEME, APP_FONTS, L10N_PREFIX } from '../../constants';
 import LocalizationContext from '../../context/localizationContext';
 import { getPicklistValues } from '../../services/describe';
 
@@ -39,12 +39,12 @@ function Picklist(props: PicklistPropType) {
   const { value, onValueChange, disabled, fieldName } = props;
 
   const displayLabel = () => {
-    return t(`'${fieldName}'`);
+    return t(`${L10N_PREFIX.PageLayoutItem}${fieldName}`);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titleLabel}>{displayLabel}</Text>
+      <Text style={styles.titleLabel}>{displayLabel()}</Text>
       <RNPickerSelect
         disabled={disabled}
         value={value}
