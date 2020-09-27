@@ -9,13 +9,14 @@ import { APP_THEME, BACKGROUND_IMAGE_SOURCE, BACKGROUND_STYLE, BACKGROUND_IMAGE_
 import { logger } from '../utility/logger';
 import { retrieveAll } from '../services/describe';
 import { showMessage } from 'react-native-flash-message';
+import { forceLogout } from '../services/session';
 
 type Language = {
   name: string;
   code: string;
 };
 
-export default function Settings() {
+export default function Settings({ navigation }) {
   const [showsSpinner, setShowsSpinner] = useState(false);
   const { t, locale, setLocale } = useContext(LocalizationContext);
 
@@ -84,7 +85,17 @@ export default function Settings() {
                 },
               });
             } catch (e) {
-              // TODO: log in again?
+              showMessage({
+                message: 'Error',
+                description: 'Unexpected error occcured while refreshing. Contact your administrator and login again.',
+                type: 'danger',
+                icon: {
+                  icon: 'danger',
+                  position: 'left',
+                },
+                duration: 4000,
+              });
+              await forceLogout(navigation);
             } finally {
               setShowsSpinner(false);
             }

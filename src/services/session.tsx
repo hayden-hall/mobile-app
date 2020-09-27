@@ -23,3 +23,9 @@ export const logout = (navigation, t) => {
     { cancelable: true }
   );
 };
+
+export const forceLogout = async navigation => {
+  clearStorage();
+  await clearDatabase();
+  navigation.navigate('Login');
+};
