@@ -16,6 +16,7 @@ const getLoggedInCDWContact = async () => {
  * @param appUserId contact Id of community development worker
  */
 export const storeContacts = async () => {
+  await clearTable(DB_TABLE.CONTACT);
   const appUserId = await getLoggedInCDWContact();
   const junctionQuery = `SELECT Id, Child__c, Child__r.Name, Mother__c, Mother__r.Name, Mother__r.Ante_Natal_Mother__c, Beneficiary_Name__c, Beneficiary_Name__r.Name
     FROM CDW_Client_Junction__c
