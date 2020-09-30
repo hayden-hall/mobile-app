@@ -50,7 +50,7 @@ export default function SurveyEditor({ route, navigation }: Props) {
     return (
       <Button
         onPress={async () => {
-          await createLocalSurvey(survey);
+          await createLocalSurvey(surveyContext.survey);
           notifySuccess('Created a new survey!');
           navigation.navigate('SurveyList');
         }}
