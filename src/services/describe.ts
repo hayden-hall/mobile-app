@@ -200,7 +200,7 @@ export const buildDictionary = async () => {
   }, {});
 
   const originalLabels = { ...recordTypeLabels, ...sectionLabels, ...fieldLabels };
-  logger('DEBUG', 'buildDictionary', originalLabels);
+  logger('FINE', 'buildDictionary', originalLabels);
   // localization.
   // TODO: create localization table first for no records in salesforce
   const translatedRecordTypes = await getAllRecords(DB_TABLE.Localization);
@@ -208,7 +208,7 @@ export const buildDictionary = async () => {
     result[`${L10N_PREFIX[current.type]}${current.name}`] = current.label;
     return result;
   }, {});
-  logger('DEBUG', 'buildDictionary', translatedLabels);
+  logger('FINE', 'buildDictionary', translatedLabels);
 
   i18n.translations = {
     en: {
