@@ -26,7 +26,7 @@ export default function FilterButtonGroup(props: FilterButtonGroupProps) {
         } else if (index === 1) {
           props.dispatch({ type: 'SHOW_SYNCED' });
         } else {
-          props.dispatch({ type: 'SHOW_SYNCED' });
+          props.dispatch({ type: 'SHOW_ALL' });
         }
       }}
       selectedIndex={selectedIndex}
