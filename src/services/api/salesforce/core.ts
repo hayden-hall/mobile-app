@@ -42,8 +42,11 @@ export const fetchSalesforceRecords = async (query: string) => {
   const endPoint = (await buildEndpointUrl()) + `/query?q=${query}`;
   const response = await fetchRetriable(endPoint, 'GET', undefined);
   logger('FINE', 'fetchSalesforceRecords', response.records);
-
-  return response.records;
+  const records = response.records.map(r => {
+    delete r.attributes;
+    return r;
+  });
+  return records;
 };
 
 export const createSalesforceRecord = async (objectName, body) => {
