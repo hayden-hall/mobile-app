@@ -3,7 +3,6 @@ import { View, StyleSheet, KeyboardAvoidingView, ImageBackground } from 'react-n
 import { Input } from 'react-native-elements';
 
 import { getCDWContact, storeContacts } from '../services/api/salesforce/contact';
-import { refreshAll } from '../services/Refresh';
 import { retrieveAll } from '../services/describe';
 import LocalizationContext from '../context/localizationContext';
 
@@ -74,9 +73,9 @@ export default function AreaCode({ navigation }) {
   const refreshAppData = async () => {
     try {
       setShowsSpinner(true);
-      await refreshAll(); // TODO: remove
       await storeContacts();
       await retrieveAll();
+      // storeSurvey();
       setShowsSpinner(false);
     } catch (error) {
       setShowsSpinner(false);
