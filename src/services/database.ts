@@ -230,9 +230,12 @@ const getFieldTypeMappings = (record: Record<string, any>): Array<FieldTypeMappi
 const convertValueToSQLite = (record): string => {
   const values = Object.entries(record).map(([key, value]) => {
     if (typeof value === 'string') {
-      return `'${value.replace(/'/g, "''")}'`;
+      return `'${value.replace(/'/g, "''")}'`; // escape single quote
     } else if (typeof value === 'boolean') {
       return value ? 1 : 0; // 1: true, 0: false
+    } else if (!value) {
+      // use blank string for null
+      return '""';
     }
     return value;
   });
