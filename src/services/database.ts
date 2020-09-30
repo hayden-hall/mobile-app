@@ -130,11 +130,13 @@ export const updateRecord = async (table, record, LocalId) => {
 
 /**
  * @description Update survey sync status to 'Synced'. Us
- * @param localId
+ * @param tableName
+ * @param keyValue
+ * @param whereClause
  */
-export const updateSurveyStatusSynced = localId => {
+export const updateRecords = (tableName: string, keyValue: string, whereClause: string) => {
   return new Promise((resolve, reject) => {
-    const statement = `update survey syncStatus = 'Synced' where localId = ${localId}`;
+    const statement = `update ${tableName} ${keyValue} ${whereClause}`;
 
     executeTransaction(statement)
       .then(result => {

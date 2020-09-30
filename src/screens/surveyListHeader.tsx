@@ -2,9 +2,11 @@ import React, { useContext } from 'react';
 import { View, StyleSheet, Alert, TextInput } from 'react-native';
 import { Button } from 'react-native-elements';
 
-import { APP_FONTS, APP_THEME, ASYNC_STORAGE_KEYS } from '../constants';
-import { SurveyItem } from '../types/survey';
 import LocalizationContext from '../context/localizationContext';
+import { uploadSurveyListToSalesforce, updateSurveyStatusSynced } from '../services/survey';
+import { notifySuccess } from '../utility/notification';
+import { APP_FONTS, APP_THEME } from '../constants';
+import { SurveyItem } from '../types/survey';
 
 type SurveyListHeaderProps = {
   isNetworkConnected: boolean;
@@ -14,16 +16,18 @@ type SurveyListHeaderProps = {
 export default function SurveyListHeader(props: SurveyListHeaderProps) {
   const { t } = useContext(LocalizationContext);
 
-  const showRefreshPopup = () => {
+  const confirmSync = () => {
     Alert.alert(
       t('SYNCING'),
       t('UPLOAD_SURVEY_MESSAGE'),
       [
         {
           text: t('OK'),
-          onPress: () => {
-            // this.props.navigation.pop();
-            // this.refreshAppData();
+          onPress: async () => {
+            const response = await uploadSurveyListToSalesforce(props.surveys);
+            console.log(JSON.stringify(response));
+            await updateSurveyStatusSynced(props.surveys);
+            notifySuccess('Surveys are successfully uploaded!');
           },
         },
         {
@@ -34,13 +38,15 @@ export default function SurveyListHeader(props: SurveyListHeaderProps) {
     );
   };
 
+  const numOflocalSurveys = props.surveys.filter(s => s.syncStatus === 'Unsynced').length;
+
   return (
     <View style={styles.pendingSurveyContainer}>
       <TextInput
         underlineColorAndroid="transparent"
         placeholder={t('SEARCH_SURVEYS')}
         style={styles.textStylePendingSurvey}
-        value={`0 - ${t('QUEUED_FOR_SYNC')}`} // dirtySurveyCount
+        value={`${numOflocalSurveys} - ${t('QUEUED_FOR_SYNC')}`} // dirtySurveyCount
         editable={false}
       />
       <View style={styles.syncIconStyle}>
@@ -63,7 +69,7 @@ export default function SurveyListHeader(props: SurveyListHeaderProps) {
               : { backgroundColor: APP_THEME.APP_BORDER_COLOR }
           }
           onPress={() => {
-            props.isNetworkConnected && this.showRefreshPopup();
+            props.isNetworkConnected && confirmSync();
           }}
           title="Sync"
         />

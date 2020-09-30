@@ -1,24 +1,7 @@
-/* eslint-disable @typescript-eslint/camelcase */
-import { createSalesforceRecord, fetchSalesforceRecords } from './api/salesforce/core';
-import {
-  saveRecordsOld,
-  updateRecord,
-  clearTable,
-  getAllRecords,
-  saveRecords,
-  updateSurveyStatusSynced,
-} from './database';
+import { createSalesforceRecord, createSalesforceRecords, fetchSalesforceRecords } from './api/salesforce/core';
+import { saveRecordsOld, updateRecord, clearTable, getAllRecords, saveRecords, updateRecords } from './database';
 import { ASYNC_STORAGE_KEYS, DB_TABLE } from '../constants';
-import i18n from '../config/i18n';
 import { PageLayoutItem } from '../types/sqlite';
-
-export const MotherChildPickerType__c = {
-  NONE: '',
-  MOTHER: 'Mother',
-  MOTHER_CHILD: 'Mother-Child',
-  ANTE_NATAL: 'Ante-Natal',
-  BENEFICIARY: 'Beneficiary',
-};
 
 /**
  * @description Retrieve all the surveys from Salesforce by area code, and store them to local database
@@ -55,16 +38,48 @@ export const createLocalSurvey = async survey => {
   return await saveRecords(DB_TABLE.SURVEY, [payload], undefined);
 };
 
+/**
+ * @description Upload surveys to salesforce
+ * @param surveys
+ */
+export const uploadSurveyListToSalesforce = async surveys => {
+  return await createSalesforceRecords('Survey__c', surveys);
+};
+
+/**
+ * updateSurveyStatusSynced
+ * @param surveys
+ */
+export const updateSurveyStatusSynced = async surveys => {
+  const commaSeparetedLocalIds = surveys.map(s => `'${s.localId}'`).join(',');
+  return await updateRecords(DB_TABLE.SURVEY, "syncStatus = 'Synced'", `where localId IN (${commaSeparetedLocalIds})`);
+};
+
+// --------------- deprecated methods below ----------------
+
+/**
+ * @deprecated
+ * @param survey
+ */
 export const createNewSurvey = async survey => {
   const payload = { ...survey, IsLocallyCreated: 1 };
   return await saveRecordsOld(DB_TABLE.SURVEY, [payload]);
 };
 
+/**
+ * @deprecated
+ * @param survey
+ * @param LocalId
+ */
 export const updateSurvey = async (survey, LocalId) => {
   const payload = { ...survey, IsLocallyCreated: 1 };
   return await updateRecord(DB_TABLE.SURVEY, payload, LocalId);
 };
 
+/**
+ * @description
+ * @param survey
+ */
 export const uploadSurveyToSalesforce = async survey => {
   let payload = {};
   for (const [key, value] of Object.entries(survey)) {
@@ -84,7 +99,7 @@ export const uploadSurveyToSalesforce = async survey => {
     } else if (response && response.length > 0 && response[0].errorCode) {
       reject(response[0].message);
     } else {
-      reject(i18n.t('SALESFORCE_OBJECT_CREATION_ERROR'));
+      reject('SALESFORCE_OBJECT_CREATION_ERROR');
     }
   });
 };
