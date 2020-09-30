@@ -9,8 +9,7 @@ import { SearchBar, ListItem, Loader } from '../components';
 import FilterButtonGroup from './surveyListFilter';
 import SurveyListHeader from './surveyListHeader';
 // services
-import { getAllSurveys, getOfflineCreatedSurvey } from '../services/api/salesforce/Survey';
-// import { refreshAll } from '../services/Refresh';
+import { getAllStoredSurveys } from '../services/api/salesforce/survey';
 import { buildDictionary } from '../services/describe';
 // store
 import { surveyFilterReducer } from '../reducers/surveyFilterReducer';
@@ -54,7 +53,7 @@ export default function SurveyList({ navigation }) {
       await buildDictionary();
     };
     build();
-    getAllSurveys()
+    getAllStoredSurveys()
       .then(response => {
         dispatchSurveys({
           type: 'INITIALIZE',
@@ -82,11 +81,11 @@ export default function SurveyList({ navigation }) {
     .filter(survey => {
       return survey.Survey_Heading.includes(searchTerm);
     })
-    .map(object => {
+    .map(survey => {
       return {
-        ...object,
-        subtitle: `${object.Survey_Type} • ${formatDate(object.Visit_Clinic_Date__c)}`,
-        showCaret: object.IsLocallyCreated !== 0,
+        ...survey,
+        subtitle: `${survey.Survey_Type} • ${formatDate(survey.Visit_Clinic_Date__c)}`,
+        showCaret: survey.syncStatus === 'Unsynced',
       };
     });
 
@@ -118,7 +117,7 @@ export default function SurveyList({ navigation }) {
         title={data.item.Survey_Heading}
         subtitle={data.item.subtitle}
         onPress={() => {
-          // onPress && onPress(data.item);
+          // navigate to survey editor
         }}
         showCaret={data.item.showCaret}
       />
