@@ -1,6 +1,7 @@
 export interface SurveyItem {
   subtitle: string;
   showCaret: boolean;
+  syncStatus: 'Unsynced' | 'Synced';
 }
 
 /**
