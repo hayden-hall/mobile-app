@@ -13,13 +13,17 @@ jobs:
       - name: 'Checkout source code'
         uses: actions/checkout@v2
 
+      # Setup node.js and yarn
+      - name: 'Setup node.js'
+        uses: actions/setup-node@v1
+
       # Install npm dependencies
-      - name: 'Install npm dependencies'
-        run: npm install
+      - name: 'Install dependencies'
+        run: yarn install
 
       # Eslint
       - name: 'Validate'
-        run: npm run validate
+        run: yarn validate
 
       # Create mock .env
       - name: 'Create mock env file'
@@ -27,7 +31,7 @@ jobs:
 
       # Unit Test
       - name: 'Unit test'
-        run: npm run test
+        run: yarn test
 
       # Delete mock .env
       - name: 'Delete mock env file'
