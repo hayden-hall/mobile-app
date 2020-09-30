@@ -1,8 +1,9 @@
-import React, { useState, useReducer, useEffect, useContext } from 'react';
+import React, { useState, useReducer, useEffect, useContext, useCallback } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Icon, Divider } from 'react-native-elements';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import NetInfo from '@react-native-community/netinfo';
+import { useFocusEffect } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 // components
 import { SearchBar, ListItem, Loader } from '../components';
@@ -38,7 +39,7 @@ export default function SurveyList({ navigation }) {
   const { t } = useContext(LocalizationContext);
 
   /**
-   * @description Initialization. Subscribe NetInfo and retrieve all surveys from local database.
+   * @description Initialization. Subscribe NetInfo and create dictionary.
    */
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
@@ -59,6 +60,21 @@ export default function SurveyList({ navigation }) {
       unsubscribe();
     };
   }, []);
+
+  /**
+   * Refresh survey list on focus this screen
+   */
+  useFocusEffect(
+    useCallback(() => {
+      const refresh = async () => {
+        logger('DEBUG', 'SurveyList', 'Refreshing surveys in survey list');
+        setShowsSpinner(true);
+        await refreshSurveys;
+        setShowsSpinner(false);
+      };
+      refresh();
+    }, [])
+  );
 
   const refreshSurveys = async () => {
     return await getAllRecordsWithCallback(DB_TABLE.SURVEY, setSurveys);
