@@ -1,3 +1,6 @@
+/**
+ * Fields used for survey list item.
+ */
 export interface SurveyItem {
   subtitle: string;
   showCaret: boolean;
