@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -18,18 +19,6 @@ import { SettingsButton, LogoutButton } from './components/headerButtons';
 
 // styles
 import { APP_FONTS, APP_THEME } from './constants';
-
-const headerStyle = {
-  headerStyle: {
-    backgroundColor: APP_THEME.NAVIGATION_BACKGROUND,
-  },
-  headerTintColor: APP_THEME.APP_BASE_FONT_COLOR,
-  headerTitleStyle: {
-    fontSize: 16,
-    fontWeight: '600',
-    fontFamily: APP_FONTS.FONT_BOLD,
-  },
-};
 
 export type StackParamList = {
   Login: undefined;
@@ -109,3 +98,15 @@ export default function Router() {
     </NavigationContainer>
   );
 }
+
+const headerStyle = {
+  headerStyle: {
+    backgroundColor: APP_THEME.NAVIGATION_BACKGROUND,
+  },
+  headerTintColor: APP_THEME.APP_BASE_FONT_COLOR,
+  headerTitleStyle: {
+    fontSize: 16,
+    fontWeight: '600' as '600',
+    fontFamily: APP_FONTS.FONT_BOLD,
+  },
+};
