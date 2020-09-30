@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer, useContext } from 'react';
+import React, { useState, useEffect, useReducer, useContext, useLayoutEffect } from 'react';
 import { Button, View, Text, StyleSheet } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/core';
@@ -30,8 +30,6 @@ export default function SurveyEditor({ route, navigation }: Props) {
 
   const { t } = useContext(LocalizationContext);
 
-  const surveyContext = { survey, dispatchSurvey };
-
   useEffect(() => {
     const fetch = async () => {
       const result = await buildLayoutDetail(route.params.selectedLayoutId);
@@ -40,17 +38,18 @@ export default function SurveyEditor({ route, navigation }: Props) {
     fetch();
   }, []);
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => SaveButton(),
     });
-  }, [navigation]);
+  }, [navigation, survey]);
 
   const SaveButton = () => {
     return (
       <Button
         onPress={async () => {
-          await createLocalSurvey(surveyContext.survey);
+          const record = { ...survey, RecordTypeId: route.params.selectedRecordTypeId };
+          await createLocalSurvey(record);
           notifySuccess('Created a new survey!');
           navigation.navigate('SurveyList');
         }}
@@ -60,7 +59,7 @@ export default function SurveyEditor({ route, navigation }: Props) {
   };
 
   return (
-    <SurveyContext.Provider value={surveyContext}>
+    <SurveyContext.Provider value={{ survey, dispatchSurvey }}>
       <View>
         {layout.sections && (
           <KeyboardAwareSectionList
