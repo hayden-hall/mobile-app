@@ -10,7 +10,6 @@ import AreaCode from './screens/areaCode';
 import SurveyList from './screens/surveyList';
 import SurveyTypePicker from './screens/surveyTypePicker';
 import SurveyEditor from './screens/surveyEditor';
-import SurveyCompleted from './screens/surveyCompleted';
 import Settings from './screens/settings';
 
 // components
@@ -30,7 +29,6 @@ export type StackParamList = {
     selectedRecordTypeId: string;
     selectedLayoutId: string;
   };
-  SurveyCompleted: undefined;
   Settings: undefined;
 };
 
@@ -84,7 +82,6 @@ export default function Router() {
             ...headerStyle,
           }}
         />
-        <Stack.Screen name="SurveyCompleted" component={SurveyCompleted} />
         <Stack.Screen
           name="Settings"
           component={Settings}
