@@ -1,5 +1,5 @@
 import React, { useState, useReducer, useEffect, useContext, useCallback } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Alert, View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Icon, Divider } from 'react-native-elements';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import NetInfo from '@react-native-community/netinfo';
@@ -11,6 +11,7 @@ import FilterButtonGroup from './surveyListFilter';
 import SurveyListHeader from './surveyListHeader';
 // services
 import { buildDictionary } from '../services/describe';
+import { deleteRecord } from '../services/database';
 // store
 import { surveyFilterReducer } from '../reducers/surveyFilterReducer';
 import LocalizationContext from '../context/localizationContext';
@@ -136,6 +137,29 @@ export default function SurveyList({ navigation }) {
     );
   };
 
+  const showDeleteConfirmAlert = (rowMap, item, index) => {
+    Alert.alert(
+      t('DELETE'),
+      t('DELETE_MESSAGE'),
+      [
+        {
+          text: t('DELETE'),
+          onPress: async () => {
+            if (rowMap[index]) {
+              rowMap[index].closeRow();
+            }
+            await deleteRecord(DB_TABLE.SURVEY, item.localId);
+            await refreshSurveys();
+          },
+        },
+        {
+          text: t('CANCEL'),
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   return (
     <View style={flex1}>
       <Loader loading={showsSpinner} />
@@ -157,11 +181,11 @@ export default function SurveyList({ navigation }) {
             return <Divider style={{ backgroundColor: APP_THEME.APP_BORDER_COLOR }} />;
           }}
           renderHiddenItem={(data, rowMap) =>
-            data.item.IsLocallyCreated ? (
+            data.item.syncStatus === 'Unsynced' ? (
               <View style={styles.rowBack}>
                 <TouchableOpacity
                   style={[styles.backRightBtn, styles.backRightBtnRight]}
-                  onPress={() => this.showDeleteConfirmAlert(rowMap, data.item, data.index)}
+                  onPress={() => showDeleteConfirmAlert(rowMap, data.item, data.index)}
                 >
                   <Text style={styles.backTextWhite}>{t('DELETE')}</Text>
                 </TouchableOpacity>
