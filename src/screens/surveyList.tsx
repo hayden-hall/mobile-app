@@ -91,7 +91,7 @@ export default function SurveyList({ navigation }) {
       return false;
     })
     .filter(survey => {
-      return survey.Survey_Heading.includes(searchTerm);
+      return survey.title.includes(searchTerm);
     })
     .map(survey => {
       return {
@@ -126,7 +126,7 @@ export default function SurveyList({ navigation }) {
   const renderItem = data => {
     return (
       <ListItem
-        title={data.item.Survey_Heading}
+        title={data.item.title}
         subtitle={data.item.subtitle}
         onPress={() => {
           // navigate to survey editor
@@ -137,7 +137,7 @@ export default function SurveyList({ navigation }) {
   };
 
   return (
-    <View>
+    <View style={flex1}>
       <Loader loading={showsSpinner} />
       <View style={flex1}>
         <SearchBar
@@ -230,34 +230,3 @@ const styles = StyleSheet.create({
     right: 0,
   },
 });
-
-/**
- * <SelectionList
-        data={surveys}
-        titleKey="Survey_Heading"
-        hideSearchBar
-        subtitleKey="subtitle"
-        searchTxt={searchTerm}
-        searchBarLabel={i18n.t('SEARCH_SURVEYS')}
-        onPress={async item => {
-          const createdSurvey = await getOfflineCreatedSurvey(item);
-          const LocalId = item.LocalId;
-          const IsLocallyCreated = item.IsLocallyCreated;
-          navigation.push('Survey', {
-            createdSurvey,
-            LocalId,
-            IsLocallyCreated,
-            headerTitle: i18n.t('SURVEY_DETAIL'),
-          });
-        }}
-      />
- */
-
-/*
-    const onSurveyDeleted = async item => {
-    const remainingSurveys = this.state.filteredSurveys.filter(
-      survey => survey.LocalId !== item.LocalId
-    );
-    this.prepareListdata(remainingSurveys);
-  };
-*/
