@@ -11,6 +11,8 @@ import { Loader } from '../components';
 
 import { APP_THEME, BACKGROUND_IMAGE_SOURCE, BACKGROUND_STYLE, BACKGROUND_IMAGE_STYLE, APP_FONTS } from '../constants';
 import { logger } from '../utility/logger';
+import { notifySuccess, notifyError } from '../utility/notification';
+import { storeOnlineSurveys } from '../services/survey';
 
 type Language = {
   name: string;
@@ -42,6 +44,15 @@ export default function Settings({ navigation }) {
     );
   };
 
+  const isInternetReachable = async () => {
+    const netInfo = await NetInfo.fetch();
+    if (!netInfo.isInternetReachable) {
+      notifyError('No network connection. Confirm your network connectivity and try again.');
+      return false;
+    }
+    return true;
+  };
+
   return (
     <ImageBackground source={BACKGROUND_IMAGE_SOURCE} style={BACKGROUND_STYLE} imageStyle={BACKGROUND_IMAGE_STYLE}>
       <Loader loading={showsSpinner} />
@@ -62,40 +73,38 @@ export default function Settings({ navigation }) {
         <Card.Title>{t('SYSTEM')}</Card.Title>
         <ListItem
           onPress={async () => {
-            const netInfo = await NetInfo.fetch();
-            if (!netInfo.isInternetReachable) {
-              showMessage({
-                message: 'No network connection. Confirm your network connectivity and try again.',
-                type: 'danger',
-                icon: {
-                  icon: 'danger',
-                  position: 'left',
-                },
-              });
+            if (!(await isInternetReachable())) {
               return;
             }
             setShowsSpinner(true);
             try {
               await retrieveAll();
-              showMessage({
-                message: 'Successfully refreshed metadata.',
-                type: 'success',
-                icon: {
-                  icon: 'success',
-                  position: 'left',
-                },
-              });
+              notifySuccess('Successfully refreshed metadata.');
             } catch (e) {
-              showMessage({
-                message: 'Error',
-                description: 'Unexpected error occcured while refreshing. Contact your administrator and login again.',
-                type: 'danger',
-                icon: {
-                  icon: 'danger',
-                  position: 'left',
-                },
-                duration: 4000,
-              });
+              notifyError('Unexpected error occcured while refreshing. Contact your administrator and login again.');
+              await forceLogout(navigation);
+            } finally {
+              setShowsSpinner(false);
+            }
+          }}
+          topDivider
+        >
+          <Icon name="cloud-download" color={APP_THEME.APP_LIGHT_FONT_COLOR} />
+          <ListItem.Content>
+            <ListItem.Title>Reload Metadata</ListItem.Title>
+          </ListItem.Content>
+        </ListItem>
+        <ListItem
+          onPress={async () => {
+            if (!(await isInternetReachable())) {
+              return;
+            }
+            setShowsSpinner(true);
+            try {
+              await storeOnlineSurveys();
+              notifySuccess('Successfully refreshed surveys.');
+            } catch (e) {
+              notifyError('Unexpected error occcured while refreshing. Contact your administrator and login again.');
               await forceLogout(navigation);
             } finally {
               setShowsSpinner(false);
@@ -106,7 +115,7 @@ export default function Settings({ navigation }) {
         >
           <Icon name="cloud-download" color={APP_THEME.APP_LIGHT_FONT_COLOR} />
           <ListItem.Content>
-            <ListItem.Title>Reload Metadata</ListItem.Title>
+            <ListItem.Title>Reload Online Surveys</ListItem.Title>
           </ListItem.Content>
         </ListItem>
       </Card>
