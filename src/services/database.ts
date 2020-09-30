@@ -151,19 +151,17 @@ export const updateSurveyStatusSynced = localId => {
  * @param tableName
  * @param LocalId
  */
-export const deleteRecord = (tableName, LocalId) => {
+export const deleteRecord = (tableName, localId) => {
   return new Promise((resolve, reject) => {
-    const sqlStatement = `DELETE FROM ${tableName} WHERE LocalId = ${LocalId}`;
-    try {
-      database.transaction(tx => {
-        tx.executeSql(sqlStatement, [], (txn, result) => {
-          resolve(true);
-        });
+    const statement = `delete from ${tableName} where localId = ${localId}`;
+
+    executeTransaction(statement)
+      .then(result => {
+        resolve(result);
+      })
+      .catch(error => {
+        reject(error);
       });
-    } catch (error) {
-      console.log(error);
-      reject(error);
-    }
   });
 };
 
