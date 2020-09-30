@@ -70,7 +70,7 @@ export default function SurveyList({ navigation }) {
       const refresh = async () => {
         logger('DEBUG', 'SurveyList', 'Refreshing surveys in survey list');
         setShowsSpinner(true);
-        await refreshSurveys;
+        await refreshSurveys();
         setShowsSpinner(false);
       };
       refresh();
