@@ -45,10 +45,10 @@ export const storeOnlineSurveys = async () => {
 };
 
 /**
- * @description Create a new survey
+ * @description Create a new survey in local database
  * @param survey
  */
-export const createSurvey = async survey => {
+export const createLocalSurvey = async survey => {
   const payload = { ...survey, syncStatus: 'Unsynced' };
   return await saveRecords(DB_TABLE.SURVEY, [payload], undefined);
 };

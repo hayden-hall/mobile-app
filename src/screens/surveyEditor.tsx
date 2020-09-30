@@ -13,6 +13,8 @@ import { SurveyLayout } from '../types/survey';
 import SurveyItem from './surveyItem';
 import SurveyContext from '../context/surveyContext';
 import LocalizationContext from '../context/localizationContext';
+import { createLocalSurvey } from '../services/survey';
+import { notifySuccess } from '../utility/notification';
 
 type SurveyEditorNavigationProp = StackNavigationProp<StackParamList, 'SurveyEditor'>;
 type SurveyEditorRouteProp = RouteProp<StackParamList, 'SurveyEditor'>;
@@ -38,15 +40,24 @@ export default function SurveyEditor({ route, navigation }: Props) {
     fetch();
   }, []);
 
-  const SaveButton = () => {
-    return <Button onPress={() => console.log('Save')} title="Done" />;
-  };
-
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => SaveButton(),
     });
   }, [navigation]);
+
+  const SaveButton = () => {
+    return (
+      <Button
+        onPress={async () => {
+          await createLocalSurvey(survey);
+          notifySuccess('Created a new survey!');
+          navigation.navigate('SurveyList');
+        }}
+        title="Done"
+      />
+    );
+  };
 
   return (
     <SurveyContext.Provider value={surveyContext}>
