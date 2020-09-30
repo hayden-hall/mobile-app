@@ -68,7 +68,6 @@ export default function SurveyList({ navigation }) {
   useFocusEffect(
     useCallback(() => {
       const refresh = async () => {
-        logger('DEBUG', 'SurveyList', 'Refreshing surveys in survey list');
         setShowsSpinner(true);
         await refreshSurveys();
         setShowsSpinner(false);
