@@ -9,19 +9,17 @@ import { SearchBar, ListItem, Loader } from '../components';
 import FilterButtonGroup from './surveyListFilter';
 import SurveyListHeader from './surveyListHeader';
 // services
-import { getAllStoredSurveys } from '../services/api/salesforce/survey';
 import { buildDictionary } from '../services/describe';
 // store
 import { surveyFilterReducer } from '../reducers/surveyFilterReducer';
-import { surveyListReducer } from '../reducers/surveyListReducer';
-import SurveyListContext from '../context/surveyListContext';
 import LocalizationContext from '../context/localizationContext';
 // util, constants
 import { formatDate } from '../utility';
 import { logger } from '../utility/logger';
-import { APP_FONTS, APP_THEME } from '../constants';
+import { APP_FONTS, APP_THEME, DB_TABLE } from '../constants';
 // types
 import { StackParamList } from '../router';
+import { getAllRecordsWithCallback } from '../services/database';
 type SurveyTypePickerNavigationProp = StackNavigationProp<StackParamList, 'SurveyList'>;
 
 type Props = {
@@ -30,7 +28,7 @@ type Props = {
 // TODO: navigate to login screen when session timeout
 
 export default function SurveyList({ navigation }) {
-  const [surveys, dispatchSurveys] = useReducer(surveyListReducer, []);
+  const [surveys, setSurveys] = useState([]);
   const [filter, dispatchFilter] = useReducer(surveyFilterReducer, 'SHOW_UNSYNCED');
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -48,33 +46,31 @@ export default function SurveyList({ navigation }) {
       logger('INFO', 'SurveyList', `Is connected? ${state.isConnected}`);
       setIsNetworkConnected(state.isConnected);
     });
+
     setShowsSpinner(true);
-    const build = async () => {
+    const prepare = async () => {
       await buildDictionary();
+      await refreshSurveys();
     };
-    build();
-    getAllStoredSurveys()
-      .then(response => {
-        dispatchSurveys({
-          type: 'INITIALIZE',
-          surveys: response,
-        });
-      })
-      .finally(() => {
-        setShowsSpinner(false);
-      });
+    prepare();
+    setShowsSpinner(false);
+
     return () => {
       unsubscribe();
     };
   }, []);
+
+  const refreshSurveys = async () => {
+    return await getAllRecordsWithCallback(DB_TABLE.SURVEY, setSurveys);
+  };
 
   /**
    * @description Filter surveys by button selection, and then by search term.
    */
   const filteredSurveys = surveys
     .filter(survey => {
-      if (filter === 'SHOW_UNSYNCED' && survey.IsLocallyCreated === 1) return true;
-      if (filter === 'SHOW_SYNCED' && survey.IsLocallyCreated === 0) return true;
+      if (filter === 'SHOW_UNSYNCED' && survey.syncStatus === 'Unsynced') return true;
+      if (filter === 'SHOW_SYNCED' && survey.syncStatus === 'Synced') return true;
       if (filter === 'SHOW_ALL') return true;
       return false;
     })
@@ -125,7 +121,7 @@ export default function SurveyList({ navigation }) {
   };
 
   return (
-    <SurveyListContext.Provider value={dispatchSurveys}>
+    <View>
       <Loader loading={showsSpinner} />
       <View style={flex1}>
         <SearchBar
@@ -167,7 +163,7 @@ export default function SurveyList({ navigation }) {
         />
         {newSurveyButton()}
       </View>
-    </SurveyListContext.Provider>
+    </View>
   );
 }
 
