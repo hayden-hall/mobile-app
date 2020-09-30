@@ -57,7 +57,7 @@ export default function Settings({ navigation }) {
     <ImageBackground source={BACKGROUND_IMAGE_SOURCE} style={BACKGROUND_STYLE} imageStyle={BACKGROUND_IMAGE_STYLE}>
       <Loader loading={showsSpinner} />
       <Card>
-        <Card.Title>{t('LANGUAGE')}</Card.Title>
+        <Card.Title style={{ fontFamily: APP_FONTS.FONT_BOLD }}>{t('LANGUAGE')}</Card.Title>
         <FlatList
           data={languages}
           renderItem={renderItem}
@@ -70,7 +70,7 @@ export default function Settings({ navigation }) {
         />
       </Card>
       <Card>
-        <Card.Title>{t('SYSTEM')}</Card.Title>
+        <Card.Title style={{ fontFamily: APP_FONTS.FONT_BOLD }}>{t('SYSTEM')}</Card.Title>
         <ListItem
           onPress={async () => {
             if (!(await isInternetReachable())) {
@@ -91,7 +91,7 @@ export default function Settings({ navigation }) {
         >
           <Icon name="cloud-download" color={APP_THEME.APP_LIGHT_FONT_COLOR} />
           <ListItem.Content>
-            <ListItem.Title>Reload Metadata</ListItem.Title>
+            <ListItem.Title style={{ fontFamily: APP_FONTS.FONT_REGULAR }}>Reload Metadata</ListItem.Title>
           </ListItem.Content>
         </ListItem>
         <ListItem
@@ -115,7 +115,7 @@ export default function Settings({ navigation }) {
         >
           <Icon name="cloud-download" color={APP_THEME.APP_LIGHT_FONT_COLOR} />
           <ListItem.Content>
-            <ListItem.Title>Reload Online Surveys</ListItem.Title>
+            <ListItem.Title style={{ fontFamily: APP_FONTS.FONT_REGULAR }}>Reload Online Surveys</ListItem.Title>
           </ListItem.Content>
         </ListItem>
       </Card>
