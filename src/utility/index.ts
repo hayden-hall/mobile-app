@@ -19,21 +19,3 @@ export const formatDate = date => {
 export const formatAPIDate = date => {
   return moment(date).format(DATE_FORMAT_API);
 };
-
-export const prepareIdsForSalesforce = contactsIds => {
-  return contactsIds
-    .filter(record => record)
-    .map(contact => `'${contact}'`)
-    .join(',');
-};
-
-export const prepareIdsForSqllite = contactsIds => {
-  return contactsIds
-    .filter(record => record)
-    .map(contact => `"${contact}"`)
-    .join(',');
-};
-
-export const checkForDatabaseNull = value => {
-  return value && value != null && value != 'null';
-};

@@ -16,7 +16,7 @@ const SURVEY_LOOKUP_FIELDS = [
 
 /**
  * @description Get all the records from a local table
- * @oaram tableName
+ * @param tableName
  */
 export const getAllRecords = (tableName: string) => {
   return new Promise<Array<any>>(async (resolve, reject) => {
@@ -30,6 +30,28 @@ export const getAllRecords = (tableName: string) => {
       .catch(error => {
         reject(error);
       });
+  });
+};
+
+/**
+ * @description Get all the records from a local table and run callback method using result array as argument
+ * @param tableName
+ * @param onSuccess callback method
+ */
+export const getAllRecordsWithCallback = (tableName: string, onSuccess) => {
+  return new Promise(async (resolve, reject) => {
+    database.transaction(
+      txn => {
+        txn.executeSql(`select * from ${tableName}`, [], (_, { rows: { _array } }) => {
+          onSuccess(_array);
+          resolve(true);
+        });
+      },
+      error => {
+        logger('ERROR', 'getAllRecordsWithCallback', error);
+        reject(error);
+      }
+    );
   });
 };
 
@@ -53,22 +75,6 @@ export const getRecords = (tableName, whereClause): Promise<Array<any>> => {
       .catch(error => {
         reject(error);
       });
-  });
-};
-
-export const markRecordNonDirty = (table, LocalId) => {
-  return new Promise((resolve, reject) => {
-    const sqlStatement = `UPDATE ${table} SET IsLocallyCreated = 0 WHERE LocalId = ${LocalId}`;
-    try {
-      database.transaction(tx => {
-        tx.executeSql(sqlStatement, [], (txn, result) => {
-          resolve(true);
-        });
-      });
-    } catch (error) {
-      console.log(error);
-      reject(error);
-    }
   });
 };
 
@@ -119,6 +125,24 @@ export const updateRecord = async (table, record, LocalId) => {
       console.log(error);
       reject(error);
     }
+  });
+};
+
+/**
+ * @description Update survey sync status to 'Synced'. Us
+ * @param localId
+ */
+export const updateSurveyStatusSynced = localId => {
+  return new Promise((resolve, reject) => {
+    const statement = `update survey syncStatus = 'Synced' where localId = ${localId}`;
+
+    executeTransaction(statement)
+      .then(result => {
+        resolve(result);
+      })
+      .catch(error => {
+        reject(error);
+      });
   });
 };
 
