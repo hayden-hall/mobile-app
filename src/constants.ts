@@ -50,7 +50,7 @@ export const DB_TABLE = {
   PageLayoutSection: 'PageLayoutSection',
   PageLayoutItem: 'PageLayoutItem',
   PICKLIST_VALUE: 'PicklistValue',
-  Survey: 'Survey',
+  SURVEY: 'Survey',
   Localization: 'Localization',
   CONTACT: 'Contact',
 };
