@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer, useContext } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Button, View, Text, StyleSheet } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/core';
 import { KeyboardAwareSectionList } from 'react-native-keyboard-aware-scroll-view';
@@ -13,7 +13,6 @@ import { SurveyLayout } from '../types/survey';
 import SurveyItem from './surveyItem';
 import SurveyContext from '../context/surveyContext';
 import LocalizationContext from '../context/localizationContext';
-import { CustomButton } from '../components';
 
 type SurveyEditorNavigationProp = StackNavigationProp<StackParamList, 'SurveyEditor'>;
 type SurveyEditorRouteProp = RouteProp<StackParamList, 'SurveyEditor'>;
@@ -39,6 +38,16 @@ export default function SurveyEditor({ route, navigation }: Props) {
     fetch();
   }, []);
 
+  const SaveButton = () => {
+    return <Button onPress={() => console.log('Save')} title="Done" />;
+  };
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => SaveButton(),
+    });
+  }, [navigation]);
+
   return (
     <SurveyContext.Provider value={surveyContext}>
       <View>
@@ -54,14 +63,6 @@ export default function SurveyEditor({ route, navigation }: Props) {
             renderItem={({ item }) => <SurveyItem item={item} />}
           />
         )}
-        <View style={styles.inputButton}>
-          <CustomButton
-            title={true ? t('SAVE') : t('UPDATE')}
-            onPress={() => {
-              console.log('Save');
-            }}
-          />
-        </View>
       </View>
     </SurveyContext.Provider>
   );
