@@ -1,15 +1,16 @@
 import React, { useState, useContext } from 'react';
 import { FlatList, ImageBackground } from 'react-native';
 import { Card, Icon, Divider, ListItem } from 'react-native-elements';
+import { showMessage } from 'react-native-flash-message';
 import NetInfo from '@react-native-community/netinfo';
-import { Loader } from '../components';
 
 import LocalizationContext from '../context/localizationContext';
+import { retrieveAll } from '../services/describe';
+import { forceLogout } from '../services/session';
+import { Loader } from '../components';
+
 import { APP_THEME, BACKGROUND_IMAGE_SOURCE, BACKGROUND_STYLE, BACKGROUND_IMAGE_STYLE, APP_FONTS } from '../constants';
 import { logger } from '../utility/logger';
-import { retrieveAll } from '../services/describe';
-import { showMessage } from 'react-native-flash-message';
-import { forceLogout } from '../services/session';
 
 type Language = {
   name: string;
