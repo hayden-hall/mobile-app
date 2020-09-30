@@ -27,7 +27,9 @@ export const MotherChildPickerType__c = {
 export const storeOnlineSurveys = async () => {
   // Build field list from page layout items
   const fields: Array<PageLayoutItem> = await getAllRecords(DB_TABLE.PageLayoutItem);
-  const commaSeparetedFields = Array.from(new Set(fields.map(f => f.fieldName))).join(',');
+  const fieldSet = new Set(fields.map(f => f.fieldName));
+  fieldSet.add('Name');
+  const commaSeparetedFields = Array.from(fieldSet).join(',');
 
   const areaCode = await storage.load({
     key: ASYNC_STORAGE_KEYS.AREA_CODE,
@@ -39,7 +41,7 @@ export const storeOnlineSurveys = async () => {
   // Surveys should have sync status and local id for offline surveys
   saveRecords(
     'Survey',
-    surveys.map(s => ({ ...s, syncStatus: 'Synced' })),
+    surveys.map(s => ({ ...s, syncStatus: 'Synced', title: s.Name })),
     undefined
   );
 };
