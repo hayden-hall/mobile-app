@@ -91,7 +91,7 @@ export default function SurveyList({ navigation }) {
       return false;
     })
     .filter(survey => {
-      return survey.title.includes(searchTerm);
+      return survey.title ? survey.title.includes(searchTerm) : true;
     })
     .map(survey => {
       return {

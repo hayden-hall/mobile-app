@@ -4,7 +4,7 @@ import { Button } from 'react-native-elements';
 
 import LocalizationContext from '../context/localizationContext';
 import { uploadSurveyListToSalesforce, updateSurveyStatusSynced } from '../services/survey';
-import { notifySuccess } from '../utility/notification';
+import { notifySuccess, notifyError } from '../utility/notification';
 import { APP_FONTS, APP_THEME } from '../constants';
 import { SurveyItem } from '../types/survey';
 
@@ -15,6 +15,7 @@ type SurveyListHeaderProps = {
 
 export default function SurveyListHeader(props: SurveyListHeaderProps) {
   const { t } = useContext(LocalizationContext);
+  const localSurveys = props.surveys.filter(s => s.syncStatus === 'Unsynced');
 
   const confirmSync = () => {
     Alert.alert(
@@ -24,10 +25,18 @@ export default function SurveyListHeader(props: SurveyListHeaderProps) {
         {
           text: t('OK'),
           onPress: async () => {
-            const response = await uploadSurveyListToSalesforce(props.surveys);
-            console.log(JSON.stringify(response));
-            await updateSurveyStatusSynced(props.surveys);
-            notifySuccess('Surveys are successfully uploaded!');
+            const response = await uploadSurveyListToSalesforce(localSurveys);
+            if (
+              response.hasErrors === true &&
+              response.results.length > 0 &&
+              response.results.length === localSurveys.length
+            ) {
+              await updateSurveyStatusSynced(props.surveys);
+              notifySuccess('Surveys are successfully uploaded!');
+              return;
+            } else {
+              notifyError('Unexpected error occued while uploading. Contact your adminsitrator.');
+            }
           },
         },
         {
@@ -38,15 +47,13 @@ export default function SurveyListHeader(props: SurveyListHeaderProps) {
     );
   };
 
-  const numOflocalSurveys = props.surveys.filter(s => s.syncStatus === 'Unsynced').length;
-
   return (
     <View style={styles.pendingSurveyContainer}>
       <TextInput
         underlineColorAndroid="transparent"
         placeholder={t('SEARCH_SURVEYS')}
         style={styles.textStylePendingSurvey}
-        value={`${numOflocalSurveys} - ${t('QUEUED_FOR_SYNC')}`} // dirtySurveyCount
+        value={`${localSurveys.length} - ${t('QUEUED_FOR_SYNC')}`} // dirtySurveyCount
         editable={false}
       />
       <View style={styles.syncIconStyle}>
