@@ -63,7 +63,7 @@ const storePageLayoutItems = async (recordTypeId: string) => {
   logger('FINE', 'storePageLayoutItems | sections', pageLayoutSections);
   await saveRecords(DB_TABLE.PageLayoutSection, pageLayoutSections, 'id');
 
-  const picklistValues: Array<PicklistValue> = [];
+  const picklistValueMap: Map<string, PicklistValue> = new Map();
   const pageLayoutItems: Array<PageLayoutItem> = response.editLayoutSections
     .filter(section => section.useHeading)
     .map(section => {
@@ -78,7 +78,10 @@ const storePageLayoutItems = async (recordTypeId: string) => {
                   label: v.label,
                   value: v.value,
                 }));
-              picklistValues.push(...values);
+              // Avoid duplicated picklist options (e.g. fields used in multiple layouts)
+              for (const v of values) {
+                picklistValueMap[`${v.fieldName}-${v.label}-${v.value}`] = v;
+              }
             }
             return {
               sectionId: section.layoutSectionId,
@@ -93,7 +96,8 @@ const storePageLayoutItems = async (recordTypeId: string) => {
     .flat(3);
   logger('FINE', 'storePageLayoutItems | items', pageLayoutItems);
   await saveRecords(DB_TABLE.PageLayoutItem, pageLayoutItems, undefined);
-  await saveRecords(DB_TABLE.PICKLIST_VALUE, picklistValues, undefined);
+
+  await saveRecords(DB_TABLE.PICKLIST_VALUE, picklistValueMap.values(), undefined);
 
   return response;
 };
