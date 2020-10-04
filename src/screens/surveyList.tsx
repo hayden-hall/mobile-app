@@ -12,12 +12,14 @@ import SurveyListHeader from './surveyListHeader';
 // services
 import { buildDictionary } from '../services/describe';
 import { deleteRecord } from '../services/database';
+import { forceLogout } from '../services/session';
 // store
 import { surveyFilterReducer } from '../reducers/surveyFilterReducer';
 import LocalizationContext from '../context/localizationContext';
 // util, constants
 import { formatDate } from '../utility';
 import { logger } from '../utility/logger';
+import { notifyError } from '../utility/notification';
 import { APP_FONTS, APP_THEME, DB_TABLE } from '../constants';
 // types
 import { StackParamList } from '../router';
@@ -51,12 +53,16 @@ export default function SurveyList({ navigation }) {
 
     setShowsSpinner(true);
     const prepare = async () => {
-      await buildDictionary();
-      await refreshSurveys();
+      try {
+        await buildDictionary();
+        await refreshSurveys();
+      } catch {
+        notifyError('Unexpected error occcured while loading survey list. Contact your administrator and login again.');
+        await forceLogout(navigation);
+      }
     };
     prepare();
     setShowsSpinner(false);
-
     return () => {
       unsubscribe();
     };
@@ -69,7 +75,9 @@ export default function SurveyList({ navigation }) {
     useCallback(() => {
       const refresh = async () => {
         setShowsSpinner(true);
-        await refreshSurveys();
+        try {
+          await refreshSurveys();
+        } catch {}
         setShowsSpinner(false);
       };
       refresh();
