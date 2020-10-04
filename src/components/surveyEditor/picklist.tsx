@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import RNPickerSelect from 'react-native-picker-select';
-import { Icon } from 'react-native-elements';
+import { View, StyleSheet, Text, Platform } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 import { APP_THEME, APP_FONTS, L10N_PREFIX } from '../../constants';
 import LocalizationContext from '../../context/localizationContext';
@@ -20,18 +19,10 @@ function Picklist(props: PicklistPropType) {
 
   const { t } = useContext(LocalizationContext);
 
-  /** NOTICE: Don't use 'undefined', use 'null' for blank value
-   * @see https://github.com/lawnstarter/react-native-picker-select/issues/40
-   */
-  const none = {
-    label: '-- None --',
-    value: null,
-  };
-
   useEffect(() => {
     const setPicklistValues = async () => {
       const options = await getPicklistValues(props.fieldName);
-      setOptions([none, ...options]); // TODO: avoid repeat query
+      setOptions(options.map(o => ({ label: o.label, value: o.value }))); // TODO: avoid repeat query
     };
     setPicklistValues();
   }, []);
@@ -43,58 +34,29 @@ function Picklist(props: PicklistPropType) {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={{
+        padding: 10,
+        width: '100%',
+      }}
+    >
       <Text style={styles.titleLabel}>{displayLabel()}</Text>
-      <RNPickerSelect
+      <DropDownPicker
         disabled={disabled}
-        value={value}
+        defaultValue={value}
         items={options}
-        style={pickerSelectStyles}
-        useNativeAndroidPickerStyle={false}
-        placeholder={{}}
-        Icon={() => {
-          return <Icon name="chevron-down" type="font-awesome" size={20} color="gray" />;
-        }}
-        onValueChange={value => {
-          onValueChange(value);
+        // style={{ backgroundColor: '#FFF' }}
+        // dropDownStyle={{ backgroundColor: '#FFF' }}
+        //placeholder={{}}
+        onChangeItem={item => {
+          onValueChange(item.value);
         }}
       />
     </View>
   );
 }
 
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: APP_THEME.APP_BORDER_COLOR,
-    borderRadius: 4,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-  },
-  inputAndroid: {
-    fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderWidth: 0.5,
-    borderColor: APP_THEME.APP_BORDER_COLOR,
-    borderRadius: 4,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
-  },
-  iconContainer: {
-    top: 10,
-    right: 5,
-  },
-});
-
 const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-    width: '100%',
-  },
   titleLabel: {
     marginBottom: 5,
     fontSize: 14,

@@ -7,7 +7,6 @@ import SurveyContext from '../context/surveyContext';
 
 type SurveyItemProps = {
   item: any;
-  index: number;
 };
 
 type SurveyContextProps = {
@@ -17,7 +16,7 @@ type SurveyContextProps = {
 
 export default function SurveyEditorItem(props: SurveyItemProps) {
   const { survey, dispatchSurvey }: SurveyContextProps = useContext(SurveyContext);
-  const { item, index } = props;
+  const { item } = props;
 
   const renderItem = () => {
     switch (item.type) {
@@ -92,10 +91,9 @@ export default function SurveyEditorItem(props: SurveyItemProps) {
   return (
     <View
       style={{
-        flex: 1,
+        // flex: 1,
         alignItems: 'flex-start',
         backgroundColor: 'white',
-        zIndex: 9000 - index,
       }}
     >
       {renderItem()}

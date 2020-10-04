@@ -26,6 +26,7 @@ type Props = {
 
 export default function SurveyEditor({ route, navigation }: Props) {
   const [layout, setLayout] = useState<SurveyLayout>({});
+  const [doneButtonDisabled, setDoneButtonDisabled] = useState(false);
   const [survey, dispatchSurvey] = useReducer(surveyReducer, {});
 
   const { t } = useContext(LocalizationContext);
@@ -36,6 +37,7 @@ export default function SurveyEditor({ route, navigation }: Props) {
       setLayout(result);
     };
     fetch();
+    setDoneButtonDisabled(false);
   }, []);
 
   useLayoutEffect(() => {
@@ -48,11 +50,13 @@ export default function SurveyEditor({ route, navigation }: Props) {
     return (
       <Button
         onPress={async () => {
+          setDoneButtonDisabled(true);
           const record = { ...survey, RecordTypeId: route.params.selectedRecordTypeId };
           await createLocalSurvey(record);
           notifySuccess('Created a new survey!');
           navigation.navigate('SurveyList');
         }}
+        disabled={doneButtonDisabled}
         title="Done"
       />
     );
@@ -65,12 +69,20 @@ export default function SurveyEditor({ route, navigation }: Props) {
           <KeyboardAwareSectionList
             sections={layout.sections}
             keyExtractor={item => item.name}
+            CellRendererComponent={({ children, index, style, ...props }) => {
+              const cellStyle = [style, { zIndex: layout.sections.length - index }];
+              return (
+                <View style={cellStyle} index={index} {...props}>
+                  {children}
+                </View>
+              );
+            }}
             renderSectionHeader={({ section: { title } }) => (
               <View style={styles.headerView}>
                 <Text style={styles.sectionTitle}>{title.toUpperCase()}</Text>
               </View>
             )}
-            renderItem={({ item, index }) => <SurveyEditorItem item={item} index={index} />}
+            renderItem={({ item }) => <SurveyEditorItem item={item} />}
           />
         )}
       </View>
