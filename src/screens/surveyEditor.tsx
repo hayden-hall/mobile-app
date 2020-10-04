@@ -10,7 +10,7 @@ import { surveyReducer } from '../reducers/surveyReducer';
 import { APP_THEME, APP_FONTS } from '../constants';
 import { StackParamList } from '../router';
 import { SurveyLayout } from '../types/survey';
-import SurveyItem from './surveyItem';
+import SurveyEditorItem from './surveyEditorItem';
 import SurveyContext from '../context/surveyContext';
 import LocalizationContext from '../context/localizationContext';
 import { createLocalSurvey } from '../services/survey';
@@ -70,7 +70,7 @@ export default function SurveyEditor({ route, navigation }: Props) {
                 <Text style={styles.sectionTitle}>{title.toUpperCase()}</Text>
               </View>
             )}
-            renderItem={({ item }) => <SurveyItem item={item} />}
+            renderItem={({ item, index }) => <SurveyEditorItem item={item} index={index} />}
           />
         )}
       </View>
