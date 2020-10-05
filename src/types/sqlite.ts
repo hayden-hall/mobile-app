@@ -51,5 +51,6 @@ export interface Survey {
   syncStatus: 'Unsynced' | 'Synced';
   title: string;
   localId: string;
+  RecordTypeId: string;
   // Following the fields on the survey object in Salesforce
 }
