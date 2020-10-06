@@ -137,7 +137,7 @@ export default function SurveyList({ navigation }) {
         title={data.item.title}
         subtitle={data.item.subtitle}
         onPress={() => {
-          // navigate to survey editor
+          navigation.navigate('SurveyEditor', { localId: data.item.localId });
         }}
         showCaret={data.item.showCaret}
       />
