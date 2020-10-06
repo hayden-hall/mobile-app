@@ -16,15 +16,26 @@ import i18n from '../config/i18n';
  */
 export const retrieveAll = async () => {
   await clearTable(DB_TABLE.RecordType);
+  const recordTypes = await storeRecordTypes();
+
   await clearTable(DB_TABLE.PageLayoutSection);
   await clearTable(DB_TABLE.PageLayoutItem);
-  await clearTable(DB_TABLE.Localization);
-
-  const recordTypes = await storeRecordTypes();
+  const serializedPicklistValueSet = new Set();
   for (const rt of recordTypes) {
-    await storePageLayoutItems(rt.recordTypeId);
+    const currentSerializedPicklistValueSet = await storePageLayoutItems(rt.recordTypeId);
+    currentSerializedPicklistValueSet.forEach(serializedPicklistValueSet.add, serializedPicklistValueSet);
   }
+
+  await clearTable(DB_TABLE.PICKLIST_VALUE);
+  const picklistValues = [...serializedPicklistValueSet.values()].map(s => {
+    return JSON.parse(s as string);
+  });
+  logger('DEBUG', 'picklistvalues refres', picklistValues);
+  await saveRecords(DB_TABLE.PICKLIST_VALUE, picklistValues, undefined);
+
+  await clearTable(DB_TABLE.Localization);
   await storeLocalization();
+
   await buildDictionary();
 };
 
@@ -50,6 +61,7 @@ export const storeRecordTypes = async () => {
 /**
  * @description Query layouts and fields including picklist values by Rest API (describe layout) and save the result to local database.
  * @param recordTypeId
+ * @return serializedPicklistValueSet
  */
 const storePageLayoutItems = async (recordTypeId: string) => {
   const response: DescribeLayout = await describeLayout(SURVEY_OBJECT, recordTypeId);
@@ -63,7 +75,7 @@ const storePageLayoutItems = async (recordTypeId: string) => {
   logger('FINE', 'storePageLayoutItems | sections', pageLayoutSections);
   await saveRecords(DB_TABLE.PageLayoutSection, pageLayoutSections, 'id');
 
-  const picklistValues: Array<PicklistValue> = [];
+  const serializedPicklistValueSet: Set<string> = new Set();
   const pageLayoutItems: Array<PageLayoutItem> = response.editLayoutSections
     .filter(section => section.useHeading)
     .map(section => {
@@ -78,7 +90,9 @@ const storePageLayoutItems = async (recordTypeId: string) => {
                   label: v.label,
                   value: v.value,
                 }));
-              picklistValues.push(...values);
+              values.forEach(v => {
+                serializedPicklistValueSet.add(JSON.stringify(v));
+              });
             }
             return {
               sectionId: section.layoutSectionId,
@@ -94,10 +108,7 @@ const storePageLayoutItems = async (recordTypeId: string) => {
   logger('FINE', 'storePageLayoutItems | items', pageLayoutItems);
   await saveRecords(DB_TABLE.PageLayoutItem, pageLayoutItems, undefined);
 
-  const distinctPicklistValues = [...new Map(picklistValues.map(o => [`${o.fieldName}-${o.value}`, o])).values()];
-  await saveRecords(DB_TABLE.PICKLIST_VALUE, distinctPicklistValues, undefined);
-
-  return response;
+  return serializedPicklistValueSet;
 };
 
 /**
