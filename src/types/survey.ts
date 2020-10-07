@@ -1,7 +1,8 @@
 /**
  * Fields used for survey list item.
  */
-export interface SurveyItem {
+export interface SurveyListItem {
+  title: string;
   subtitle: string;
   showCaret: boolean;
   syncStatus: 'Unsynced' | 'Synced';

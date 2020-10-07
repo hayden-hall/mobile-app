@@ -6,11 +6,11 @@ import LocalizationContext from '../context/localizationContext';
 import { uploadSurveyListToSalesforce, updateSurveyStatusSynced } from '../services/survey';
 import { notifySuccess, notifyError } from '../utility/notification';
 import { APP_FONTS, APP_THEME } from '../constants';
-import { SurveyItem } from '../types/survey';
+import { SurveyListItem } from '../types/survey';
 
 type SurveyListHeaderProps = {
   isNetworkConnected: boolean;
-  surveys: Array<SurveyItem>;
+  surveys: Array<SurveyListItem>;
 };
 
 export default function SurveyListHeader(props: SurveyListHeaderProps) {
