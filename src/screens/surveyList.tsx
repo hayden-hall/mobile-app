@@ -99,13 +99,14 @@ export default function SurveyList({ navigation }) {
       return false;
     })
     .filter(survey => {
-      return survey.title ? survey.title.includes(searchTerm) : true;
+      return survey.Name ? survey.Name.includes(searchTerm) : true;
     })
     .map(survey => {
       return {
         ...survey,
         subtitle: `${survey.Survey_Type} • ${formatDate(survey.Visit_Clinic_Date__c)}`,
         showCaret: survey.syncStatus === 'Unsynced',
+        title: survey.Name || survey.localId,
       };
     });
 
