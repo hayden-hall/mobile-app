@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, StyleSheet, Text, Platform } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
+import { View, StyleSheet, Text } from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
 
 import { APP_THEME, APP_FONTS, L10N_PREFIX } from '../../constants';
 import LocalizationContext from '../../context/localizationContext';
@@ -16,18 +16,17 @@ type PicklistPropType = {
 
 function Picklist(props: PicklistPropType) {
   const [options, setOptions] = useState([]);
-
   const { t } = useContext(LocalizationContext);
 
   useEffect(() => {
     const setPicklistValues = async () => {
-      const options = await getPicklistValues(props.fieldName);
-      setOptions(options.map(o => ({ label: o.label, value: o.value }))); // TODO: avoid repeat query
+      const storedOptions = await getPicklistValues(props.fieldName);
+      setOptions(storedOptions.map(o => ({ label: o.label, value: o.value })));
     };
     setPicklistValues();
   }, []);
 
-  const { value, onValueChange, disabled, fieldName } = props;
+  const { onValueChange, value, disabled, fieldName } = props;
 
   const displayLabel = () => {
     return t(`${L10N_PREFIX.PageLayoutItem}${fieldName}`);
@@ -41,17 +40,20 @@ function Picklist(props: PicklistPropType) {
       }}
     >
       <Text style={styles.titleLabel}>{displayLabel()}</Text>
-      <DropDownPicker
-        disabled={disabled}
-        defaultValue={value}
-        items={options}
-        // style={{ backgroundColor: '#FFF' }}
-        // dropDownStyle={{ backgroundColor: '#FFF' }}
-        //placeholder={{}}
-        onChangeItem={item => {
-          onValueChange(item.value);
-        }}
-      />
+      {options.length > 0 && (
+        <RNPickerSelect
+          disabled={disabled}
+          value={value}
+          items={options}
+          style={pickerSelectStyles}
+          // dropDownStyle={{ backgroundColor: '#FFF' }}
+          //placeholder={{}}
+          onValueChange={value => {
+            console.log(`${fieldName} is changed to ${value}`);
+            onValueChange(value);
+          }}
+        />
+      )}
     </View>
   );
 }
@@ -68,6 +70,27 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: APP_THEME.APP_LIGHT_FONT_COLOR,
     fontFamily: APP_FONTS.FONT_REGULAR,
+  },
+});
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
+  inputAndroid: {
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 0.5,
+    borderColor: 'purple',
+    borderRadius: 8,
+    color: 'black',
+    paddingRight: 30, // to ensure the text is never behind the icon
   },
 });
 
