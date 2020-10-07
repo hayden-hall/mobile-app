@@ -37,27 +37,6 @@ export default function SurveyEditor({ route, navigation }: Props) {
 
   const editorMode = route.params.localId ? 'EDIT' : 'NEW';
 
-  const SaveButton = () => {
-    return (
-      survey &&
-      survey.syncStatus === 'Unsynced' && (
-        <Button
-          onPress={async () => {
-            setDoneButtonDisabled(true);
-            // new or update
-            const recordTypeId = route.params.selectedRecordTypeId || survey.recordTypeId;
-            const record = { ...survey, RecordTypeId: recordTypeId };
-            await createLocalSurvey(record);
-            notifySuccess('Created a new survey!');
-            navigation.navigate('SurveyList');
-          }}
-          disabled={doneButtonDisabled}
-          title={t('SAVE')}
-        />
-      )
-    );
-  };
-
   useEffect(() => {
     setDoneButtonDisabled(true);
     const fetch = async () => {
@@ -92,6 +71,28 @@ export default function SurveyEditor({ route, navigation }: Props) {
       headerRight: () => SaveButton(),
     });
   }, [navigation, survey]);
+
+  const SaveButton = () => {
+    return (
+      survey &&
+      survey.syncStatus === 'Unsynced' && (
+        <Button
+          onPress={async () => {
+            setDoneButtonDisabled(true);
+            // For new survey, use record type id passed from picker screen. For existing survey, use stored record type id.
+            const recordTypeId = route.params.selectedRecordTypeId || survey.recordTypeId;
+            const record = { ...survey, RecordTypeId: recordTypeId };
+            await createLocalSurvey(record);
+            dispatchSurvey({ type: 'CLEAR' });
+            notifySuccess('Created a new survey!');
+            navigation.navigate('SurveyList');
+          }}
+          disabled={doneButtonDisabled}
+          title={t('SAVE')}
+        />
+      )
+    );
+  };
 
   return (
     <View>
