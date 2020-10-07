@@ -2,6 +2,7 @@ import { createSalesforceRecord, createSalesforceRecords, fetchSalesforceRecords
 import { saveRecordsOld, updateRecord, clearTable, getAllRecords, saveRecords, updateRecords } from './database';
 import { ASYNC_STORAGE_KEYS, DB_TABLE } from '../constants';
 import { PageLayoutItem } from '../types/sqlite';
+import { logger } from '../utility/logger';
 
 /**
  * @description Retrieve all the surveys from Salesforce by area code, and store them to local database
@@ -12,6 +13,7 @@ export const storeOnlineSurveys = async () => {
   const fields: Array<PageLayoutItem> = await getAllRecords(DB_TABLE.PageLayoutItem);
   const fieldSet = new Set(fields.map(f => f.fieldName));
   fieldSet.add('Name');
+  fieldSet.add('RecordTypeId');
   const commaSeparetedFields = Array.from(fieldSet).join(',');
 
   const areaCode = await storage.load({
@@ -34,8 +36,8 @@ export const storeOnlineSurveys = async () => {
  * @param survey
  */
 export const createLocalSurvey = async survey => {
-  const payload = { ...survey, syncStatus: 'Unsynced', title: 'Local Survey' };
-  return await saveRecords(DB_TABLE.SURVEY, [payload], undefined);
+  logger('DEBUG', 'Saving survey', survey);
+  return await saveRecords(DB_TABLE.SURVEY, [survey], undefined);
 };
 
 /**
@@ -43,7 +45,16 @@ export const createLocalSurvey = async survey => {
  * @param surveys
  */
 export const uploadSurveyListToSalesforce = async surveys => {
-  return await createSalesforceRecords('Survey__c', surveys);
+  logger('DEBUG', 'Upload to Salesforce (local)', surveys);
+  const records = surveys.map(s => {
+    // Remove local or read only fields
+    delete s.localId;
+    delete s.syncStatus;
+    delete s.Name;
+    return s;
+  });
+  logger('DEBUG', 'Upload to Salesforce', records);
+  return await createSalesforceRecords('Survey__c', records);
 };
 
 /**
