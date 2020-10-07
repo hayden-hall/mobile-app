@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { ImageStyle, ViewStyle, Dimensions } from 'react-native';
 
 export const APP_FONTS = {
@@ -59,4 +60,10 @@ export const L10N_PREFIX = {
   RecordType: 'RECORD_TYPE_',
   PageLayoutSection: 'PAGE_LAYOUT_SECTION_',
   PageLayoutItem: 'PAGE_LAYOUT_ITEM_',
+};
+
+export const LOOKUP_TO_CONTACT = {
+  Mother__c: 'Mother',
+  Child__c: 'Child',
+  Beneficiary_Name__c: 'Beneficiary',
 };
