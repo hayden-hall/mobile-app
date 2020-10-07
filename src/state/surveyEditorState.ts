@@ -19,7 +19,6 @@ const SurveyEditorActionType = {
 type SurveyEditorActionType = typeof SurveyEditorActionType[keyof typeof SurveyEditorActionType];
 
 const surveyReducer = (state: SurveyEditorState, action: SurveyEditorAction) => {
-  console.log('State updating ' + JSON.stringify(state));
   switch (action.type) {
     case 'UPDATE':
       return { survey: { ...state.survey, [action.field.name]: action.field.value } };
