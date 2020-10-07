@@ -12,7 +12,7 @@ import { useSelector, useDispatch } from '../state/surveyEditorState';
 import { getRecords } from '../services/database';
 import { buildLayoutDetail } from '../services/describe';
 import { notifySuccess } from '../utility/notification';
-import { createLocalSurvey } from '../services/survey';
+import { upsertLocalSurvey } from '../services/survey';
 // constatns
 import { APP_THEME, APP_FONTS, DB_TABLE } from '../constants';
 // types
@@ -35,16 +35,17 @@ export default function SurveyEditor({ route, navigation }: Props) {
 
   const { t } = useContext(LocalizationContext);
 
-  const editorMode = route.params.localId ? 'EDIT' : 'NEW';
+  const MODE = route.params.localId ? 'EDIT_OR_VIEW' : 'NEW';
 
   useEffect(() => {
     setDoneButtonDisabled(true);
     const fetch = async () => {
-      if (editorMode === 'NEW') {
+      if (MODE === 'NEW') {
         dispatchSurvey({ type: 'LOAD', detail: { syncStatus: 'Unsynced', disabled: false } });
         const result = await buildLayoutDetail(route.params.selectedLayoutId);
         setLayout(result);
-      } else if (editorMode === 'EDIT') {
+      } else if (MODE === 'EDIT_OR_VIEW') {
+        // query existing survey from local database
         const storedSurveys: Array<Survey> = await getRecords(
           DB_TABLE.SURVEY,
           `where localId ='${route.params.localId}'`
@@ -53,8 +54,9 @@ export default function SurveyEditor({ route, navigation }: Props) {
           DB_TABLE.RecordType,
           `where recordTypeId ='${storedSurveys[0].RecordTypeId}'`
         );
-        console.log(JSON.stringify(storedSurveys[0]));
+        console.log(JSON.stringify(storedSurveys[0])); // TODO: REMOVE
         dispatchSurvey({ type: 'LOAD', detail: storedSurveys[0] });
+        // disabled form if the survey is synced
         if (storedSurveys[0].syncStatus === 'Synced') {
           dispatchSurvey({ type: 'UPDATE', field: { name: 'disabled', value: true } });
         }
@@ -82,7 +84,7 @@ export default function SurveyEditor({ route, navigation }: Props) {
             // For new survey, use record type id passed from picker screen. For existing survey, use stored record type id.
             const recordTypeId = route.params.selectedRecordTypeId || survey.recordTypeId;
             const record = { ...survey, RecordTypeId: recordTypeId };
-            await createLocalSurvey(record);
+            await upsertLocalSurvey(record);
             dispatchSurvey({ type: 'CLEAR' });
             notifySuccess('Created a new survey!');
             navigation.navigate('SurveyList');

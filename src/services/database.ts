@@ -5,15 +5,6 @@ import { DB_TABLE } from '../constants';
 
 const database = SQLite.openDatabase('AppDatabase.db');
 
-const SURVEY_LOOKUP_FIELDS = [
-  'Mother__c',
-  'Child__c',
-  'Beneficiary_Name__c',
-  'Permanent_Record__c',
-  'Record_Type_ID__c',
-  'Family_Org_Name__c',
-];
-
 /**
  * @description Get all the records from a local table
  * @param tableName
@@ -92,7 +83,7 @@ export const saveRecords = (tableName: string, records, primaryKey: string) => {
     const keys = fieldTypeMappings.map(field => field.name).join(','); // e.g., 'developerName', 'recordTypeId', ...
     const values = records
       .map(record => {
-        return convertValueToSQLite(record);
+        return `(${Object.values(convertObjectToSQLite(record))})`;
       })
       .join(','); // e.g., ('a1', 'b2'), ('c1', 'd2')
     const statement = `insert into ${tableName} (${keys}) values ${values}`;
@@ -108,35 +99,39 @@ export const saveRecords = (tableName: string, records, primaryKey: string) => {
   });
 };
 
-export const updateRecord = async (table, record, LocalId) => {
+/**
+ * @description Update a object to local table
+ * @param tableName Name of table on local sqlite
+ * @param record record object
+ * @param whereClause where clause string
+ */
+export const updateRecord = (tableName: string, record, whereClause: string) => {
   return new Promise((resolve, reject) => {
-    const fields = getDatabaseFields(record);
-    //Prepare update statement
-    const sqlUpdateStatement = prepareUpdateStatement(table, record, fields, LocalId);
-    console.log('sqlUpdateStatement: ', sqlUpdateStatement);
-
-    try {
-      database.transaction(tx => {
-        tx.executeSql(sqlUpdateStatement, null, (txn, result) => {
-          resolve(true);
-        });
+    const keyValues = Object.entries(convertObjectToSQLite(record))
+      .map(([key, value]) => `${key} = ${value}`)
+      .join(',');
+    const statement = `update ${tableName} set ${keyValues} ${whereClause}`;
+    logger('DEBUG', 'updateRecord', statement);
+    executeTransaction(statement)
+      .then(result => {
+        resolve(result);
+      })
+      .catch(error => {
+        reject(error);
       });
-    } catch (error) {
-      console.log(error);
-      reject(error);
-    }
   });
 };
 
 /**
- * @description Update survey sync status to 'Synced'. Us
+ * @description Update survey sync status to 'Synced'.
  * @param tableName
- * @param keyValue
+ * @param field
+ * @param value
  * @param whereClause
  */
-export const updateRecords = (tableName: string, keyValue: string, whereClause: string) => {
+export const updateFieldValue = (tableName: string, field: string, value: string | number, whereClause: string) => {
   return new Promise((resolve, reject) => {
-    const statement = `update ${tableName} ${keyValue} ${whereClause}`;
+    const statement = `update ${tableName} set ${field} = '${value}' ${whereClause}`;
 
     executeTransaction(statement)
       .then(result => {
@@ -222,24 +217,28 @@ const getFieldTypeMappings = (record: Record<string, any>): Array<FieldTypeMappi
 };
 
 /**
- * @description Convert values of a record into sqlite supported formated string for dml statement
+ * @description Convert values of a record into sqlite supported formated object for dml statement
  * @param record
- * @param fieldTypeMappings
- * @example { name: 'Hello', id: 1} => ('Hello', 1)
+ * @example { name: 'Hello', disabled: true } => { name: 'Hello', disabled: 1 }
  */
-const convertValueToSQLite = (record): string => {
-  const values = Object.entries(record).map(([key, value]) => {
+const convertObjectToSQLite = record => {
+  const converted = Object.entries(record).reduce((result, [key, value]) => {
+    let sqliteValue;
     if (typeof value === 'string') {
-      return `'${value.replace(/'/g, "''")}'`; // escape single quote
+      sqliteValue = `'${value.replace(/'/g, "''")}'`; // escape single quote
     } else if (typeof value === 'boolean') {
-      return value ? 1 : 0; // 1: true, 0: false
+      sqliteValue = value ? 1 : 0; // 1: true, 0: false
     } else if (!value) {
       // use blank string for null
-      return '""';
+      sqliteValue = "''";
     }
-    return value;
-  });
-  return `(${values})`;
+    sqliteValue = value;
+    return {
+      ...result,
+      [key]: sqliteValue,
+    };
+  }, {});
+  return converted;
 };
 
 /**
@@ -298,161 +297,4 @@ const executeTransaction = (statement: string) => {
       reject(error);
     }
   });
-};
-
-// --------------------- Deprecated methods below -------------------------
-
-/**
- * @deprecated
- * @param table
- * @param records
- * @param fields
- */
-const prepareInsertStatement = (table, records, fields) => {
-  const valuesArray = [];
-  records.forEach(record => {
-    const values = [];
-    fields.forEach(field => {
-      values.push(`"${record[field]}"`);
-    });
-    valuesArray.push(`(${values.join(',')})`);
-  });
-
-  const keys = fields.join(',');
-  return `insert into ${table} (${keys}) values ${valuesArray.join(',')}`;
-};
-
-/**
- * @deprecated
- * @param table
- * @param record
- * @param fields
- * @param LocalId
- */
-const prepareUpdateStatement = (table, record, fields, LocalId) => {
-  const pairArray = [];
-  fields.forEach(field => {
-    //Leave as it is for lookup fields
-    if (!SURVEY_LOOKUP_FIELDS.includes(field)) {
-      pairArray.push(`${field}="${record[field]}"`);
-    }
-  });
-  return `UPDATE ${table} SET ${pairArray.join(',')} WHERE LocalId = ${LocalId}`;
-};
-
-/**
- * @deprecated
- * @param table
- * @param records
- * @param fieldsWithDataTypes
- */
-export const saveRecordsWithFields = async (table: any, records: any, fieldsWithDataTypes: Array<any>) => {
-  return new Promise(async (resolve, reject) => {
-    //Check for table.
-    await checkAndCreateTableWithDataTypes(table, fieldsWithDataTypes);
-    //Prepare insert statement
-    const fields = fieldsWithDataTypes.map(fieldWithDataType => fieldWithDataType.split('#')[0]);
-    const sqlInsertStatement = prepareInsertStatement(table, records, fields);
-    logger('DEBUG', 'Database Insert', sqlInsertStatement);
-    try {
-      database.transaction(tx => {
-        tx.executeSql(sqlInsertStatement, null, (txn, result) => {
-          resolve(result);
-        });
-      });
-    } catch (error) {
-      console.log(error);
-      reject(error);
-    }
-  });
-};
-
-/**
- * @deprecated
- * @param table
- * @param records
- */
-export const saveRecordsOld = (table, records) => {
-  return new Promise(async (resolve, reject) => {
-    const firstRecord = records[0];
-    const fields = getDatabaseFields(firstRecord);
-
-    //Check for table.
-    await checkAndCreateTable(table, fields);
-
-    //Prepare insert statement
-    const sqlInsertStatement = prepareInsertStatement(table, records, fields);
-    logger('DEBUG', 'Database Insert', sqlInsertStatement);
-
-    try {
-      database.transaction(tx => {
-        tx.executeSql(sqlInsertStatement, null, (txn, result) => {
-          resolve(result);
-        });
-      });
-    } catch (error) {
-      console.log(error);
-      reject(error);
-    }
-  });
-};
-
-/**
- * @deprecated
- * @param table
- * @param fields
- */
-const checkAndCreateTable = (table, fields) => {
-  return new Promise((resolve, reject) => {
-    let fieldsWithType = fields.map(field => `${field} TEXT`).join(',');
-    fieldsWithType = `${fieldsWithType}, IsLocallyCreated INTEGER DEFAULT 0`;
-    fieldsWithType = `${fieldsWithType}, LocalId INTEGER PRIMARY KEY AUTOINCREMENT`;
-    try {
-      database.transaction(tx => {
-        tx.executeSql(`CREATE TABLE IF NOT EXISTS ${table}( ${fieldsWithType});`, [], (txn, result) => {
-          resolve(database);
-        });
-      });
-    } catch (error) {
-      console.log(error);
-      reject(error);
-    }
-  });
-};
-
-/**
- * @deprecated
- * @param table
- * @param fieldsWithDataType
- */
-const checkAndCreateTableWithDataTypes = (table, fieldsWithDataType) => {
-  return new Promise((resolve, reject) => {
-    let fieldsWithType = fieldsWithDataType.map(field => `${field.split('#')[0]} ${field.split('#')[1]}`).join(',');
-    fieldsWithType = `${fieldsWithType}, IsLocallyCreated INTEGER DEFAULT 0`;
-    fieldsWithType = `${fieldsWithType}, LocalId INTEGER PRIMARY KEY AUTOINCREMENT`;
-    try {
-      database.transaction(tx => {
-        tx.executeSql(`CREATE TABLE IF NOT EXISTS ${table}( ${fieldsWithType});`, [], (txn, result) => {
-          resolve(database);
-        });
-      });
-    } catch (error) {
-      console.log(error);
-      reject(error);
-    }
-  });
-};
-
-/**
- * @deprecated
- * @param record
- */
-const getDatabaseFields = record => {
-  const keys = [];
-  for (const [key, value] of Object.entries(record)) {
-    if (typeof value != 'object' || value == null) {
-      keys.push(key);
-    }
-  }
-  return keys;
 };
