@@ -23,7 +23,7 @@ function SurveyEditorItem({ title, name, type }: SurveyItemProps) {
     dispatchSurvey({ type: 'UPDATE', field: { name: name, value } });
   };
 
-  const SurveyEditorItemContent = () => {
+  const renderItem = () => {
     switch (type) {
       case 'string':
         return <TextInput title={title} onValueChange={onValueChange} value={value} disabled={disabled} />;
@@ -70,7 +70,7 @@ function SurveyEditorItem({ title, name, type }: SurveyItemProps) {
         backgroundColor: 'white',
       }}
     >
-      <SurveyEditorItemContent />
+      {renderItem()}
     </View>
   );
 }
