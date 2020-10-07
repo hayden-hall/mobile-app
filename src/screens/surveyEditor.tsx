@@ -107,7 +107,9 @@ export default function SurveyEditor({ route, navigation }: Props) {
               <Text style={styles.sectionTitle}>{title.toUpperCase()}</Text>
             </View>
           )}
-          renderItem={({ item }) => <SurveyEditorItem title={item.label} name={item.name} type={item.type} />}
+          renderItem={({ item }) => (
+            <SurveyEditorItem navigation={navigation} title={item.label} name={item.name} type={item.type} />
+          )}
         />
       )}
     </View>

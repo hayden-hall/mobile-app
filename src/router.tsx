@@ -11,6 +11,7 @@ import SurveyList from './screens/surveyList';
 import SurveyTypePicker from './screens/surveyTypePicker';
 import SurveyEditor from './screens/surveyEditor';
 import Settings from './screens/settings';
+import Lookup from './screens/lookup';
 
 // components
 import { SettingsButton, LogoutButton } from './components/headerButtons';
@@ -33,65 +34,74 @@ export type StackParamList = {
   Settings: undefined;
 };
 
-const Stack = createStackNavigator();
+const MainStack = createStackNavigator();
+const RootStack = createStackNavigator();
+
+function MainStackScreen() {
+  const { t } = useContext(LocalizationContext);
+  return (
+    <MainStack.Navigator>
+      <MainStack.Screen
+        name="Login"
+        component={Login}
+        options={{
+          title: t('LOGIN'),
+          ...headerStyle,
+        }}
+      />
+      <MainStack.Screen
+        name="AreaCode"
+        component={AreaCode}
+        options={{
+          title: t('ENTER_AREA_CODE'),
+          ...headerStyle,
+        }}
+      />
+      <MainStack.Screen
+        name="SurveyList"
+        component={SurveyList}
+        options={({ navigation }) => ({
+          title: t('SURVEYS'),
+          headerLeft: () => LogoutButton(navigation, t),
+          headerRight: () => SettingsButton(navigation),
+          ...headerStyle,
+        })}
+      />
+      <MainStack.Screen
+        name="SurveyTypePicker"
+        component={SurveyTypePicker}
+        options={{
+          title: t('CHOOSE_SURVEY'),
+          ...headerStyle,
+        }}
+      />
+      <MainStack.Screen
+        name="SurveyEditor"
+        component={SurveyEditor}
+        options={{
+          title: t('NEW_SURVEY'),
+          ...headerStyle,
+        }}
+      />
+      <MainStack.Screen
+        name="Settings"
+        component={Settings}
+        options={{
+          title: t('SETTINGS'),
+          ...headerStyle,
+        }}
+      />
+    </MainStack.Navigator>
+  );
+}
 
 export default function Router() {
-  const { t } = useContext(LocalizationContext);
-
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{
-            title: t('LOGIN'),
-            ...headerStyle,
-          }}
-        />
-        <Stack.Screen
-          name="AreaCode"
-          component={AreaCode}
-          options={{
-            title: t('ENTER_AREA_CODE'),
-            ...headerStyle,
-          }}
-        />
-        <Stack.Screen
-          name="SurveyList"
-          component={SurveyList}
-          options={({ navigation }) => ({
-            title: t('SURVEYS'),
-            headerLeft: () => LogoutButton(navigation, t),
-            headerRight: () => SettingsButton(navigation),
-            ...headerStyle,
-          })}
-        />
-        <Stack.Screen
-          name="SurveyTypePicker"
-          component={SurveyTypePicker}
-          options={{
-            title: t('CHOOSE_SURVEY'),
-            ...headerStyle,
-          }}
-        />
-        <Stack.Screen
-          name="SurveyEditor"
-          component={SurveyEditor}
-          options={{
-            title: t('NEW_SURVEY'),
-            ...headerStyle,
-          }}
-        />
-        <Stack.Screen
-          name="Settings"
-          component={Settings}
-          options={{
-            title: t('SETTINGS'),
-            ...headerStyle,
-          }}
-        />
-      </Stack.Navigator>
+      <RootStack.Navigator mode="modal" headerMode="none">
+        <RootStack.Screen name="Main" component={MainStackScreen} />
+        <RootStack.Screen name="Lookup" component={Lookup} />
+      </RootStack.Navigator>
     </NavigationContainer>
   );
 }

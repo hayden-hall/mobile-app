@@ -1,16 +1,17 @@
 import React, { memo, useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { Button, Text, View } from 'react-native';
 import { TextInput, CheckboxButton, DatePicker, Picklist } from '../components/surveyEditor';
 
 import { useSelector, useDispatch } from '../state/surveyEditorState';
 
 type SurveyItemProps = {
+  navigation: any;
   title: string;
   name: string;
   type: string;
 };
 
-function SurveyEditorItem({ title, name, type }: SurveyItemProps) {
+function SurveyEditorItem({ navigation, title, name, type }: SurveyItemProps) {
   const value = useSelector(state => state.survey[name]);
   const disabled = useSelector(state => state.survey.disabled);
   const dispatchSurvey = useDispatch();
@@ -53,6 +54,8 @@ function SurveyEditorItem({ title, name, type }: SurveyItemProps) {
         return <Picklist onValueChange={onValueChange} value={value} fieldName={name} disabled={disabled} />;
       case 'phone':
         return <TextInput title={title} onValueChange={onValueChange} value={value} keyboardType="phone-pad" />;
+      case 'reference':
+        return <Button title={`Open ${title}`} onPress={() => navigation.navigate('Lookup')} />;
       default:
         return (
           <Text>
