@@ -1,10 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect, useContext, useLayoutEffect } from 'react';
+import { Button, View, Text, StyleSheet } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/core';
+import { KeyboardAwareSectionList } from 'react-native-keyboard-aware-scroll-view';
+// component
+import SurveyEditorItem from './surveyEditorItem';
+// state
+import LocalizationContext from '../context/localizationContext';
+import { useSelector, useDispatch } from '../state/surveyEditorState';
+// services
+import { getRecords } from '../services/database';
+import { buildLayoutDetail } from '../services/describe';
+import { notifySuccess } from '../utility/notification';
+import { createLocalSurvey } from '../services/survey';
+// constatns
+import { APP_THEME, APP_FONTS, DB_TABLE } from '../constants';
+// types
+import { SurveyLayout } from '../types/survey';
+import { Survey, RecordType } from '../types/sqlite';
 import { StackParamList } from '../router';
-import { Provider } from '../state/surveyEditorState';
-import SurveyEditorContent from './surveyEditorContent';
-
 type SurveyEditorNavigationProp = StackNavigationProp<StackParamList, 'SurveyEditor'>;
 type SurveyEditorRouteProp = RouteProp<StackParamList, 'SurveyEditor'>;
 
@@ -14,9 +28,103 @@ type Props = {
 };
 
 export default function SurveyEditor({ route, navigation }: Props) {
+  const [layout, setLayout] = useState<SurveyLayout>({});
+  const [doneButtonDisabled, setDoneButtonDisabled] = useState(false);
+  const survey = useSelector(state => state.survey);
+  const dispatchSurvey = useDispatch();
+
+  const { t } = useContext(LocalizationContext);
+
+  const editorMode = route.params.localId ? 'EDIT' : 'NEW';
+
+  const SaveButton = () => {
+    return (
+      survey &&
+      survey.syncStatus === 'Unsynced' && (
+        <Button
+          onPress={async () => {
+            setDoneButtonDisabled(true);
+            // new or update
+            const recordTypeId = route.params.selectedRecordTypeId || survey.recordTypeId;
+            const record = { ...survey, RecordTypeId: recordTypeId };
+            await createLocalSurvey(record);
+            notifySuccess('Created a new survey!');
+            navigation.navigate('SurveyList');
+          }}
+          disabled={doneButtonDisabled}
+          title={t('SAVE')}
+        />
+      )
+    );
+  };
+
+  useEffect(() => {
+    setDoneButtonDisabled(true);
+    const fetch = async () => {
+      if (editorMode === 'NEW') {
+        dispatchSurvey({ type: 'LOAD', detail: { syncStatus: 'Unsynced', disabled: false } });
+        const result = await buildLayoutDetail(route.params.selectedLayoutId);
+        setLayout(result);
+      } else if (editorMode === 'EDIT') {
+        const storedSurveys: Array<Survey> = await getRecords(
+          DB_TABLE.SURVEY,
+          `where localId ='${route.params.localId}'`
+        );
+        const storedRecordTypes: Array<RecordType> = await getRecords(
+          DB_TABLE.RecordType,
+          `where recordTypeId ='${storedSurveys[0].RecordTypeId}'`
+        );
+        console.log(JSON.stringify(storedSurveys[0]));
+        dispatchSurvey({ type: 'LOAD', detail: storedSurveys[0] });
+        if (storedSurveys[0].syncStatus === 'Synced') {
+          dispatchSurvey({ type: 'UPDATE', field: { name: 'disabled', value: true } });
+        }
+        const result = await buildLayoutDetail(storedRecordTypes[0].layoutId);
+        setLayout(result);
+      }
+    };
+    fetch();
+    setDoneButtonDisabled(false);
+  }, []);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => SaveButton(),
+    });
+  }, [navigation, survey]);
+
   return (
-    <Provider>
-      <SurveyEditorContent route={route} navigation={navigation} />
-    </Provider>
+    <View>
+      {layout.sections && (
+        <KeyboardAwareSectionList
+          sections={layout.sections}
+          keyExtractor={item => item.name}
+          renderSectionHeader={({ section: { title } }) => (
+            <View style={styles.headerView}>
+              <Text style={styles.sectionTitle}>{title.toUpperCase()}</Text>
+            </View>
+          )}
+          renderItem={({ item }) => <SurveyEditorItem title={item.label} name={item.name} type={item.type} />}
+        />
+      )}
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  headerView: {
+    backgroundColor: APP_THEME.APP_LIST_HEADER_COLOR,
+    justifyContent: 'center',
+  },
+  sectionTitle: {
+    fontSize: 10,
+    color: APP_THEME.APP_LIGHT_FONT_COLOR,
+    letterSpacing: 0.42,
+    padding: 10,
+    fontFamily: APP_FONTS.FONT_REGULAR,
+  },
+  flex1: {
+    flex: 1,
+  },
+  inputButton: { width: '40%', alignSelf: 'center', paddingTop: 20 },
+});

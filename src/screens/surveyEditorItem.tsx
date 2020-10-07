@@ -1,59 +1,62 @@
-import React, { useEffect } from 'react';
+import React, { memo, useEffect } from 'react';
 import { Text, View } from 'react-native';
-import { memo } from 'react-tracked';
 import { TextInput, CheckboxButton, DatePicker, Picklist } from '../components/surveyEditor';
 
 import { useSelector, useDispatch } from '../state/surveyEditorState';
-import SurveyEditor from './surveyEditor';
 
 type SurveyItemProps = {
-  item: any;
+  title: string;
+  name: string;
+  type: string;
 };
 
-type SurveyItemContentProps = {
-  item: any;
-  onValueChange(value: any): void;
-};
-
-function SurveyEditorItem(props: SurveyItemProps) {
-  const { item } = props;
-  const value = useSelector(state => (state.survey ? state.survey[item.name] : undefined));
+function SurveyEditorItem({ title, name, type }: SurveyItemProps) {
+  const value = useSelector(state => state.survey[name]);
+  const disabled = useSelector(state => state.survey.disabled);
   const dispatchSurvey = useDispatch();
 
   useEffect(() => {
-    console.log(`Rendering editor item ${item.label}`);
+    console.log(`Rendering editor item ${title}`);
   });
 
   const onValueChange = value => {
-    dispatchSurvey({ type: 'UPDATE', field: { name: item.name, value } });
+    dispatchSurvey({ type: 'UPDATE', field: { name: name, value } });
   };
 
-  const SurveyEditorItemContent = (props: SurveyItemContentProps) => {
-    switch (item.type) {
+  const SurveyEditorItemContent = () => {
+    switch (type) {
       case 'string':
-        return <TextInput title={item.label} onValueChange={onValueChange} value={value} />;
+        return <TextInput title={title} onValueChange={onValueChange} value={value} disabled={disabled} />;
       case 'textarea':
-        return <TextInput title={item.label} onValueChange={onValueChange} value={value} multiline />;
+        return <TextInput title={title} onValueChange={onValueChange} value={value} multiline={disabled} />;
       case 'double':
-        return <TextInput title={item.label} onValueChange={onValueChange} value={value} keyboardType="numeric" />;
+        return (
+          <TextInput
+            title={title}
+            onValueChange={onValueChange}
+            value={value}
+            keyboardType="numeric"
+            disabled={disabled}
+          />
+        );
       case 'boolean':
         return (
           <CheckboxButton
-            title={item.label}
-            onPress={() => dispatchSurvey({ type: 'UPDATE', field: { name: item.name, value: !value } })}
+            title={title}
+            onPress={() => dispatchSurvey({ type: 'UPDATE', field: { name: name, value: !value } })}
             selected={value}
           />
         );
       case 'date':
-        return <DatePicker title={item.label} onValueChange={onValueChange} value={value} />;
+        return <DatePicker title={title} onValueChange={onValueChange} value={value} />;
       case 'picklist':
-        return <Picklist onValueChange={onValueChange} value={value} fieldName={item.name} />;
+        return <Picklist onValueChange={onValueChange} value={value} fieldName={name} disabled={disabled} />;
       case 'phone':
-        return <TextInput title={item.label} onValueChange={onValueChange} value={value} keyboardType="phone-pad" />;
+        return <TextInput title={title} onValueChange={onValueChange} value={value} keyboardType="phone-pad" />;
       default:
         return (
           <Text>
-            {item.label} ({item.type})
+            {title} ({type})
           </Text>
         );
     }
@@ -67,7 +70,7 @@ function SurveyEditorItem(props: SurveyItemProps) {
         backgroundColor: 'white',
       }}
     >
-      <SurveyEditorItemContent item={item} onValueChange={onValueChange} />
+      <SurveyEditorItemContent />
     </View>
   );
 }
