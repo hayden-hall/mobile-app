@@ -15,6 +15,7 @@ export const notifySuccess = (description: string) => {
       icon: 'success',
       position: 'left',
     },
+    backgroundColor: '#04844b',
     duration: 3000,
   });
 };
@@ -32,5 +33,6 @@ export const notifyError = (description: string) => {
       position: 'left',
     },
     duration: 4500,
+    backgroundColor: '#c23934',
   });
 };
