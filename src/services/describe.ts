@@ -6,7 +6,7 @@ import { SurveyLayout } from '../types/survey';
 import { DescribeLayoutResult, DescribeLayout, LocalizationCustomMetadata } from '../types/metadata';
 
 import { logger } from '../utility/logger';
-import { DB_TABLE, L10N_PREFIX } from '../constants';
+import { ASYNC_STORAGE_KEYS, DB_TABLE, L10N_PREFIX } from '../constants';
 import { SURVEY_OBJECT } from 'react-native-dotenv';
 import i18n from '../config/i18n';
 
@@ -15,17 +15,22 @@ import i18n from '../config/i18n';
  * @todo For surveys and contacts?
  */
 export const retrieveAll = async () => {
+  // Record types
   await clearTable(DB_TABLE.RecordType);
   const recordTypes = await storeRecordTypes();
-
+  // Page Layout
   await clearTable(DB_TABLE.PageLayoutSection);
   await clearTable(DB_TABLE.PageLayoutItem);
   const serializedPicklistValueSet = new Set();
+  const serializedFieldTypeSet = new Set();
   for (const rt of recordTypes) {
-    const currentSerializedPicklistValueSet = await storePageLayoutItems(rt.recordTypeId);
+    const pageLayoutResult = await storePageLayoutItems(rt.recordTypeId);
+    const currentSerializedPicklistValueSet = pageLayoutResult.serializedPicklistValueSet;
+    const currentSerializedFieldTypeSet = pageLayoutResult.serializedFieldTypeSet;
     currentSerializedPicklistValueSet.forEach(serializedPicklistValueSet.add, serializedPicklistValueSet);
+    currentSerializedFieldTypeSet.forEach(serializedFieldTypeSet.add, serializedFieldTypeSet);
   }
-
+  // Picklist options
   await clearTable(DB_TABLE.PICKLIST_VALUE);
   const picklistValues = [...serializedPicklistValueSet.values()].map(s => {
     return JSON.parse(s as string);
@@ -33,9 +38,20 @@ export const retrieveAll = async () => {
   logger('DEBUG', 'picklistvalues refres', picklistValues);
   await saveRecords(DB_TABLE.PICKLIST_VALUE, picklistValues, undefined);
 
+  // Field type object
+  const fieldType = [...serializedFieldTypeSet.values()]
+    .map(s => {
+      return JSON.parse(s as string);
+    })
+    .reduce((result, current) => {
+      result[current.name] = current.type;
+      return result;
+    }, {});
+  storage.save({ key: ASYNC_STORAGE_KEYS.FIELD_TYPE, data: fieldType });
+
+  // Dictionary
   await clearTable(DB_TABLE.Localization);
   await storeLocalization();
-
   await buildDictionary();
 };
 
@@ -108,7 +124,10 @@ const storePageLayoutItems = async (recordTypeId: string) => {
   logger('FINE', 'storePageLayoutItems | items', pageLayoutItems);
   await saveRecords(DB_TABLE.PageLayoutItem, pageLayoutItems, undefined);
 
-  return serializedPicklistValueSet;
+  const serializedFieldTypeSet = [
+    ...pageLayoutItems.map(item => JSON.stringify({ name: item.fieldName, type: item.fieldType })),
+  ];
+  return { serializedPicklistValueSet, serializedFieldTypeSet };
 };
 
 /**

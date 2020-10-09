@@ -4,6 +4,7 @@ import { fetchRetriable } from './connection';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
 import { logger } from '../../../utility/logger';
 import { DescribeLayoutResult, DescribeLayout } from '../../../../src/types/metadata';
+import { formatAPIDate } from '../../../utility/index'; 
 
 const SALESFORCE_API_VERSION = 'v49.0';
 
@@ -30,9 +31,25 @@ export const fetchSalesforceRecords = async (query: string) => {
  */
 export const createSalesforceRecords = async (sObjectType: string, records) => {
   const endPoint = (await buildEndpointUrl()) + `/composite/tree/${sObjectType}`;
+  const fieldType = await storage.load({ key: ASYNC_STORAGE_KEYS.FIELD_TYPE });
+  console.log(JSON.stringify(fieldType));
   const body = {
-    records,
+    records: records.map(r => {
+      Object.entries(r).forEach(([key, value]) => {
+        // Remove null fields
+        if (value === null) {
+          delete r[key];
+          // Replace number value to boolean for checkbox field
+        } else if (fieldType[key] === 'boolean') {
+          r[key] = value === 1 ? true : false;
+        } else if (fieldType[key] === 'date') {
+          r[key] = formatAPIDate(value as string);
+        }
+      });
+      return r;
+    }),
   };
+  console.log(body);
   const response = await fetchRetriable(endPoint, 'POST', JSON.stringify(body));
   return response;
 };

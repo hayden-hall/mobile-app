@@ -1,4 +1,4 @@
-import { fetchSalesforceRecords } from './api/salesforce/core';
+import { createSalesforceRecords, fetchSalesforceRecords } from './api/salesforce/core';
 import { updateRecord, updateFieldValue, clearTable, getAllRecords, saveRecords } from './database';
 import { ASYNC_STORAGE_KEYS, DB_TABLE } from '../constants';
 import { PageLayoutItem } from '../types/sqlite';
@@ -26,7 +26,7 @@ export const storeOnlineSurveys = async () => {
   // Surveys should have sync status and local id for offline surveys
   saveRecords(
     'Survey',
-    surveys.map(s => ({ ...s, syncStatus: 'Synced', title: s.Name })),
+    surveys.map(s => ({ ...s, syncStatus: 'Synced' })),
     undefined
   );
 };
@@ -36,7 +36,8 @@ export const storeOnlineSurveys = async () => {
  * @param survey
  */
 export const upsertLocalSurvey = async survey => {
-  // remove state
+  // Remove non persistent fields in the state
+  delete survey.localId;
   delete survey.disabled;
   logger('DEBUG', 'Saving survey', survey);
   if (survey.localId) {
@@ -50,16 +51,16 @@ export const upsertLocalSurvey = async survey => {
  * @param surveys
  */
 export const uploadSurveyListToSalesforce = async surveys => {
-  logger('DEBUG', 'Upload to Salesforce (local)', surveys);
   const records = surveys.map(s => {
     // Remove local or read only fields
     delete s.localId;
+    delete s.disabled;
     delete s.syncStatus;
     delete s.Name;
+    // s.RecordTypeName?
     return s;
   });
-  logger('DEBUG', 'Upload to Salesforce', records);
-  // return await createSalesforceRecords('Survey__c', records);
+  return await createSalesforceRecords('Survey__c', records);
 };
 
 /**
