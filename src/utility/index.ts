@@ -16,6 +16,6 @@ export const formatDate = date => {
   return moment(date).format(DATE_FORMAT);
 };
 
-export const formatAPIDate = date => {
+export const formatAPIDate = (date: string) => {
   return moment(date).format(DATE_FORMAT_API);
 };
