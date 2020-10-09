@@ -27,6 +27,7 @@ export const ASYNC_STORAGE_KEYS = {
   AREA_CODE: '@AreaCode',
   NETWORK_CONNECTIVITY: '@NetworkConnectivity',
   LANGUAGE: '@Language', // Will be deprecated for using device locale
+  FIELD_TYPE: '@FieldType',
 };
 
 export const BACKGROUND_IMAGE_SOURCE = require('../assets/images/background3x.png');
