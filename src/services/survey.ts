@@ -42,7 +42,6 @@ export const upsertLocalSurvey = async survey => {
   if (survey.localId) {
     return await updateRecord(DB_TABLE.SURVEY, survey, `where localId = ${survey.localId}`);
   }
-  delete survey.localId;
   return await saveRecords(DB_TABLE.SURVEY, [survey], undefined);
 };
 

@@ -83,11 +83,11 @@ export const saveRecords = (tableName: string, records, primaryKey: string) => {
     const keys = fieldTypeMappings.map(field => field.name).join(','); // e.g., 'developerName', 'recordTypeId', ...
     const values = records
       .map(record => {
-        return `(${Object.values(convertObjectToSQLite(record)).map(v => `'${v}'`)})`;
+        return `(${Object.values(convertObjectToSQLite(record))})`;
       })
       .join(','); // e.g., ('a1', 'b2'), ('c1', 'd2')
     const statement = `insert into ${tableName} (${keys}) values ${values}`;
-    logger('FINE', 'saveRecords', statement);
+    logger('DEBUG', 'saveRecords', statement);
 
     executeTransaction(statement)
       .then(result => {
@@ -107,8 +107,13 @@ export const saveRecords = (tableName: string, records, primaryKey: string) => {
  */
 export const updateRecord = (tableName: string, record, whereClause: string) => {
   return new Promise((resolve, reject) => {
+    Object.entries(record).forEach(([key, value]) => {
+      if (value === null) {
+        delete record[key];
+      }
+    });
     const keyValues = Object.entries(convertObjectToSQLite(record))
-      .map(([key, value]) => `${key} = '${value}'`)
+      .map(([key, value]) => `${key} = ${value}`)
       .join(',');
     const statement = `update ${tableName} set ${keyValues} ${whereClause}`;
     logger('DEBUG', 'updateRecord', statement);
@@ -225,7 +230,7 @@ const convertObjectToSQLite = record => {
   const converted = Object.entries(record).reduce((result, [key, value]) => {
     let sqliteValue;
     if (typeof value === 'string') {
-      sqliteValue = `${value.replace(/'/g, "''")}`; // escape single quote
+      sqliteValue = `'${value.replace(/'/g, "''")}'`; // escape single quote
     } else if (typeof value === 'boolean') {
       sqliteValue = value ? 1 : 0; // 1: true, 0: false
     } else if (!value) {

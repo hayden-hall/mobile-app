@@ -48,7 +48,7 @@ export default function SurveyEditor({ route, navigation }: Props) {
         // query existing survey from local database
         const storedSurveys: Array<Survey> = await getRecords(
           DB_TABLE.SURVEY,
-          `where localId ='${route.params.localId}'`
+          `where localId = ${route.params.localId}`
         );
         const storedRecordTypes: Array<RecordType> = await getRecords(
           DB_TABLE.RecordType,
@@ -82,11 +82,11 @@ export default function SurveyEditor({ route, navigation }: Props) {
           onPress={async () => {
             setDoneButtonDisabled(true);
             // For new survey, use record type id passed from picker screen. For existing survey, use stored record type id.
-            const recordTypeId = route.params.selectedRecordTypeId || survey.recordTypeId;
+            const recordTypeId = route.params.selectedRecordTypeId || survey.RecordTypeId;
             const record = { ...survey, RecordTypeId: recordTypeId };
             await upsertLocalSurvey(record);
             dispatchSurvey({ type: 'CLEAR' });
-            notifySuccess('Created a new survey!');
+            notifySuccess(`${survey.localId ? 'Updated the survey!' : 'Created a new survey!'}`);
             navigation.navigate('SurveyList');
           }}
           disabled={doneButtonDisabled}
