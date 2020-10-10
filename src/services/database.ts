@@ -12,7 +12,7 @@ const database = SQLite.openDatabase('AppDatabase.db');
 export const getAllRecords = (tableName: string) => {
   return new Promise<Array<any>>(async (resolve, reject) => {
     const statement = `select * from ${tableName}`;
-    logger('DEBUG', 'getAllRecords', statement);
+    logger('FINE', 'getAllRecords', statement);
 
     executeTransaction(statement)
       .then(result => {
@@ -57,7 +57,7 @@ export const getRecords = (tableName, whereClause): Promise<Array<any>> => {
       reject('Specify where clause or use "getAllRecords" instead.');
     }
     const statement = `select * from ${tableName} ${whereClause}`;
-    logger('DEBUG', 'getAllRecords', statement);
+    logger('FINE', 'getRecords', statement);
 
     executeTransaction(statement)
       .then(result => {
