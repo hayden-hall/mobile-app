@@ -4,7 +4,7 @@ import { fetchRetriable } from './connection';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
 import { logger } from '../../../utility/logger';
 import { DescribeLayoutResult, DescribeLayout } from '../../../../src/types/metadata';
-import { formatAPIDate } from '../../../utility/index'; 
+import { formatISOStringToAPIDate } from '../../../utility/date';
 
 const SALESFORCE_API_VERSION = 'v49.0';
 
@@ -42,7 +42,7 @@ export const createSalesforceRecords = async (sObjectType: string, records) => {
         } else if (fieldType[key] === 'boolean') {
           r[key] = value === 1 ? true : false;
         } else if (fieldType[key] === 'date') {
-          r[key] = formatAPIDate(value as string);
+          r[key] = formatISOStringToAPIDate(value as string);
         }
       });
       r.attributes = {
