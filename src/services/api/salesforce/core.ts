@@ -25,16 +25,15 @@ export const fetchSalesforceRecords = async (query: string) => {
 };
 
 /**
- * @description Create multiple records using composite resource
+ * @description Create multiple records using composite resource.
  * @param records
  * @see https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_composite_sobject_tree_flat.htm
  */
 export const createSalesforceRecords = async (sObjectType: string, records) => {
   const endPoint = (await buildEndpointUrl()) + `/composite/tree/${sObjectType}`;
   const fieldType = await storage.load({ key: ASYNC_STORAGE_KEYS.FIELD_TYPE });
-  console.log(JSON.stringify(fieldType));
   const body = {
-    records: records.map(r => {
+    records: records.map((r, index) => {
       Object.entries(r).forEach(([key, value]) => {
         // Remove null fields
         if (value === null) {
@@ -46,10 +45,13 @@ export const createSalesforceRecords = async (sObjectType: string, records) => {
           r[key] = formatAPIDate(value as string);
         }
       });
+      r.attributes = {
+        type: 'Survey__c',
+        referenceId: `ref${index}`,
+      };
       return r;
     }),
   };
-  console.log(body);
   const response = await fetchRetriable(endPoint, 'POST', JSON.stringify(body));
   return response;
 };

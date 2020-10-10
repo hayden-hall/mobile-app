@@ -37,12 +37,12 @@ export const storeOnlineSurveys = async () => {
  */
 export const upsertLocalSurvey = async survey => {
   // Remove non persistent fields in the state
-  delete survey.localId;
   delete survey.disabled;
   logger('DEBUG', 'Saving survey', survey);
   if (survey.localId) {
     return await updateRecord(DB_TABLE.SURVEY, survey, `where localId = ${survey.localId}`);
   }
+  delete survey.localId;
   return await saveRecords(DB_TABLE.SURVEY, [survey], undefined);
 };
 

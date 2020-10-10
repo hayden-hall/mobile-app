@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo } from 'react';
 import { Button, Text, View } from 'react-native';
 import { TextInput, CheckboxButton, DatePicker, Picklist } from '../components/surveyEditor';
 
@@ -15,10 +15,6 @@ function SurveyEditorItem({ navigation, title, name, type }: SurveyItemProps) {
   const value = useSelector(state => state.survey[name]);
   const disabled = useSelector(state => state.survey.disabled);
   const dispatchSurvey = useDispatch();
-
-  useEffect(() => {
-    console.log(`Rendering editor item ${title}`);
-  });
 
   const onValueChange = value => {
     dispatchSurvey({ type: 'UPDATE', field: { name: name, value } });

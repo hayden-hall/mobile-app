@@ -7,6 +7,7 @@ import { uploadSurveyListToSalesforce, updateSurveyStatusSynced } from '../servi
 import { notifySuccess, notifyError } from '../utility/notification';
 import { APP_FONTS, APP_THEME } from '../constants';
 import { SurveyListItem } from '../types/survey';
+import { logger } from '../utility/logger';
 
 type SurveyListHeaderProps = {
   isNetworkConnected: boolean;
@@ -26,8 +27,10 @@ export default function SurveyListHeader(props: SurveyListHeaderProps) {
           text: t('OK'),
           onPress: async () => {
             const response = await uploadSurveyListToSalesforce(localSurveys);
+            logger('DEBUG', 'upload result', response);
             if (
-              response.hasErrors === true &&
+              response.hasErrors === false &&
+              response.results &&
               response.results.length > 0 &&
               response.results.length === localSurveys.length
             ) {

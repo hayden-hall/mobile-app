@@ -49,7 +49,6 @@ function Picklist(props: PicklistPropType) {
           // dropDownStyle={{ backgroundColor: '#FFF' }}
           //placeholder={{}}
           onValueChange={value => {
-            console.log(`${fieldName} is changed to ${value}`);
             onValueChange(value);
           }}
         />
