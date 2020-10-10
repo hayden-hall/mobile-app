@@ -8,5 +8,4 @@ export * from './SelectionList';
 export * from './CheckBoxButton';
 export * from './ToolTip';
 export * from './Picklist';
-export * from './DatePicker';
 export * from './Loader';

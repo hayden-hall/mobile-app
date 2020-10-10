@@ -17,7 +17,7 @@ import { forceLogout } from '../services/session';
 import { surveyFilterReducer } from '../reducers/surveyFilterReducer';
 import LocalizationContext from '../context/localizationContext';
 // util, constants
-import { formatDate } from '../utility';
+import { formatISOStringToCalendarDateString } from '../utility/date';
 import { logger } from '../utility/logger';
 import { notifyError } from '../utility/notification';
 import { APP_FONTS, APP_THEME, DB_TABLE } from '../constants';
@@ -104,7 +104,9 @@ export default function SurveyList({ navigation }) {
     .map(survey => {
       return {
         ...survey,
-        subtitle: `${survey.Survey_Type} • ${formatDate(survey.Visit_Clinic_Date__c)}`,
+        subtitle: `${survey.Survey_Type} • ${
+          survey.Visit_Clinic_Date__c ? formatISOStringToCalendarDateString(survey.Visit_Clinic_Date__c) : ''
+        }`,
         showCaret: survey.syncStatus === 'Unsynced',
         title: survey.Name || survey.localId,
       };

@@ -5,12 +5,12 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 import { APP_THEME, APP_FONTS } from '../../constants';
 import LocalizationContext from '../../context/localizationContext';
-import { formatDate } from '../../utility';
+import { formatISOStringToCalendarDateString } from '../../utility/date';
 
 type DatePickerPropType = {
   title: string;
   value: string;
-  onValueChange(date: Date): void;
+  onValueChange(date: string): void;
   disabled?: boolean;
 };
 
@@ -33,7 +33,9 @@ function DatePicker(props: DatePickerPropType) {
             setIsDatePickerVisible(true);
           }}
         >
-          <Text style={value ? valueLabel : placeholderLabel}>{value ? formatDate(value) : t('SELECT')}</Text>
+          <Text style={value ? valueLabel : placeholderLabel}>
+            {value ? formatISOStringToCalendarDateString(value) : t('SELECT')}
+          </Text>
           <View style={iconView}>
             <Icon name="calendar" size={18} color={APP_THEME.APP_BASE_FONT_COLOR} type="antdesign" />
           </View>
@@ -46,7 +48,7 @@ function DatePicker(props: DatePickerPropType) {
         date={value ? new Date(value) : undefined}
         isVisible={isDatePickerVisible}
         onConfirm={date => {
-          onValueChange(date);
+          onValueChange(date.toISOString());
           setIsDatePickerVisible(false);
         }}
         onCancel={() => setIsDatePickerVisible(false)}
