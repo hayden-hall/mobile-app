@@ -37,6 +37,7 @@ export interface Localization {
 }
 
 /**
+ * sObject
  * TODO: Make this generic. Now this data model is specific for hayden hall.
  */
 export interface Contact {
@@ -47,6 +48,9 @@ export interface Contact {
   userId: string; // cdw contactid
 }
 
+/**
+ * sObject.
+ */
 export interface Survey {
   syncStatus: 'Unsynced' | 'Synced';
   localId: string;
