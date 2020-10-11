@@ -179,7 +179,12 @@ export default function SurveyList({ navigation }) {
           value={searchTerm}
           onChangeText={searchTerm => setSearchTerm(searchTerm)}
         />
-        <SurveyListHeader isNetworkConnected={isNetworkConnected} surveys={surveys} />
+        <SurveyListHeader
+          isNetworkConnected={isNetworkConnected}
+          surveys={surveys}
+          setShowsSpinner={setShowsSpinner}
+          refreshSurveys={refreshSurveys}
+        />
         <Text style={textStyleTotalSurvey}>{`${t('TOTAL_SURVEYS')} ${surveys.length}`}</Text>
         <FilterButtonGroup dispatch={dispatchFilter} />
         <Divider style={{ backgroundColor: APP_THEME.APP_BORDER_COLOR }} />

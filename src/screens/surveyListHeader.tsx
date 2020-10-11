@@ -12,6 +12,8 @@ import { logger } from '../utility/logger';
 type SurveyListHeaderProps = {
   isNetworkConnected: boolean;
   surveys: Array<SurveyListItem>;
+  setShowsSpinner(showsSpinner: boolean): void;
+  refreshSurveys(): void;
 };
 
 export default function SurveyListHeader(props: SurveyListHeaderProps) {
@@ -26,6 +28,7 @@ export default function SurveyListHeader(props: SurveyListHeaderProps) {
         {
           text: t('OK'),
           onPress: async () => {
+            props.setShowsSpinner(true);
             const response = await uploadSurveyListToSalesforce(localSurveys);
             logger('DEBUG', 'upload result', response);
             if (
@@ -34,7 +37,9 @@ export default function SurveyListHeader(props: SurveyListHeaderProps) {
               response.results.length > 0 &&
               response.results.length === localSurveys.length
             ) {
-              await updateSurveyStatusSynced(props.surveys);
+              await updateSurveyStatusSynced(localSurveys);
+              await props.refreshSurveys();
+              props.setShowsSpinner(false);
               notifySuccess('Surveys are successfully uploaded!');
               return;
             } else {
