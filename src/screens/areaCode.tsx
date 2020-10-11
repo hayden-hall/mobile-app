@@ -4,7 +4,7 @@ import { Input } from 'react-native-elements';
 
 import { getCDWContact, storeContacts } from '../services/api/salesforce/contact';
 import { storeOnlineSurveys } from '../services/survey';
-import { retrieveAll } from '../services/describe';
+import { retrieveAllMetadata } from '../services/describe';
 import LocalizationContext from '../context/localizationContext';
 
 import { CustomButton, Loader } from '../components';
@@ -41,10 +41,7 @@ export default function AreaCode({ navigation }) {
    * @description Retrieve contact detail from Salesforce
    */
   const retrieveContactDetail = async () => {
-    setShowsSpinner(true);
     const response = await getCDWContact(areaCode);
-    setShowsSpinner(false);
-
     if (response.records && response.records.length > 0) {
       // TODO: For multiple records?
       const workerContact = response.records[0];
@@ -65,25 +62,6 @@ export default function AreaCode({ navigation }) {
         alert(t('AREA_CODE_NOT_FOUND'));
       }, 500);
       throw new Error(`Retrieve contact details. ${JSON.stringify(response)}`);
-    }
-  };
-
-  /**
-   * @description Retrieve survey metadata from Salesforce
-   */
-  const refreshAppData = async () => {
-    try {
-      setShowsSpinner(true);
-      await storeContacts();
-      await retrieveAll();
-      await storeOnlineSurveys();
-      setShowsSpinner(false);
-    } catch (error) {
-      setShowsSpinner(false);
-      setTimeout(() => {
-        alert(`${error}`);
-      }, 500);
-      throw new Error(error);
     }
   };
 
@@ -112,11 +90,16 @@ export default function AreaCode({ navigation }) {
               onPress={async () => {
                 try {
                   validateInput();
+                  setShowsSpinner(true);
                   await retrieveContactDetail();
-                  await refreshAppData();
+                  await storeContacts();
+                  await retrieveAllMetadata();
+                  await storeOnlineSurveys();
                   navigation.navigate('SurveyList');
                 } catch (error) {
                   logger('ERROR', 'AreaCode', `${error}`);
+                } finally {
+                  setShowsSpinner(false);
                 }
               }}
             />

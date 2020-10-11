@@ -5,7 +5,7 @@ import { showMessage } from 'react-native-flash-message';
 import NetInfo from '@react-native-community/netinfo';
 
 import LocalizationContext from '../context/localizationContext';
-import { retrieveAll } from '../services/describe';
+import { retrieveAllMetadata } from '../services/describe';
 import { forceLogout } from '../services/session';
 import { Loader } from '../components';
 
@@ -78,7 +78,7 @@ export default function Settings({ navigation }) {
             }
             setShowsSpinner(true);
             try {
-              await retrieveAll();
+              await retrieveAllMetadata();
               notifySuccess('Successfully refreshed metadata.');
             } catch (e) {
               notifyError('Unexpected error occcured while refreshing. Contact your administrator and login again.');

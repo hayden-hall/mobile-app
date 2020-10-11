@@ -14,7 +14,7 @@ import i18n from '../config/i18n';
  * @description Download record types, all the page layouts, and localization custom metadata.
  * @todo For surveys and contacts?
  */
-export const retrieveAll = async () => {
+export const retrieveAllMetadata = async () => {
   // Record types
   await clearTable(DB_TABLE.RecordType);
   const recordTypes = await storeRecordTypes();
