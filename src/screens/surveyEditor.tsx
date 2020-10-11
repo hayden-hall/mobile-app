@@ -41,7 +41,7 @@ export default function SurveyEditor({ route, navigation }: Props) {
     setDoneButtonDisabled(true);
     const fetch = async () => {
       if (MODE === 'NEW') {
-        dispatchSurvey({ type: 'LOAD', detail: { syncStatus: 'Unsynced', disabled: false } });
+        dispatchSurvey({ type: 'LOAD', detail: { syncStatus: 'Unsynced' } });
         const result = await buildLayoutDetail(route.params.selectedLayoutId);
         setLayout(result);
       } else if (MODE === 'EDIT_OR_VIEW') {
@@ -56,10 +56,6 @@ export default function SurveyEditor({ route, navigation }: Props) {
         );
         console.log(JSON.stringify(storedSurveys[0])); // TODO: REMOVE
         dispatchSurvey({ type: 'LOAD', detail: storedSurveys[0] });
-        // disabled form if the survey is synced
-        if (storedSurveys[0].syncStatus === 'Synced') {
-          dispatchSurvey({ type: 'UPDATE', field: { name: 'disabled', value: true } });
-        }
         const result = await buildLayoutDetail(storedRecordTypes[0].layoutId);
         setLayout(result);
       }

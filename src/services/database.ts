@@ -137,7 +137,7 @@ export const updateRecord = (tableName: string, record, whereClause: string) => 
 export const updateFieldValue = (tableName: string, field: string, value: string | number, whereClause: string) => {
   return new Promise((resolve, reject) => {
     const statement = `update ${tableName} set ${field} = '${value}' ${whereClause}`;
-
+    logger('DEBUG', 'update field value', statement);
     executeTransaction(statement)
       .then(result => {
         resolve(result);
@@ -224,7 +224,7 @@ const getFieldTypeMappings = (record: Record<string, any>): Array<FieldTypeMappi
 /**
  * @description Convert values of a record into sqlite supported formated object for dml statement
  * @param record
- * @example { name: 'Hello', disabled: true } => { name: 'Hello', disabled: 1 }
+ * @example { name: 'Hello', somethingBool: true } => { name: 'Hello', somethingBool: 1 }
  */
 const convertObjectToSQLite = record => {
   const converted = Object.entries(record).reduce((result, [key, value]) => {

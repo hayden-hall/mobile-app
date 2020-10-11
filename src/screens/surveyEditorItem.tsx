@@ -13,7 +13,8 @@ type SurveyItemProps = {
 
 function SurveyEditorItem({ navigation, title, name, type }: SurveyItemProps) {
   const value = useSelector(state => state.survey[name]);
-  const disabled = useSelector(state => state.survey.disabled);
+  const syncStatus = useSelector(state => state.survey.syncStatus);
+  const disabled = syncStatus === 'Synced';
   const dispatchSurvey = useDispatch();
 
   const onValueChange = value => {

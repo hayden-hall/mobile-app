@@ -36,8 +36,6 @@ export const storeOnlineSurveys = async () => {
  * @param survey
  */
 export const upsertLocalSurvey = async survey => {
-  // Remove non persistent fields in the state
-  delete survey.disabled;
   logger('DEBUG', 'Saving survey', survey);
   if (survey.localId) {
     return await updateRecord(DB_TABLE.SURVEY, survey, `where localId = ${survey.localId}`);
@@ -53,7 +51,6 @@ export const uploadSurveyListToSalesforce = async surveys => {
   const records = surveys.map(s => {
     // Remove local or read only fields
     delete s.localId;
-    delete s.disabled;
     delete s.syncStatus;
     delete s.Name;
     // s.RecordTypeName?
@@ -63,11 +60,11 @@ export const uploadSurveyListToSalesforce = async surveys => {
 };
 
 /**
- * updateSurveyStatusSynced
- * @param surveys
+ * @updateSurveyStatusSynced
+ * @param surveys Offline surveys
  */
 export const updateSurveyStatusSynced = async surveys => {
-  const commaSeparetedLocalIds = surveys.map(s => `'${s.localId}'`).join(',');
+  const commaSeparetedLocalIds = surveys.map(s => s.localId).join(',');
   return await updateFieldValue(
     DB_TABLE.SURVEY,
     'syncStatus',
