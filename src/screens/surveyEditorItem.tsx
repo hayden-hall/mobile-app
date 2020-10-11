@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
-import { Button, Text, View } from 'react-native';
-import { TextInput, CheckboxButton, DatePicker, Picklist } from '../components/surveyEditor';
+import { Text, View } from 'react-native';
+import { TextInput, CheckboxButton, DatePicker, Picklist, Lookup } from '../components/surveyEditor';
 
 import { useSelector, useDispatch } from '../state/surveyEditorState';
 
@@ -52,7 +52,7 @@ function SurveyEditorItem({ navigation, title, name, type }: SurveyItemProps) {
       case 'phone':
         return <TextInput title={title} onValueChange={onValueChange} value={value} keyboardType="phone-pad" />;
       case 'reference':
-        return <Button title={`Open ${title}`} onPress={() => navigation.navigate('Lookup')} />;
+        return <Lookup title={title} navigation={navigation} />;
       default:
         return (
           <Text>

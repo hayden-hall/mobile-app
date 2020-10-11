@@ -32,6 +32,7 @@ function TextInput(props: TextInputPropType) {
       inputContainerStyle={inputContainerStyle}
       labelStyle={labelStyle}
       inputStyle={multiline ? inputStyleMultiline : inputStyle}
+      renderErrorMessage={false}
     />
   );
 }

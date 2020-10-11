@@ -11,7 +11,7 @@ import SurveyList from './screens/surveyList';
 import SurveyTypePicker from './screens/surveyTypePicker';
 import SurveyEditor from './screens/surveyEditor';
 import Settings from './screens/settings';
-import Lookup from './screens/lookup';
+import LookupSearch from './screens/lookupSearch';
 
 // components
 import { SettingsButton, LogoutButton } from './components/headerButtons';
@@ -100,7 +100,7 @@ export default function Router() {
     <NavigationContainer>
       <RootStack.Navigator mode="modal" headerMode="none">
         <RootStack.Screen name="Main" component={MainStackScreen} />
-        <RootStack.Screen name="Lookup" component={Lookup} />
+        <RootStack.Screen name="Lookup" component={LookupSearch} />
       </RootStack.Navigator>
     </NavigationContainer>
   );
