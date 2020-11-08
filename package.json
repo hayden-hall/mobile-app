@@ -34,7 +34,7 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-39.0.0.tar.gz",
-    "react-native-dotenv": "^0.2.0",
+    "react-native-dotenv": "^2.4.2",
     "react-native-elements": "^2.3.2",
     "react-native-flash-message": "^0.1.16",
     "react-native-gesture-handler": "~1.7.0",
@@ -55,6 +55,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.8.3",
+    "@testing-library/react": "^11.0.4",
     "@types/expo__vector-icons": "^9.0.1",
     "@types/react": "~16.9.35",
     "@types/react-native": "~0.63.2",

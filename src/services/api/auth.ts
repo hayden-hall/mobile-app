@@ -1,5 +1,5 @@
 import { ASYNC_STORAGE_KEYS } from '../../constants';
-import { LOGIN_API_URL, REFRESH_KEY } from 'react-native-dotenv';
+import { LOGIN_API_URL, REFRESH_KEY } from '@env';
 
 interface LoginResponse {
   access_token: string;

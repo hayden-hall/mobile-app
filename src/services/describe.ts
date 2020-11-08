@@ -7,7 +7,7 @@ import { DescribeLayoutResult, DescribeLayout, LocalizationCustomMetadata } from
 
 import { logger } from '../utility/logger';
 import { ASYNC_STORAGE_KEYS, DB_TABLE, L10N_PREFIX } from '../constants';
-import { SURVEY_OBJECT } from 'react-native-dotenv';
+import { SURVEY_OBJECT } from '@env';
 import i18n from '../config/i18n';
 
 /**

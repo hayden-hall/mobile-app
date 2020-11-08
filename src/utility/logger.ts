@@ -1,4 +1,4 @@
-import { LOGGING_LEVEL } from 'react-native-dotenv';
+import { LOGGING_LEVEL } from '@env';
 
 const LoggingLevel = {
   ERROR: 0,
