@@ -70,6 +70,32 @@ export const getRecords = (tableName, whereClause): Promise<Array<any>> => {
 };
 
 /**
+ * @description Get records from a local table with condition
+ * @param tableName
+ * @param whereClause Required.
+ */
+export const getRecordsWithCallback = (tableName: string, whereClause: string, onSuccess) => {
+  return new Promise(async (resolve, reject) => {
+    if (!whereClause) {
+      reject('Specify where clause or use "getAllRecordsWithCallback" instead.');
+    }
+    const statement = `select * from ${tableName} ${whereClause}`;
+    database.transaction(
+      txn => {
+        txn.executeSql(statement, [], (_, { rows: { _array } }) => {
+          onSuccess(_array);
+          resolve(true);
+        });
+      },
+      error => {
+        logger('ERROR', 'getAllRecordsWithCallback', error);
+        reject(error);
+      }
+    );
+  });
+};
+
+/**
  * @description Save records to the local sqlite table
  * @param tableName Name of table on local sqlite
  * @param records
