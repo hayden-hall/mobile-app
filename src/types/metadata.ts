@@ -47,6 +47,7 @@ export interface DescribeLayoutItem {
 
 export interface DescribeLayoutComponent {
   details: DescribeFieldProperties;
+  type: string;
 }
 
 export interface DescribeFieldProperties {

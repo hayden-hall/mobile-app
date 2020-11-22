@@ -97,31 +97,33 @@ const storePageLayoutItems = async (recordTypeId: string) => {
     .map(section => {
       return section.layoutRows.map(row => {
         return row.layoutItems.map(item => {
-          return item.layoutComponents.map(c => {
-            if (c.details.type === 'picklist') {
-              const values: Array<PicklistValue> = c.details.picklistValues
-                .filter(v => v.active)
-                .map(v => ({
-                  fieldName: c.details.name,
-                  label: v.label,
-                  value: v.value,
-                }));
-              values.forEach(v => {
-                serializedPicklistValueSet.add(JSON.stringify(v));
-              });
-            }
-            return {
-              sectionId: section.layoutSectionId,
-              fieldName: c.details.name,
-              fieldLabel: c.details.label,
-              fieldType: c.details.type,
-            };
-          });
+          return item.layoutComponents
+            .filter(c => c.type !== 'EmptySpace')
+            .map(c => {
+              if (c.details.type === 'picklist') {
+                const values: Array<PicklistValue> = c.details.picklistValues
+                  .filter(v => v.active)
+                  .map(v => ({
+                    fieldName: c.details.name,
+                    label: v.label,
+                    value: v.value,
+                  }));
+                values.forEach(v => {
+                  serializedPicklistValueSet.add(JSON.stringify(v));
+                });
+              }
+              return {
+                sectionId: section.layoutSectionId,
+                fieldName: c.details.name,
+                fieldLabel: c.details.label,
+                fieldType: c.details.type,
+              };
+            });
         });
       });
     })
     .flat(3);
-  logger('FINE', 'storePageLayoutItems | items', pageLayoutItems);
+  logger('DEBUG', 'storePageLayoutItems | items', pageLayoutItems);
   await saveRecords(DB_TABLE.PageLayoutItem, pageLayoutItems, undefined);
 
   const serializedFieldTypeSet = [
