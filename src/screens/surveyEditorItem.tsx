@@ -17,6 +17,10 @@ function SurveyEditorItem({ navigation, title, name, type }: SurveyItemProps) {
   const disabled = syncStatus === 'Synced';
   const dispatchSurvey = useDispatch();
 
+  React.useEffect(() => {
+    console.log('Rendering survey editor item ' + name);
+  });
+
   const onValueChange = value => {
     dispatchSurvey({ type: 'UPDATE', field: { name: name, value } });
   };
@@ -52,7 +56,7 @@ function SurveyEditorItem({ navigation, title, name, type }: SurveyItemProps) {
       case 'phone':
         return <TextInput title={title} onValueChange={onValueChange} value={value} keyboardType="phone-pad" />;
       case 'reference':
-        return <Lookup title={title} navigation={navigation} />;
+        return <Lookup title={title} fieldName={name} navigation={navigation} value={value} />;
       default:
         return (
           <Text>
