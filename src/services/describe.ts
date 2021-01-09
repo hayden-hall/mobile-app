@@ -70,7 +70,10 @@ export const storeRecordTypes = async () => {
     }));
   logger('DEBUG', 'storeRecordTypes', `${JSON.stringify(recordTypes)}`);
   await saveRecords(DB_TABLE.RecordType, recordTypes, 'name');
-
+  storage.save({
+    key: 'RECORD_TYPES',
+    data: recordTypes,
+  });
   return recordTypes;
 };
 
