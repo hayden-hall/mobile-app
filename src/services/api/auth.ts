@@ -1,5 +1,6 @@
 import { ASYNC_STORAGE_KEYS } from '../../constants';
 import { LOGIN_API_URL, REFRESH_KEY } from '@env';
+import { logger } from '../../utility/logger';
 
 interface LoginResponse {
   access_token: string;
@@ -20,7 +21,7 @@ export const authenticate = async (email: string, password: string): Promise<Log
       const responseJson = await saveToken(response);
       resolve(responseJson);
     } catch (error) {
-      console.log('ERROR', error);
+      logger('ERROR', 'services | auth', error);
       reject(error);
     }
   });
@@ -63,7 +64,7 @@ const saveToken = async (response): Promise<LoginResponse> => {
       }
       resolve(responseJson);
     } else {
-      const responseText = await response.text();
+      const responseText = await response.json();
       reject(responseText);
     }
   });

@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { FlatList, ImageBackground } from 'react-native';
 import { Card, Icon, Divider, ListItem } from 'react-native-elements';
-import { showMessage } from 'react-native-flash-message';
 import NetInfo from '@react-native-community/netinfo';
 
 import LocalizationContext from '../context/localizationContext';

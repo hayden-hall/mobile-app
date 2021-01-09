@@ -17,6 +17,7 @@ import {
 import LocalizationContext from '../context/localizationContext';
 
 import { authenticate } from '../services/api/auth';
+import { notifyError } from '../utility/notification';
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
@@ -82,19 +83,10 @@ export default function Login({ navigation }) {
       const loginResponse = await authenticate(email, password);
 
       logger('DEBUG', 'Login', `${JSON.stringify(loginResponse)}`);
-
-      if (loginResponse.access_token && loginResponse.instance_url) {
-        // TODO: Re-login from survey list screen
-        navigation.navigate('AreaCode');
-      } else {
-        setTimeout(() => {
-          alert(`Invalid login`);
-        }, 500);
-      }
+      // TODO: Re-login from survey list screen
+      navigation.navigate('AreaCode');
     } catch (error) {
-      setTimeout(() => {
-        alert(`${error}`);
-      }, 500);
+      notifyError(error.error_description);
     } finally {
       setShowsSpinner(false);
     }
