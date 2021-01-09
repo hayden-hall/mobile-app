@@ -17,6 +17,7 @@ import { forceLogout } from '../services/session';
 import { surveyFilterReducer } from '../reducers/surveyFilterReducer';
 import LocalizationContext from '../context/localizationContext';
 // util, constants
+import { getSurveyTitleOnList } from '../utility';
 import { formatISOStringToCalendarDateString } from '../utility/date';
 import { logger } from '../utility/logger';
 import { notifyError } from '../utility/notification';
@@ -39,7 +40,8 @@ export default function SurveyList({ navigation }) {
   const [showsSpinner, setShowsSpinner] = useState(false);
   const [isNetworkConnected, setIsNetworkConnected] = useState(false);
 
-  const [recordsTypes, setRecordTypes] = useState([]);
+  const [recordTypes, setRecordTypes] = useState([]);
+  const [contacts, setContacts] = useState([]);
 
   const { t } = useContext(LocalizationContext);
 
@@ -58,6 +60,8 @@ export default function SurveyList({ navigation }) {
       try {
         const rt = await storage.load({ key: '@RecordTypes' });
         setRecordTypes(rt);
+        const cont = await storage.load({ key: '@Contacts' });
+        setContacts(cont);
         await buildDictionary();
         await refreshSurveys();
       } catch {
@@ -93,7 +97,7 @@ export default function SurveyList({ navigation }) {
   };
 
   const getRecordTypeLabel = recordTypeId => {
-    const rt = recordsTypes.find(r => r.recordTypeId === recordTypeId);
+    const rt = recordTypes.find(r => r.recordTypeId === recordTypeId);
     return rt ? rt.label : '';
   };
 
@@ -117,7 +121,7 @@ export default function SurveyList({ navigation }) {
           survey.Visit_Clinic_Date__c ? formatISOStringToCalendarDateString(survey.Visit_Clinic_Date__c) : ''
         }`,
         showCaret: survey.syncStatus === 'Unsynced',
-        title: survey.Name || survey.localId,
+        title: getSurveyTitleOnList(recordTypes, contacts, survey),
       };
     });
 

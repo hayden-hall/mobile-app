@@ -22,14 +22,14 @@ export const storeOnlineSurveys = async () => {
   );
   serializedFieldSet.add(
     JSON.stringify({
-      name: 'RecordTypeId',
-      type: 'text',
+      fieldName: 'RecordTypeId',
+      fieldType: 'text',
     })
   );
   serializedFieldSet.add(
     JSON.stringify({
-      name: 'Name',
-      type: 'text',
+      fieldName: 'Name',
+      fieldType: 'text',
     })
   );
   const surveyFieldTypeMappings: Array<FieldTypeMapping> = [...serializedFieldSet.values()].map(s => {

@@ -57,6 +57,10 @@ export const storeContacts = async () => {
 
   logger('DEBUG', 'storeContacts', contacts);
   await saveRecords(DB_TABLE.CONTACT, contacts, 'id');
+  storage.save({
+    key: '@Contacts',
+    data: contacts,
+  });
 };
 
 /**

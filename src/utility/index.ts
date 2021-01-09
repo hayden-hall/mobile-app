@@ -5,3 +5,25 @@ export const validateEmail = email => {
   }
   return false;
 };
+
+/* this should be removed for grass roots app */
+export const getSurveyTitleOnList = (recordTypes, contacts, survey) => {
+  const rt = recordTypes.find(r => r.recordTypeId === survey.RecordTypeId);
+  if (!rt) {
+    return survey.Name || survey.localId;
+  }
+  switch (rt.name) {
+    case 'Ante_Natal_Visit':
+      return contacts.find(c => c.id === survey.Mother__c).name;
+    case 'Mother_Child_Visit':
+      return contacts.find(c => c.id === survey.Mother__c).name;
+    case 'New_Beneficiary':
+      return `${survey.Beneficiary_First_Name__c} ${survey.Beneficiary_Last_Name__c}`;
+    case 'New_Child':
+      return `${survey.Child_First_Name__c} ${survey.Child_Last_Name__c}`;
+    case 'New_Mother':
+      return `${survey.Mother_First_Name__c} ${survey.Mother_Last_Name__c}`;
+    case 'Social_Services_Visit':
+      return ' ';
+  }
+};
