@@ -39,6 +39,8 @@ export default function SurveyList({ navigation }) {
   const [showsSpinner, setShowsSpinner] = useState(false);
   const [isNetworkConnected, setIsNetworkConnected] = useState(false);
 
+  const [recordsTypes, setRecordTypes] = useState([]);
+
   const { t } = useContext(LocalizationContext);
 
   /**
@@ -54,6 +56,8 @@ export default function SurveyList({ navigation }) {
     setShowsSpinner(true);
     const prepare = async () => {
       try {
+        const rt = await storage.load({ key: '@RecordTypes' });
+        setRecordTypes(rt);
         await buildDictionary();
         await refreshSurveys();
       } catch {
@@ -88,6 +92,11 @@ export default function SurveyList({ navigation }) {
     return await getAllRecordsWithCallback(DB_TABLE.SURVEY, setSurveys);
   };
 
+  const getRecordTypeLabel = recordTypeId => {
+    const rt = recordsTypes.find(r => r.recordTypeId === recordTypeId);
+    return rt ? rt.label : '';
+  };
+
   /**
    * @description Filter surveys by button selection, and then by search term.
    */
@@ -104,7 +113,7 @@ export default function SurveyList({ navigation }) {
     .map(survey => {
       return {
         ...survey,
-        subtitle: `${survey.Survey_Type} • ${
+        subtitle: `${getRecordTypeLabel(survey.RecordTypeId)} • ${
           survey.Visit_Clinic_Date__c ? formatISOStringToCalendarDateString(survey.Visit_Clinic_Date__c) : ''
         }`,
         showCaret: survey.syncStatus === 'Unsynced',
