@@ -18,6 +18,7 @@ import {
   BACKGROUND_IMAGE_STYLE,
 } from '../constants';
 import { logger } from '../utility/logger';
+import { notifyError } from '../utility/notification';
 
 export default function AreaCode({ navigation }) {
   const [areaCode, setAreaCode] = useState('');
@@ -98,6 +99,7 @@ export default function AreaCode({ navigation }) {
                   navigation.navigate('SurveyList');
                 } catch (error) {
                   logger('ERROR', 'AreaCode', `${error}`);
+                  notifyError(JSON.stringify(error));
                 } finally {
                   setShowsSpinner(false);
                 }

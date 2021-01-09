@@ -27,12 +27,19 @@ export const storeContacts = async () => {
           userId: appUserId,
         };
       } else if (junctionRecord.Mother__c && !junctionRecord.Mother__r.Ante_Natal_Mother__c) {
-        return { id: junctionRecord.Mother__c, name: junctionRecord.Mother__r.Name, type: 'Mother', userId: appUserId };
+        return {
+          id: junctionRecord.Mother__c,
+          name: junctionRecord.Mother__r.Name,
+          type: 'Mother',
+          motherId: '',
+          userId: appUserId,
+        };
       } else if (junctionRecord.Mother__c && junctionRecord.Mother__r.Ante_Natal_Mother__c) {
         return {
           id: junctionRecord.Mother__c,
           name: junctionRecord.Mother__r.Name,
           type: 'AnteNatelMother',
+          motherId: '',
           userId: appUserId,
         };
       } else if (junctionRecord.Beneficiary__c) {
@@ -40,6 +47,7 @@ export const storeContacts = async () => {
           id: junctionRecord.Beneficiary_Name__c,
           name: junctionRecord.Beneficiary_Name__r.Name,
           type: 'Beneficiary',
+          motherId: '',
           userId: appUserId,
         };
       }
