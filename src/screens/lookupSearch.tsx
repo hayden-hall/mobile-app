@@ -26,12 +26,11 @@ export default function LookupSearch({ navigation, route }: LookupProps) {
   const dispatchSurvey = useDispatch();
 
   useEffect(() => {
-    console.log('Opening lookup search screen');
     const loadRecords = async () => {
       await getRecordsWithCallback(DB_TABLE.CONTACT, `where type = '${LOOKUP_TO_CONTACT[fieldName]}'`, setResult);
     };
     loadRecords();
-  });
+  }, []);
 
   const filteredResult = searchTerm ? result.filter(r => r.name.includes(searchTerm)) : result;
 

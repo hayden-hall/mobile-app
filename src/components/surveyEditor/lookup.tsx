@@ -15,7 +15,6 @@ function Lookup({ fieldName, title, value, navigation }: LookupPropType) {
   const [lookupToName, setLookupToName] = useState('');
 
   useEffect(() => {
-    console.log('Lookup item component. Resolving record id to name');
     const load = async () => {
       if (value) {
         const records = await getRecords(DB_TABLE.CONTACT, `where id = '${value}'`);
@@ -25,7 +24,7 @@ function Lookup({ fieldName, title, value, navigation }: LookupPropType) {
       }
     };
     load();
-  });
+  }, []);
 
   return (
     <View style={{ paddingBottom: 8, width: '100%' }}>
@@ -37,6 +36,7 @@ function Lookup({ fieldName, title, value, navigation }: LookupPropType) {
           inputContainerStyle={styles.inputContainerStyle}
           renderErrorMessage={false}
           rightIcon={{ name: 'search', color: APP_THEME.APP_LIGHT_FONT_COLOR }}
+          inputStyle={styles.inputStyle}
         />
       </TouchableOpacity>
     </View>
@@ -53,9 +53,14 @@ const styles = StyleSheet.create({
   },
   inputContainerStyle: {
     height: 40,
-    borderRadius: 4,
+    paddingLeft: 10,
     borderWidth: 1,
+    borderRadius: 4,
     borderColor: APP_THEME.APP_BORDER_COLOR,
+  },
+  inputStyle: {
+    fontSize: 16,
+    fontFamily: APP_FONTS.FONT_REGULAR,
   },
 });
 
