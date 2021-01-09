@@ -9,9 +9,10 @@ type LookupPropType = {
   title: string;
   value: string;
   navigation: any;
+  disabled?: boolean;
 };
 
-function Lookup({ fieldName, title, value, navigation }: LookupPropType) {
+function Lookup({ fieldName, title, value, navigation, disabled }: LookupPropType) {
   const [lookupToName, setLookupToName] = useState('');
 
   useEffect(() => {
@@ -29,7 +30,11 @@ function Lookup({ fieldName, title, value, navigation }: LookupPropType) {
   return (
     <View style={{ paddingBottom: 8, width: '100%' }}>
       <Text style={styles.labelStyle}>{title}</Text>
-      <TouchableOpacity onPress={() => navigation.navigate('Lookup', { fieldName, title })}>
+      <TouchableOpacity
+        onPress={() => {
+          if (!disabled) navigation.navigate('Lookup', { fieldName, title });
+        }}
+      >
         <Input
           value={lookupToName}
           pointerEvents="none"

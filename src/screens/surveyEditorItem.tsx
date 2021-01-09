@@ -47,16 +47,17 @@ function SurveyEditorItem({ navigation, title, name, type }: SurveyItemProps) {
             title={title}
             onPress={() => dispatchSurvey({ type: 'UPDATE', field: { name: name, value: !value } })}
             selected={value}
+            disabled={disabled}
           />
         );
       case 'date':
-        return <DatePicker title={title} onValueChange={onValueChange} value={value} />;
+        return <DatePicker title={title} onValueChange={onValueChange} value={value} disabled={disabled} />;
       case 'picklist':
         return <Picklist onValueChange={onValueChange} value={value} fieldName={name} disabled={disabled} />;
       case 'phone':
         return <TextInput title={title} onValueChange={onValueChange} value={value} keyboardType="phone-pad" />;
       case 'reference':
-        return <Lookup title={title} fieldName={name} navigation={navigation} value={value} />;
+        return <Lookup title={title} fieldName={name} navigation={navigation} value={value} disabled={disabled} />;
       default:
         return (
           <Text>
