@@ -1,7 +1,7 @@
 import { createSalesforceRecords, fetchSalesforceRecords } from './api/salesforce/core';
-import { updateRecord, updateFieldValue, clearTable, getAllRecords, saveRecords } from './database';
+import { updateRecord, updateFieldValue, clearTable, getAllRecords, saveRecords, prepareTable } from './database';
 import { ASYNC_STORAGE_KEYS, DB_TABLE } from '../constants';
-import { PageLayoutItem } from '../types/sqlite';
+import { FieldTypeMapping, PageLayoutItem } from '../types/sqlite';
 import { logger } from '../utility/logger';
 
 /**
@@ -11,6 +11,45 @@ import { logger } from '../utility/logger';
 export const storeOnlineSurveys = async () => {
   // Build field list from page layout items
   const fields: Array<PageLayoutItem> = await getAllRecords(DB_TABLE.PageLayoutItem);
+  // Prepare local survey table
+  const serializedFieldSet = new Set(
+    fields.map(f =>
+      JSON.stringify({
+        fieldName: f.fieldName,
+        fieldType: f.fieldType,
+      })
+    )
+  );
+  serializedFieldSet.add(
+    JSON.stringify({
+      name: 'RecordTypeId',
+      type: 'text',
+    })
+  );
+  serializedFieldSet.add(
+    JSON.stringify({
+      name: 'Name',
+      type: 'text',
+    })
+  );
+  const surveyFieldTypeMappings: Array<FieldTypeMapping> = [...serializedFieldSet.values()].map(s => {
+    const item = JSON.parse(s);
+    const result: FieldTypeMapping = {
+      name: item.fieldName,
+      type: ['double', 'boolean', 'percent', 'currency'].includes(item.fieldType) ? 'integer' : 'text',
+    };
+    return result;
+  });
+  const localFields: Array<FieldTypeMapping> = [
+    {
+      name: 'syncStatus',
+      type: 'text',
+    },
+  ];
+  clearTable('Survey');
+  prepareTable(DB_TABLE.SURVEY, [...surveyFieldTypeMappings, ...localFields], undefined);
+
+  // Query salesforce records and save them to local
   const fieldSet = new Set(fields.map(f => f.fieldName));
   fieldSet.add('Name');
   fieldSet.add('RecordTypeId');
@@ -22,8 +61,9 @@ export const storeOnlineSurveys = async () => {
   const surveys = await fetchSalesforceRecords(
     `SELECT ${commaSeparetedFields} FROM Survey__c WHERE Area_Code__c = '${areaCode}'`
   );
-  clearTable('Survey');
-  // Surveys should have sync status and local id for offline surveys
+  if (surveys.length === 0) {
+    return;
+  }
   saveRecords(
     'Survey',
     surveys.map(s => ({ ...s, syncStatus: 'Synced' })),
@@ -53,7 +93,6 @@ export const uploadSurveyListToSalesforce = async surveys => {
     delete s.localId;
     delete s.syncStatus;
     delete s.Name;
-    // s.RecordTypeName?
     return s;
   });
   return await createSalesforceRecords('Survey__c', records);
