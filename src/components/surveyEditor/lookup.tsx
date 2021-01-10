@@ -25,7 +25,7 @@ function Lookup({ fieldName, title, value, navigation, disabled }: LookupPropTyp
       }
     };
     load();
-  }, []);
+  }, [value]);
 
   return (
     <View style={{ paddingBottom: 8, width: '100%' }}>

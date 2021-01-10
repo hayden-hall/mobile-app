@@ -17,10 +17,6 @@ function SurveyEditorItem({ navigation, title, name, type }: SurveyItemProps) {
   const disabled = syncStatus === 'Synced';
   const dispatchSurvey = useDispatch();
 
-  React.useEffect(() => {
-    console.log('Rendering survey editor item ' + name);
-  });
-
   const onValueChange = value => {
     dispatchSurvey({ type: 'UPDATE', field: { name: name, value } });
   };
