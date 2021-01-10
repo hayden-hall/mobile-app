@@ -5,13 +5,13 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LocalizationContext from './context/localizationContext';
 
 // screens
-import Login from './screens/login';
+import Login from './screens/Login';
 import AreaCode from './screens/areaCode';
 import SurveyList from './screens/surveyList';
 import SurveyTypePicker from './screens/surveyTypePicker';
 import SurveyEditor from './screens/surveyEditor';
 import Settings from './screens/settings';
-import LookupSearch from './screens/lookupSearch';
+import LookupSearch from './screens/LookupSearch';
 
 // components
 import { SettingsButton, LogoutButton } from './components/headerButtons';

@@ -19,7 +19,7 @@ import LocalizationContext from '../context/localizationContext';
 import { authenticate } from '../services/api/auth';
 import { notifyError } from '../utility/notification';
 
-export default function Login({ navigation }) {
+export default function Login({ navigation }): React.FC {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
