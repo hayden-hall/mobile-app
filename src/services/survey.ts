@@ -88,7 +88,9 @@ export const upsertLocalSurvey = async survey => {
  * @param surveys
  */
 export const uploadSurveyListToSalesforce = async surveys => {
-  const records = surveys.map(s => {
+  // create deep clone of array because the original array including localId is used for updating syncStatus.
+  const records = surveys.map(survey => {
+    const s = Object.assign({}, survey);
     // Remove local or read only fields
     delete s.localId;
     delete s.syncStatus;

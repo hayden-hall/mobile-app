@@ -43,6 +43,7 @@ export default function SurveyListHeader(props: SurveyListHeaderProps) {
               notifySuccess('Surveys are successfully uploaded!');
               return;
             } else {
+              props.setShowsSpinner(false);
               notifyError('Unexpected error occued while uploading. Contact your adminsitrator.');
             }
           },
