@@ -6,11 +6,11 @@ import LocalizationContext from './context/localizationContext';
 
 // screens
 import Login from './screens/Login';
-import AreaCode from './screens/areaCode';
-import SurveyList from './screens/surveyList';
-import SurveyTypePicker from './screens/surveyTypePicker';
-import SurveyEditor from './screens/surveyEditor';
-import Settings from './screens/settings';
+import AreaCode from './screens/AreaCode';
+import SurveyList from './screens/SurveyList';
+import SurveyTypePicker from './screens/SurveyTypePicker';
+import SurveyEditor from './screens/SurveyEditor';
+import Settings from './screens/Settings';
 import LookupSearch from './screens/LookupSearch';
 
 // components
