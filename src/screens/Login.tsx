@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, StyleSheet, Image, ImageBackground } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import * as SecureStore from 'expo-secure-store';
+
 import { CustomButton, Loader } from '../components';
 import { Input } from 'react-native-elements';
 
@@ -81,7 +83,8 @@ export default function Login({ navigation }) {
     try {
       setShowsSpinner(true);
       const loginResponse = await authenticate(email, password);
-
+      await SecureStore.setItemAsync('email', email);
+      await SecureStore.setItemAsync('password', password);
       logger('DEBUG', 'Login', `${JSON.stringify(loginResponse)}`);
       // TODO: Re-login from survey list screen
       navigation.navigate('AreaCode');

@@ -27,6 +27,9 @@ export const authenticate = async (email: string, password: string): Promise<Log
   });
 };
 
+/**
+ * @deprecated
+ */
 export const refreshAccessToken = async (): Promise<LoginResponse> => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -64,8 +67,8 @@ const saveToken = async (response): Promise<LoginResponse> => {
       }
       resolve(responseJson);
     } else {
-      const responseText = await response.json();
-      reject(responseText);
+      const responseJson = await response.json();
+      reject(responseJson);
     }
   });
 };

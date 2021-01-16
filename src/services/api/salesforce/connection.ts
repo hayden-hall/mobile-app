@@ -1,4 +1,6 @@
-import { refreshAccessToken } from '../auth';
+import * as SecureStore from 'expo-secure-store';
+
+import { authenticate } from '../auth';
 import { ASYNC_STORAGE_KEYS } from '../../../constants';
 import { logger } from '../../../utility/logger';
 
@@ -23,7 +25,9 @@ export const fetchRetriable = async (endPoint: string, method: string, body: str
   });
   if (response.status === 401) {
     logger('DEBUG', 'fetchRetriable', 'refreshing access token');
-    const refreshResponse = await refreshAccessToken();
+    const email = await SecureStore.getItemAsync('email');
+    const password = await SecureStore.getItemAsync('password');
+    const refreshResponse = await authenticate(email, password);
     const secondResponse = await fetch(endPoint, {
       method,
       headers: {

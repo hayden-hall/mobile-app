@@ -27,6 +27,7 @@
     "expo": "^39.0.0",
     "expo-constants": "~9.2.0",
     "expo-localization": "~9.0.0",
+    "expo-secure-store": "~9.2.0",
     "expo-sqlite": "~8.4.0",
     "i18n-js": "^3.5.1",
     "moment": "^2.24.0",
