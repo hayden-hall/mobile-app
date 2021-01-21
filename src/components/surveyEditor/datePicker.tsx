@@ -48,8 +48,8 @@ function DatePicker(props: DatePickerPropType) {
         date={value ? new Date(value) : undefined}
         isVisible={isDatePickerVisible}
         onConfirm={date => {
-          onValueChange(date.toISOString());
           setIsDatePickerVisible(false);
+          onValueChange(date.toISOString());
         }}
         onCancel={() => setIsDatePickerVisible(false)}
       />
@@ -82,6 +82,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     fontFamily: APP_FONTS.FONT_REGULAR,
+    color: APP_THEME.APP_DARK_FONT_COLOR,
   },
   iconView: {
     right: 0,
