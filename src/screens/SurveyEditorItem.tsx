@@ -32,7 +32,7 @@ function SurveyEditorItem({ navigation, title, name, type }: SurveyItemProps) {
           <TextInput
             title={title}
             onValueChange={onValueChange}
-            value={value}
+            value={value?.toString()}
             keyboardType="numeric"
             disabled={disabled}
           />
