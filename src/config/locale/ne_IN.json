@@ -12,7 +12,7 @@
     "TOTAL_SURVEYS": "कुल सर्वेक्षणहरू",
     "UNSYNCED": "Unsynced",
     "SYNCED": "Synced",
-    "ALL": "All",
+    "ALL": "सबै",
     "QUEUED_FOR_SYNC":
       "सर्वेक्षण अनलाइन पठाउनु प्रतिक्षामा छ । चाड़ो पठाउनु होस् ।",
     "UPLOAD_SURVEY_MESSAGE": "के तपाई सर्वेक्षणहरु  अनलाइन पठाउनु चाहनुहुन्छ ?",
@@ -47,5 +47,6 @@
     "LANGUAGE": "भाषा",
     "SETTINGS": "सेटिङ",
     "DELETE": "Delete",
-    "DELETE_MESSAGE": "Are you sure to delete this survey? This cannot be undone."
+    "DELETE_MESSAGE": "Are you sure to delete this survey? This cannot be undone.",
+    "SYSTEM": "रणाली"
   }

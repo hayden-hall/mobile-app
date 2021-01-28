@@ -1,29 +1,45 @@
-import React, { PureComponent } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import * as Font from 'expo-font';
-import Router from './src/Router';
-import { initializeStorage } from './src/utility';
+import FlashMessage from 'react-native-flash-message';
 
-console.disableYellowBox = true;
-initializeStorage();
+import Router from './src/router';
+import i18n from './src/config/i18n';
+import { initializeStorage } from './src/utility/storage';
+import LocalizationContext from './src/context/localizationContext';
+import { Provider } from './src/state/surveyEditorState';
 
-export default class App extends PureComponent {
-  state = {
-    fontLoaded: false,
-  };
+export default function App() {
+  const [locale, setLocale] = useState(i18n.locale);
+  const [fontLoaded, setFontLoaded] = useState(false);
 
-  async componentDidMount() {
-    await Font.loadAsync({
-      'SalesforceSans-Regular': require('./assets/fonts/SalesforceSans-Regular.ttf'),
-      'SalesforceSans-Bold': require('./assets/fonts/SalesforceSans-Bold.ttf'),
-      'SalesforceSans-Light': require('./assets/fonts/SalesforceSans-Light.ttf'),
-    });
+  const localizationContext = useMemo(
+    () => ({
+      t: (scope, options) => i18n.t(scope, { locale, ...options }),
+      locale,
+      setLocale,
+    }),
+    [locale]
+  );
 
-    this.setState({
-      fontLoaded: true,
-    });
-  }
+  useEffect(() => {
+    initializeStorage();
+    const loadFont = async () => {
+      await Font.loadAsync({
+        'SalesforceSans-Regular': require('./assets/fonts/SalesforceSans-Regular.ttf'),
+        'SalesforceSans-Bold': require('./assets/fonts/SalesforceSans-Bold.ttf'),
+        'SalesforceSans-Light': require('./assets/fonts/SalesforceSans-Light.ttf'),
+      });
+      setFontLoaded(true);
+    };
+    loadFont();
+  }, []);
 
-  render() {
-    return this.state.fontLoaded ? <Router /> : null;
-  }
+  return fontLoaded ? (
+    <LocalizationContext.Provider value={localizationContext}>
+      <Provider>
+        <Router />
+      </Provider>
+      <FlashMessage position="top" />
+    </LocalizationContext.Provider>
+  ) : null;
 }
